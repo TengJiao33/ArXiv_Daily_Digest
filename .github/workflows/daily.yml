@@ -9,6 +9,8 @@ on:
 jobs:
   daily-digest:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: 检出代码
@@ -29,7 +31,7 @@ jobs:
           SERVERCHAN_SENDKEY: ${{ secrets.SERVERCHAN_SENDKEY }}
           WXPUSHER_APP_TOKEN: ${{ secrets.WXPUSHER_APP_TOKEN }}
           WXPUSHER_UIDS: ${{ secrets.WXPUSHER_UIDS }}
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python main.py
 
       - name: 提交存储数据
