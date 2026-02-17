@@ -1,0 +1,41 @@
+name: ArXiv Daily Digest 每日推送
+
+on:
+  schedule:
+    # 每天北京时间 10:40 (UTC 02:40)
+    - cron: '40 2 * * *'
+  workflow_dispatch:  # 支持手动触发
+
+jobs:
+  daily-digest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 安装依赖
+        run: pip install -r requirements.txt
+
+      - name: 运行 ArXiv Daily Digest
+        env:
+          DOUBAO_API_KEY: ${{ secrets.DOUBAO_API_KEY }}
+          DOUBAO_ENDPOINT_ID: ${{ secrets.DOUBAO_ENDPOINT_ID }}
+          SERVERCHAN_SENDKEY: ${{ secrets.SERVERCHAN_SENDKEY }}
+          WXPUSHER_APP_TOKEN: ${{ secrets.WXPUSHER_APP_TOKEN }}
+          WXPUSHER_UIDS: ${{ secrets.WXPUSHER_UIDS }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+        run: python main.py
+
+      - name: 提交存储数据
+        run: |
+          git config user.name "ArXiv Digest Bot"
+          git config user.email "bot@arxiv-digest.local"
+          git add data/ || true
+          git diff --cached --quiet || git commit -m "📊 $(date +%Y-%m-%d) 论文日报数据"
+          git push || true
