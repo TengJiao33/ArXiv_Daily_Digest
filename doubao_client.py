@@ -35,24 +35,38 @@ class DoubaoClient:
             full_messages.append({"role": "system", "content": system_prompt})
         full_messages.extend(messages)
 
-        try:
-            response = self.client.chat.completions.create(
-                model=self.endpoint_id,
-                messages=full_messages,
-                max_tokens=max_tokens,
-            )
-            content = response.choices[0].message.content
+        import time
 
-            # 提取 usage 信息
-            usage = {}
-            if response.usage:
-                usage = {
-                    "prompt_tokens": response.usage.prompt_tokens or 0,
-                    "completion_tokens": response.usage.completion_tokens or 0,
-                    "total_tokens": response.usage.total_tokens or 0,
-                }
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                response = self.client.chat.completions.create(
+                    model=self.endpoint_id,
+                    messages=full_messages,
+                    max_tokens=max_tokens,
+                )
+                content = response.choices[0].message.content
 
-            return content, usage
-        except Exception as e:
-            print(f"[DoubaoClient] API 调用失败: {e}")
-            return None, {}
+                # 提取 usage 信息
+                usage = {}
+                if response.usage:
+                    usage = {
+                        "prompt_tokens": response.usage.prompt_tokens or 0,
+                        "completion_tokens": response.usage.completion_tokens or 0,
+                        "total_tokens": response.usage.total_tokens or 0,
+                    }
+
+                return content, usage
+            
+            except Exception as e:
+                error_msg = str(e)
+                if "TooManyRequests" in error_msg or "rate_limit" in error_msg or "429" in error_msg:
+                    wait_time = (2 ** attempt) * 2  # 2s, 4s, 8s
+                    print(f"[DoubaoClient] ⚠️ 触发限流，等待 {wait_time}秒后重试 ({attempt+1}/{max_retries})...")
+                    time.sleep(wait_time)
+                else:
+                    print(f"[DoubaoClient] ❌ API 调用失败: {e}")
+                    return None, {}
+        
+        print(f"[DoubaoClient] ❌ 重试 {max_retries} 次后仍失败")
+        return None, {}
