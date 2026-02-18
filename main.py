@@ -1,6 +1,6 @@
 """
 ArXiv Daily Digest — AI 论文精选日报
-主流程：抓取 50 篇 → AI 批量筛选 13 篇 → 代码检查 → Top3 深度摘要 → 分层报告 → 存储 → 推送
+主流程：抓取 50 篇 → AI 批量筛选 9 篇 → 代码检查 → Top2 深度摘要 → 分层报告 → 存储 → 推送
 """
 
 import os
@@ -50,7 +50,7 @@ SELECTION_SYSTEM = """你是一位资深 AI 研究顾问，每天帮助开发者
 你对 LLM、Agent、RAG、多模态、推理、对齐等热门方向有深入理解。"""
 
 SELECTION_PROMPT = """以下是今天 ArXiv 上的 {count} 篇 AI 相关新论文。
-请从中精选出 **最值得关注的 13 篇**，按推荐程度排序（最推荐的排第一）。
+请从中精选出 **最值得关注的 9 篇**，按推荐程度排序（最推荐的排第一）。
 
 论文列表：
 {papers_text}
@@ -66,7 +66,7 @@ SELECTION_PROMPT = """以下是今天 ArXiv 上的 {count} 篇 AI 相关新论�
 
 注意：
 - index 是论文在上面列表中的编号（从 0 开始）
-- 返回恰好 13 个
+- 返回恰好 9 个
 - reason 用中文，详细概括推荐理由，50-80字
 - 优先选择：有突破性创新的、解决实际痛点的、可能引领新方向的"""
 
@@ -129,7 +129,7 @@ def ai_select_papers(papers, client):
 
     prompt = SELECTION_PROMPT.format(count=len(papers), papers_text=papers_text)
 
-    print(f"[AI 筛选] 正在从 {len(papers)} 篇中挑选 13 篇...")
+    print(f"[AI 筛选] 正在从 {len(papers)} 篇中挑选 9 篇...")
     response, usage = client.chat_completion(
         messages=[{"role": "user", "content": prompt}],
         system_prompt=SELECTION_SYSTEM,
@@ -137,8 +137,8 @@ def ai_select_papers(papers, client):
     )
 
     if not response:
-        print("[AI 筛选] ❌ AI 调用失败，随机取前 13 篇作为兜底")
-        return papers[:13], usage
+        print("[AI 筛选] ❌ AI 调用失败，随机取前 9 篇作为兜底")
+        return papers[:9], usage
 
     # 解析 JSON 响应
     try:
@@ -160,10 +160,10 @@ def ai_select_papers(papers, client):
                 paper["one_liner"] = item.get("reason", "")
                 selected.append(paper)
 
-        if len(selected) < 3:
-            print(f"[AI 筛选] ⚠️ 只解析到 {len(selected)} 篇，补充到 13 篇")
+        if len(selected) < 9:
+            print(f"[AI 筛选] ⚠️ 只解析到 {len(selected)} 篇，补充到 9 篇")
             for i, p in enumerate(papers):
-                if i not in seen_indices and len(selected) < 13:
+                if i not in seen_indices and len(selected) < 9:
                     paper = dict(p)
                     paper["one_liner"] = "AI 未提供推荐理由"
                     selected.append(paper)
@@ -172,9 +172,9 @@ def ai_select_papers(papers, client):
         return selected, usage
 
     except (json.JSONDecodeError, KeyError, TypeError) as e:
-        print(f"[AI 筛选] ⚠️ JSON 解析失败: {e}，使用前 13 篇")
+        print(f"[AI 筛选] ⚠️ JSON 解析失败: {e}，使用前 9 篇")
         fallback = []
-        for p in papers[:13]:
+        for p in papers[:9]:
             paper = dict(p)
             paper["one_liner"] = "AI 解析异常"
             fallback.append(paper)
@@ -239,7 +239,7 @@ def extract_full_text(pdf_url):
 
 
 def generate_deep_summaries(top_papers, client):
-    """对 Top 3 论文生成深度 AI 摘要"""
+    """对 Top 2 论文生成深度 AI 摘要"""
     total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0, "api_calls": 0}
 
     for p in top_papers:
@@ -308,7 +308,7 @@ def _code_badge(paper):
 
 
 def build_report(selected_papers, usage_select, usage_deep, total_scanned):
-    """组装分层 Markdown 报告：Top 3 深度解读 + 10 篇速览表格"""
+    """组装分层 Markdown 报告：Top 2 深度解读 + 7 篇速览表格"""
     date_str = datetime.now().strftime("%Y-%m-%d")
     weekday_map = {0: "周一", 1: "周二", 2: "周三", 3: "周四", 4: "周五", 5: "周六", 6: "周日"}
     weekday = weekday_map[datetime.now().weekday()]
@@ -327,9 +327,9 @@ def build_report(selected_papers, usage_select, usage_deep, total_scanned):
         cost = prompt_t / 1_000_000 * 0.3 + comp_t / 1_000_000 * 0.6
         lines.append(f"> 📊 Tokens: **{total_tokens:,}** (¥{cost:.4f})\n")
 
-    # ─── 今日必读 (Top 3) ─────────────────────────
-    top_papers = selected_papers[:3]
-    rest_papers = selected_papers[3:]
+    # ─── 今日必读 (Top 2) ─────────────────────────
+    top_papers = selected_papers[:2]
+    rest_papers = selected_papers[2:]
 
     lines.append(f"## 🔥 今日必读\n")
 
@@ -409,7 +409,7 @@ def run():
     total_scanned = len(papers)
 
     # 2. AI 批量筛选
-    print(f"\n[2/5] AI 从 {total_scanned} 篇中精选 13 篇...")
+    print(f"\n[2/5] AI 从 {total_scanned} 篇中精选 9 篇...")
     try:
         client = DoubaoClient()
     except ValueError as e:
@@ -424,9 +424,9 @@ def run():
     hunter = CodeHunter(github_token=os.getenv("GITHUB_TOKEN"))
     selected = check_all_code(selected, hunter)
 
-    # 4. Top 3 深度摘要
-    print(f"\n[4/5] 为 Top 3 生成深度摘要...")
-    usage_deep = generate_deep_summaries(selected[:3], client)
+    # 4. Top 2 深度摘要
+    print(f"\n[4/5] 为 Top 2 生成深度摘要...")
+    usage_deep = generate_deep_summaries(selected[:2], client)
 
     # 打印用量统计
     total_tokens = usage_select.get("total_tokens", 0) + usage_deep.get("total_tokens", 0)
