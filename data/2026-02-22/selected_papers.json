@@ -1,0 +1,99 @@
+{
+  "date": "2026-02-22",
+  "total_scanned": 50,
+  "total_selected": 9,
+  "papers": [
+    {
+      "title": "KLong: Training LLM Agent for Extremely Long-horizon Tasks",
+      "url": "http://arxiv.org/abs/2602.17547v1",
+      "category": "cs.AI",
+      "one_liner": "针对当前LLM Agent难以处理极长周期任务的痛点，提出轨迹拆分SFT冷启动结合渐进缩放的训练方案，开源方案对长horizon Agent研究有很高实用价值。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: KLong：面向超长周期任务的大语言模型智能体训练\n\n**背景与痛点**: 当前大语言模型智能体应对超长周期任务（如复现顶会论文、完成机器学习工程全流程）存在显著短板：这类任务交互轮次是普通长周期任务的10倍，天然超出模型上下文窗口限制；现有方案多为系统级上下文管理，不提升智能体原生能力，现有训练方案也仅支持百轮以内交互，无法适配真实场景。\n\n**核心创新**: 本文提出开源KLong智能体，针对超长周期任务设计了从数据生成到训练的全流程方案：自动构建高质量复现论文训练数据的Research-Factory流水线，搭配轨迹拆分监督微调、渐进强化学习两大训练技术，解决了超长轨迹超出上下文窗口、强化学习稀疏不稳定的核心问题，能力可跨任务泛化。\n\n**技术细节**: 数据层面，Research-Factory自动从顶会收集筛选论文，去除测试集污染，封禁原官方代码避免作弊，自动生成结构化评估标准，再蒸馏Claude 4.5 Sonnet得到数千条高质量超长轨迹。训练分两步：1）轨迹拆分监督微调，固定开头任务/论文阅读前缀保留全局信息，对后续内容渐进截断，子轨迹间保留重叠保证上下文连贯，将可支持交互轮次从115轮提升到732轮；2）渐进强化学习，分阶段逐步延长任务超时限制，解决奖励稀疏问题，同时优化调度解决资源拥塞。\n\n**实验结果**: 在PaperBench、SWE-bench Verified、MLE-bench等5个长周期智能体基准测试，106B参数的KLong在PaperBench上平均得分超过1T参数的Kimi K2 Thinking 11.28个百分点，在软件工程、机器学习工程、代码安全等多个任务上均实现一致性能提升，验证了方法的有效性和跨任务泛化性。",
+      "summary_preview": "This paper introduces KLong, an open-source LLM agent trained to solve extremely long-horizon tasks. The principle is to first cold-start the model via trajectory-splitting SFT, then scale it via progressive RL training. Specifically, we first activate basic agentic abilities of a base model with a ..."
+    },
+    {
+      "title": "MASPO: Unifying Gradient Utilization, Probability Mass, and Signal Reliability for Robust and Sample-Efficient LLM Reasoning",
+      "url": "http://arxiv.org/abs/2602.17550v1",
+      "category": "cs.LG",
+      "one_liner": "针对现有RLVR类算法（如GRPO）的信任区域机制不符合LLM推理特性的问题，统一多维度优化，提升LLM推理的鲁棒性和样本效率，价值突出。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: MASPO：统一梯度利用、概率质量与信号可靠性的鲁棒样本高效大语言模型推理\n**背景与痛点**: 针对大语言推理任务的可验证奖励强化学习（RLVR），主流方法GRPO沿用PPO的刚性硬截断、均匀对称置信域机制，存在三大缺陷：硬截断浪费越界有效梯度、统一约束忽略token分布头尾概率差异、对称更新不区分正负样本信噪比差异，导致训练低效、性能上限低。\n**核心创新**: 提出质量自适应软策略优化MASPO，从梯度、概率、信号三个维度统一解决现有方法的优化错配问题，将刚性置信域改造为连续自适应软约束，同时适配token概率分布和反馈信号置信度，是鲁棒高效的一站式RLVR改进方案。\n**技术细节**: 核心包含三个协同模块：1）可微软高斯门控，仅对越界更新做平滑梯度衰减，保留近边界探索样本的有效梯度，解决硬截断的梯度浪费问题；2）质量自适应限制器，将置信域宽度与旧策略token概率成反比调整，给长尾低概率token放宽约束鼓励探索，给头部高概率token收紧约束防止策略坍缩；3）不对称风险控制器，放大难题正确样本的更新步长加速学习，压缩简单歧义负样本的更新步长避免灾难性遗忘。\n**实验结果**: 在AIME、AMC、MATH500等多个数学推理基准测试，覆盖1.5B、7B、14B三种尺度模型，相比GRPO平均准确率提升2.8-3个百分点，Pass@32提升2.6-3.7个百分点，训练熵更稳定，收敛更快，性能显著优于所有对比的GRPO改进基线。",
+      "summary_preview": "Existing Reinforcement Learning with Verifiable Rewards (RLVR) algorithms, such as GRPO, rely on rigid, uniform, and symmetric trust region mechanisms that are fundamentally misaligned with the complex optimization dynamics of Large Language Models (LLMs). In this paper, we identify three critical c..."
+    },
+    {
+      "title": "MARS: Margin-Aware Reward-Modeling with Self-Refinement",
+      "url": "http://arxiv.org/abs/2602.17658v1",
+      "category": "cs.LG",
+      "one_liner": "针对RLHF等LLM对齐流程中奖励模型训练不可靠的核心痛点，提出边际感知奖励建模加自精炼框架，能有效提升对齐流程的稳定性和最终效果。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Reward modeling is a core component of modern alignment pipelines including RLHF and RLAIF, underpinning policy optimization methods including PPO and TRPO. However, training reliable reward models relies heavily on human-labeled preference data, which is costly and limited, motivating the use of da..."
+    },
+    {
+      "title": "ODESteer: A Unified ODE-Based Steering Framework for LLM Alignment",
+      "url": "http://arxiv.org/abs/2602.17560v1",
+      "category": "cs.AI",
+      "one_liner": "针对当前基于激活转向的LLM推理时对齐缺乏统一框架的问题，提出基于ODE的统一 steering 框架，实现轻量化对齐，创新性较强。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Activation steering, or representation engineering, offers a lightweight approach to align large language models (LLMs) by manipulating their internal activations at inference time. However, current methods suffer from two key limitations: \\textit{(i)} the lack of a unified theoretical framework for..."
+    },
+    {
+      "title": "Reverso: Efficient Time Series Foundation Models for Zero-shot Forecasting",
+      "url": "http://arxiv.org/abs/2602.17634v1",
+      "category": "cs.LG",
+      "one_liner": "针对时间序列基础模型零样本推理效率低的痛点，提出高效的Reverso架构，优化缩放效率，提升零样本时序预测性能，工业应用价值高。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Learning time series foundation models has been shown to be a promising approach for zero-shot time series forecasting across diverse time series domains. Insofar as scaling has been a critical driver of performance of foundation models in other modalities such as language and vision, much recent wo..."
+    },
+    {
+      "title": "The Cascade Equivalence Hypothesis: When Do Speech LLMs Behave Like ASR$\\rightarrow$LLM Pipelines?",
+      "url": "http://arxiv.org/abs/2602.17598v1",
+      "category": "cs.CL",
+      "one_liner": "提出语音大模型的级联等价假设，通过分析证明多数现有语音LLM在常见任务中等价于Whisper+LLM级联 pipeline，对该领域研究有重要启发。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Current speech LLMs largely perform implicit ASR: on tasks solvable from a transcript, they are behaviorally and mechanistically equivalent to simple Whisper$\\to$LLM cascades. We show this through matched-backbone testing across four speech LLMs and six tasks, controlling for the LLM backbone for th..."
+    },
+    {
+      "title": "MolHIT: Advancing Molecular-Graph Generation with Hierarchical Discrete Diffusion Models",
+      "url": "http://arxiv.org/abs/2602.17602v1",
+      "category": "cs.AI",
+      "one_liner": "针对AI药物研发中分子图生成的质量痛点，提出分层离散扩散模型MolHIT，改进分子生成的结构合理性，对AI药物发现方向实用价值高。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Molecular generation with diffusion models has emerged as a promising direction for AI-driven drug discovery and materials science. While graph diffusion models have been widely adopted due to the discrete nature of 2D molecular graphs, existing models suffer from low chemical validity and struggle ..."
+    },
+    {
+      "title": "FAMOSE: A ReAct Approach to Automated Feature Discovery",
+      "url": "http://arxiv.org/abs/2602.17641v1",
+      "category": "cs.LG",
+      "one_liner": "针对表格机器学习领域特征工程的长期瓶颈，结合ReAct Agent框架实现自动化特征发现，能在指数级特征空间高效搜索，实用性很强。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Feature engineering remains a critical yet challenging bottleneck in machine learning, particularly for tabular data, as identifying optimal features from an exponentially large feature space traditionally demands substantial domain expertise. To address this challenge, we introduce FAMOSE (Feature ..."
+    },
+    {
+      "title": "When to Trust the Cheap Check: Weak and Strong Verification for Reasoning",
+      "url": "http://arxiv.org/abs/2602.17633v1",
+      "category": "cs.LG",
+      "one_liner": "针对当前LLM推理验证流程中弱验证（低成本）和强验证（高成本）的选择问题，提出决策框架平衡成本和可靠性，助力工业系统降本增效。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Reasoning with LLMs increasingly unfolds inside a broader verification loop. Internally, systems use cheap checks, such as self-consistency or proxy rewards, which we call weak verification. Externally, users inspect outputs and steer the model through feedback until results are trustworthy, which w..."
+    }
+  ]
+}
