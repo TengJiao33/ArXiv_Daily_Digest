@@ -1,0 +1,99 @@
+{
+  "date": "2026-02-23",
+  "total_scanned": 50,
+  "total_selected": 9,
+  "papers": [
+    {
+      "title": "The Geometry of Noise: Why Diffusion Models Don't Need Noise Conditioning",
+      "url": "http://arxiv.org/abs/2602.18428v1",
+      "category": "cs.LG",
+      "one_liner": "挑战扩散模型传统噪声条件建模范式，从几何角度证明扩散可学习时间不变无噪声向量场，动摇现有设计基础，对生成模型架构创新有重要启发。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: 噪声的几何：为什么扩散模型不需要噪声条件化\n\n**背景与痛点**: 现有主流扩散生成模型都依赖显式的噪声水平（时间步）条件输入，近年新兴的噪声无关自治生成模型，仅用一个与时间无关的静态向量场就能生成高质量样本，但该范式一直存在核心悖论：为什么有界的静态网络能在梯度本应发散的数据流形附近保持稳定？现有工作未从根本上解决该疑问，也无法解释不同盲扩散模型的性能差异。\n\n**核心创新**: 本文从几何角度对噪声无关自治扩散给出了严谨的统一理论框架，将其隐式优化目标定义为对所有噪声水平积分得到的边际能量，证明自治生成本质是边际能量上的黎曼梯度流，揭示静态向量场会隐式引入局部共形度量抵消梯度奇异性，同时推导了自治采样的结构稳定性条件。\n\n**技术细节**: 首先推导得最优噪声无关向量场，是所有噪声水平下最优条件场按噪声后验概率加权得到的期望，再将其分解为天然梯度、传输校正、线性漂移三个可解释的几何分量。在高维全局、近数据流形局部两种场景下，噪声后验都会坍缩，传输校正项消失，有效增益会以恰好抵消梯度发散的速度趋近于零，保证向量场有界，最终推导得到不同参数化的稳定性条件。\n\n**实验结果**: 在CIFAR-10、SVHN、Fashion MNIST以及可控高维玩具数据集上验证，结果完全符合理论预测：去掉噪声条件的DDPM噪声预测模型生成充满噪声的无效样本；去掉噪声条件的速度参数化模型生成质量与带显式条件的基线相当，CIFAR-10上FID可低至2.23。",
+      "summary_preview": "Autonomous (noise-agnostic) generative models, such as Equilibrium Matching and blind diffusion, challenge the standard paradigm by learning a single, time-invariant vector field that operates without explicit noise-level conditioning. While recent work suggests that high-dimensional concentration a..."
+    },
+    {
+      "title": "Thinking by Subtraction: Confidence-Driven Contrastive Decoding for LLM Reasoning",
+      "url": "http://arxiv.org/abs/2602.18232v1",
+      "category": "cs.CL",
+      "one_liner": "针对现有LLM推理测试扩展均匀分配计算资源的痛点，提出置信度驱动的对比解码方法，以减法思路提升推理准确率与效率，实用性强。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: 减法式思考：面向大语言模型推理的置信度驱动对比解码\n\n**背景与痛点**: 现有大模型推理的测试时扩展方法大多均匀增加全解码过程的计算量，要么生成多条推理轨迹，要么全局应用对比解码，普遍算力开销大、冗余推理多。推理不确定性实际高度局部化，仅少数低置信度token会引发绝大多数错误，全局修正会稀释干预效果，也造成计算浪费。\n\n**核心创新**: 本文提出置信度驱动对比解码（CCD），核心是只在推理过程中识别出的低置信度关键位置做针对性修正，不对高置信度的稳定推理步骤做多余干预，无需额外训练、也不需要生成多条推理轨迹，仅引入极小的KV缓存开销，是传统全局测试时缩放方案的高效替代。\n\n**技术细节**: 解码时首先在线计算每个生成token的预测置信度，通过滑动窗口统计最近置信度分布，用分位数阈值动态划分低置信度待干预token和高置信度语义锚点；维护双KV缓存，主缓存保存正常上下文，对比缓存将高置信度锚点替换为无语义占位符，构造故意混淆的参考分布；仅在低置信度位置触发对比修正，最终预测logits为原分布加权后减去混淆参考分布加权，放大正确token概率优势。\n\n**实验结果**: 在AIME2024/2025、BRUMO2025、HMMT2025四个高难度数学推理基准测试，覆盖1.5B到32B不同规模的稠密、MoE大模型，相比原生解码，CCD稳定提升3-5个百分点的准确率，同时能压缩冗余推理，输出更简洁，超参数鲁棒性好。",
+      "summary_preview": "Recent work on test-time scaling for large language model (LLM) reasoning typically assumes that allocating more inference-time computation uniformly improves correctness. However, prior studies show that reasoning uncertainty is highly localized: a small subset of low-confidence tokens disproportio..."
+    },
+    {
+      "title": "SPQ: An Ensemble Technique for Large Language Model Compression",
+      "url": "http://arxiv.org/abs/2602.18420v1",
+      "category": "cs.CL",
+      "one_liner": "提出结合保留方差SVD、剪枝、量化的集成LLM压缩方法SPQ，兼顾压缩率和模型性能，有效降低大模型部署成本，工业实用价值高。",
+      "has_code": true,
+      "repo_url": "https://github.com/JiaminYao/SPQ_LLM_Compression",
+      "repo_stars": 0,
+      "summary_preview": "This study presents an ensemble technique, SPQ (SVD-Pruning-Quantization), for large language model (LLM) compression that combines variance-retained singular value decomposition (SVD), activation-based pruning, and post-training linear quantization. Each component targets a different source of inef..."
+    },
+    {
+      "title": "RVR: Retrieve-Verify-Retrieve for Comprehensive Question Answering",
+      "url": "http://arxiv.org/abs/2602.18425v1",
+      "category": "cs.CL",
+      "one_liner": "针对开放域问答需要覆盖多维度答案信息的痛点，提出多轮检索框架RVR，通过检索-验证-再检索提升召回全面性，改进RAG问答效果。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Comprehensively retrieving diverse documents is crucial to address queries that admit a wide range of valid answers. We introduce retrieve-verify-retrieve (RVR), a multi-round retrieval framework designed to maximize answer coverage. Initially, a retriever takes the original query and returns a cand..."
+    },
+    {
+      "title": "Analyzing and Improving Chain-of-Thought Monitorability Through Information Theory",
+      "url": "http://arxiv.org/abs/2602.18297v1",
+      "category": "cs.LG",
+      "one_liner": "针对CoT推理难以监控异常输出（如代码生成测试黑客行为）的问题，基于信息论分析并改进CoT可监控性，提升LLM输出可靠性。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Chain-of-thought (CoT) monitors are LLM-based systems that analyze reasoning traces to detect when outputs may exhibit attributes of interest, such as test-hacking behavior during code generation. In this paper, we use information-theoretic analysis to show that non-zero mutual information between C..."
+    },
+    {
+      "title": "Decoding as Optimisation on the Probability Simplex: From Top-K to Top-P (Nucleus) to Best-of-K Samplers",
+      "url": "http://arxiv.org/abs/2602.18292v1",
+      "category": "cs.LG",
+      "one_liner": "针对当前LLM解码被当作启发式调参的现状，提出将解码统一为概率单纯形上的优化框架，统一了主流采样方法，有基础理论价值。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Decoding sits between a language model and everything we do with it, yet it is still treated as a heuristic knob-tuning exercise. We argue decoding should be understood as a principled optimisation layer: at each token, we solve a regularised problem over the probability simplex that trades off mode..."
+    },
+    {
+      "title": "On the Adversarial Robustness of Discrete Image Tokenizers",
+      "url": "http://arxiv.org/abs/2602.18252v1",
+      "category": "cs.CV",
+      "one_liner": "离散图像分词器是当前多模态大模型核心组件，本文系统分析其对抗鲁棒性，填补领域研究空白，对多模态系统安全设计有指导意义。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Discrete image tokenizers encode visual inputs as sequences of tokens from a finite vocabulary and are gaining popularity in multimodal systems, including encoder-only, encoder-decoder, and decoder-only models. However, unlike CLIP encoders, their vulnerability to adversarial attacks has not been ex..."
+    },
+    {
+      "title": "A Probabilistic Framework for LLM-Based Model Discovery",
+      "url": "http://arxiv.org/abs/2602.18266v1",
+      "category": "cs.LG",
+      "one_liner": "提出基于LLM的自动化科学模型发现概率框架，结合Agent范式从观测数据挖掘可解释机械模型，有望加速科学发现，前沿性突出。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Automated methods for discovering mechanistic simulator models from observational data offer a promising path toward accelerating scientific progress. Such methods often take the form of agentic-style iterative workflows that repeatedly propose and revise candidate models by imitating human discover..."
+    },
+    {
+      "title": "PRISM-FCP: Byzantine-Resilient Federated Conformal Prediction via Partial Sharing",
+      "url": "http://arxiv.org/abs/2602.18396v1",
+      "category": "cs.LG",
+      "one_liner": "针对联邦学习中拜占庭攻击导致 conformal预测校准失效的痛点，提出基于部分共享的鲁棒框架，提升分布式预测的可靠性与安全性。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "We propose PRISM-FCP (Partial shaRing and robust calIbration with Statistical Margins for Federated Conformal Prediction), a Byzantine-resilient federated conformal prediction framework that utilizes partial model sharing to improve robustness against Byzantine attacks during both model training and..."
+    }
+  ]
+}
