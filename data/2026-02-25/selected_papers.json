@@ -1,0 +1,99 @@
+{
+  "date": "2026-02-25",
+  "total_scanned": 50,
+  "total_selected": 9,
+  "papers": [
+    {
+      "title": "Aletheia tackles FirstProof autonomously",
+      "url": "http://arxiv.org/abs/2602.21201v1",
+      "category": "cs.AI",
+      "one_liner": "Gemini驱动的数学研究Agent Aletheia首次完成FirstProof自主数学证明挑战，验证了大模型Agent在前沿数学研究中的应用潜力，方向前沿影响力大",
+      "has_code": true,
+      "repo_url": "https://github.com/google-deepmind/superhuman",
+      "repo_stars": 540,
+      "deep_summary": "**中文标题**: Aletheia自主攻克FirstProof测评\n**背景与痛点**: FirstProof是职业数学家提出的10道原创研究级数学开放问题，用于测评AI解决真实前沿数学问题的自主能力。此前AI解决开放数学问题大多依赖人类专家在回路中提供思路、修正内容，鲜有符合规则的全自主解题验证实践。\n**核心创新**: 本文验证了Google DeepMind开发的、基于Gemini 3 Deep Think的自主数学智能体Aletheia的前沿解题能力，严格遵守FirstProof对自主性的最高要求，全程无人类提供数学内容或修正，自动生成符合学术出版标准的完整证明，同时公开全部原始交互保证可验证性。\n**技术细节**: Aletheia采用生成+验证的双智能体架构，直接输入未修改的FirstProof原始问题文本；验证环节用预定义prompt让大模型自主检查候选证明的逻辑漏洞、修正格式，直接输出符合学术规范的LaTeX代码。智能体优先保障可靠性，无解时会主动输出“未找到解”，实验采用best-of-2策略从两个不同基模型的结果中选最优，仅最终评估环节人类介入，不修改模型输出内容。\n**实验结果**: 在FirstProof的10道研究级问题上，经独立数学专家评估，Aletheia自主正确解决了6道问题，仅第8题未达成一致评估（5/7专家认为正确）。所有结果在官方截止前提交，不存在数据泄露，证明大模型智能体已经具备解决部分前沿开放数学问题的能力。",
+      "summary_preview": "We report the performance of Aletheia (Feng et al., 2026b), a mathematics research agent powered by Gemini 3 Deep Think, on the inaugural FirstProof challenge. Within the allowed timeframe of the challenge, Aletheia autonomously solved 6 problems (2, 5, 7, 8, 9, 10) out of 10 according to majority e..."
+    },
+    {
+      "title": "Untied Ulysses: Memory-Efficient Context Parallelism via Headwise Chunking",
+      "url": "http://arxiv.org/abs/2602.21196v1",
+      "category": "cs.LG",
+      "one_liner": "针对长序列Transformer上下文并行的内存开销痛点，提出按头分块的内存高效上下文并行方法，大幅降低长上下文训练的内存成本，实用性极强",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: 解开的尤利西斯：基于头分块的内存高效上下文并行\n\n**背景与痛点**: 当前长上下文大模型训练普遍依赖上下文并行技术，主流方案如DeepSpeed Ulysses、Ring Attention未优化注意力阶段的中间激活内存，内存开销随序列长度线性增长，无法支持超百万级长序列；现有内存优化方案如FPDT依赖CPU卸载，会大幅降低训练吞吐量，ALST等方案未解决注意力层的内存瓶颈。\n\n**核心创新**: 本文提出UPipe（Untied Ulysses）方法，核心洞察是长序列训练下仅处理部分注意力头即可占满GPU计算资源，因此通过头维度分块串行执行注意力，复用内存缓冲区，相比现有沿序列分块的方案，能在不损失吞吐量的前提下大幅降低注意力层峰值内存，还适配了现代大模型常用的分组查询注意力（GQA）。\n\n**技术细节**: UPipe基于DeepSpeed Ulysses改造，将全部注意力头拆分为多个块，每个阶段仅处理一个块的注意力，处理完成后复用QKV和all-to-all通信缓冲区，峰值内存从与总头数成正比降为与单次处理头数成正比，最小可降至与上下文并行设备数相等。针对GQA设计特殊调度：第一阶段通信所有唯一KV头，后续阶段仅通信对应查询头，避免冗余通信，可即插即用适配现有训练流程。\n\n**实验结果**: 在Llama3-8B、Qwen3-32B上测试，单8卡H100节点训练Llama3-8B可支持500万token上下文长度，相比前代SOTA提升25%；对32B模型可降低最多87.5%的注意力层中间激活内存，训练吞吐量和主流Ulysses方案基本持平。",
+      "summary_preview": "Efficiently processing long sequences with Transformer models usually requires splitting the computations across accelerators via context parallelism. The dominant approaches in this family of methods, such as Ring Attention or DeepSpeed Ulysses, enable scaling over the context dimension but do not ..."
+    },
+    {
+      "title": "Test-Time Training with KV Binding Is Secretly Linear Attention",
+      "url": "http://arxiv.org/abs/2602.21204v1",
+      "category": "cs.LG",
+      "one_liner": "重新分析了带KV绑定的测试时训练，修正了其为在线元学习的原有认知，证明其本质是线性注意力，为测试时自适应方法提供了全新理论理解",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Test-time training (TTT) with KV binding as sequence modeling layer is commonly interpreted as a form of online meta-learning that memorizes a key-value mapping at test time. However, our analysis reveals multiple phenomena that contradict this memorization-based interpretation. Motivated by these f..."
+    },
+    {
+      "title": "Prompt-Level Distillation: A Non-Parametric Alternative to Model Fine-Tuning for Efficient Reasoning",
+      "url": "http://arxiv.org/abs/2602.21103v1",
+      "category": "cs.CL",
+      "one_liner": "针对思维链推理成本高、微调小模型损失精度的痛点，提出非参数的prompt级蒸馏方案，无需微调即可实现高效推理，适配落地需求",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Advanced reasoning typically requires Chain-of-Thought prompting, which is accurate but incurs prohibitive latency and substantial test-time inference costs. The standard alternative, fine-tuning smaller models, often sacrifices interpretability while introducing significant resource and operational..."
+    },
+    {
+      "title": "Scaling State-Space Models on Multiple GPUs with Tensor Parallelism",
+      "url": "http://arxiv.org/abs/2602.21144v1",
+      "category": "cs.DC",
+      "one_liner": "针对热门长上下文 backbone 选择性状态空间模型（SSM）多GPU部署推理性能差的问题，提出适配的张量并行扩展方法，助力SSM规模化落地",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Selective state space models (SSMs) have rapidly become a compelling backbone for large language models, especially for long-context workloads. Yet in deployment, their inference performance is often bounded by the memory capacity, bandwidth, and latency limits of a single GPU, making multi-GPU exec..."
+    },
+    {
+      "title": "SELAUR: Self Evolving LLM Agent via Uncertainty-aware Rewards",
+      "url": "http://arxiv.org/abs/2602.21158v1",
+      "category": "cs.LG",
+      "one_liner": "针对LLM多步决策Agent的奖励设计痛点，提出基于不确定性感知奖励的LLM Agent自进化框架，推动Agent自主迭代优化方向发展",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Large language models (LLMs) are increasingly deployed as multi-step decision-making agents, where effective reward design is essential for guiding learning. Although recent work explores various forms of reward shaping and step-level credit assignment, a key signal remains largely overlooked: the i..."
+    },
+    {
+      "title": "Multi-Vector Index Compression in Any Modality",
+      "url": "http://arxiv.org/abs/2602.21202v1",
+      "category": "cs.IR",
+      "one_liner": "面向任意模态迟交互多向量检索的效率痛点，研究了多向量索引压缩方案，提升多模态检索的效率，对多模态RAG落地有重要实用价值",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "We study efficient multi-vector retrieval for late interaction in any modality. Late interaction has emerged as a dominant paradigm for information retrieval in text, images, visual documents, and videos, but its computation and storage costs grow linearly with document length, making it costly for ..."
+    },
+    {
+      "title": "VAUQ: Vision-Aware Uncertainty Quantification for LVLM Self-Evaluation",
+      "url": "http://arxiv.org/abs/2602.21054v1",
+      "category": "cs.CV",
+      "one_liner": "针对大视觉语言模型的幻觉问题，提出视觉感知的不确定性量化方法，实现LVLM的自我评估，提升多模态模型落地的安全性",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Large Vision-Language Models (LVLMs) frequently hallucinate, limiting their safe deployment in real-world applications. Existing LLM self-evaluation methods rely on a model's ability to estimate the correctness of its own outputs, which can improve deployment reliability; however, they depend heavil..."
+    },
+    {
+      "title": "Tool Building as a Path to \"Superintelligence\"",
+      "url": "http://arxiv.org/abs/2602.21061v1",
+      "category": "cs.AI",
+      "one_liner": "围绕LLM通过工具构建实现能力扩展的前沿路线，设计了衡量步骤成功率的基准，为探索LLM自主进化路线提供了核心评测基础",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "The Diligent Learner framework suggests LLMs can achieve superintelligence via test-time search, provided a sufficient step-success probability $γ$. In this work, we design a benchmark to measure $γ$ on logical out-of-distribution inference. We construct a class of tasks involving GF(2) circuit reco..."
+    }
+  ]
+}
