@@ -1,0 +1,99 @@
+{
+  "date": "2026-02-28",
+  "total_scanned": 50,
+  "total_selected": 9,
+  "papers": [
+    {
+      "title": "InnerQ: Hardware-aware Tuning-free Quantization of KV Cache for Large Language Models",
+      "url": "http://arxiv.org/abs/2602.23200v1",
+      "category": "cs.LG",
+      "one_liner": "解决LLM长序列解码中KV缓存内存占用过高的核心痛点，提出硬件感知免调优的KV缓存量化方案，实用性强，可直接提升大模型部署效率。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: InnerQ：面向大语言模型KV缓存的硬件感知无调优量化\n\n**背景与痛点**: 大语言模型解码阶段，KV缓存的大小随序列长度线性增长，是内存占用和推理延迟的核心瓶颈。现有主流KV缓存量化方法均沿缓存矩阵外维度分组，该布局不匹配解码阶段向量-矩阵乘法的计算流程，会导致内存访问次数多、反量化开销大，难以兼顾精度和推理速度。\n\n**核心创新**: InnerQ从硬件感知角度重新设计KV缓存的量化分组维度，选择沿缓存矩阵的内维度做分组量化，让分组布局对齐解码阶段向量-矩阵乘法的计算流，实现缩放因子复用减少内存访问和反量化延迟，同时配套无额外开销的精度优化，全程无需调优和校准。\n\n**技术细节**: 具体包含四个关键设计：① 内维度分组量化：缓存矩阵每一行内的同组元素共享缩放和零点参数，可让GPU计算单元复用参数，大幅减少内存访问；② 逐分组混合量化：每个分组根据本地分布动态选对称或非对称量化，额外计算在访存间隙完成，不增加延迟；③ 双高精度窗口：同时保留开头的注意力汇点token和最新token用高精度存储，缓解异常值精度损失；④ Key缓存逐通道归一化，归一化因子prefill阶段计算后折叠进权重，运行时无额外开销。\n\n**实验结果**: 在多个尺寸Llama模型的GSM8K少样本评测中，2bit量化的InnerQ推理精度和非量化KV缓存相当，优于现有主流KV缓存量化方法；相比半精度原生计算最高获得88%加速，比外维度分组的SOTA方法最高提速22%。",
+      "summary_preview": "Reducing the hardware footprint of large language models (LLMs) during decoding is critical for efficient long-sequence generation. A key bottleneck is the key-value (KV) cache, whose size scales with sequence length and easily dominates the memory footprint of the model. Previous work proposed quan..."
+    },
+    {
+      "title": "ParamMem: Augmenting Language Agents with Parametric Reflective Memory",
+      "url": "http://arxiv.org/abs/2602.23320v1",
+      "category": "cs.LG",
+      "one_liner": "针对现有语言自反思Agent普遍存在的输出重复、推理性能受限的问题，提出参数化反思记忆增强方案，有效提升语言Agent推理能力，方向前沿。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: ParamMem：为语言智能体增强参数化反思记忆\n**背景与痛点**: 现有基于反思的语言智能体普遍存在反思输出重复、多样性不足的问题，严重限制推理性能。当前提升多样性的方案要么是提示级修改，要么是检索式跨样本记忆，检索方法受嵌入坍缩限制，难以捕捉组合泛化模式，性能提升有限。\n**核心创新**: 核心提出参数化反思记忆模块ParamMem，通过轻量微调将跨样本反思模式编码进模型参数，靠温度采样生成多样化反思，替代检索式方案；进一步构建了统一情景记忆、跨样本记忆、参数化记忆的ParamAgent框架，支持免强大模型依赖的自我改进与弱到强迁移。\n**技术细节**: 首先构造任务适配的辅助反思数据集：编程任务输出潜在错误和bug示例，数学任务输出常见易错点，多跳问答输出查询分解和子任务，随后用LoRA做轻量微调得到参数化记忆模块。推理时每次迭代除已有情景记忆、可选检索的跨样本轨迹，额外从ParamMem采样反思信号输入生成模型，采用温度调度：第一轮低温度保证基础稳定性，后续轮次高温度促进反思多样性。\n**实验结果**: 在代码生成、数学推理、多跳问答三大领域共7个基准数据集测试，ParamAgent系列全面超过当前SOTA基线；仅需约500训练样本即可生效，支持弱模型训练的参数记忆增强强大模型智能体，可完全基于自身生成数据完成无外依赖的自我提升。",
+      "summary_preview": "Self-reflection enables language agents to iteratively refine solutions, yet often produces repetitive outputs that limit reasoning performance. Recent studies have attempted to address this limitation through various approaches, among which increasing reflective diversity has shown promise. Our emp..."
+    },
+    {
+      "title": "Evaluating Stochasticity in Deep Research Agents",
+      "url": "http://arxiv.org/abs/2602.23271v1",
+      "category": "cs.AI",
+      "one_liner": "针对新兴的深度研究Agent领域，系统研究了输出随机性对任务性能的影响，填补了该方向评估方法论的空白，对Agent落地有重要指导意义。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Deep Research Agents (DRAs) are promising agentic systems that gather and synthesize information to support research across domains such as financial decision-making, medical analysis, and scientific discovery. Despite recent improvements in research quality (e.g., outcome accuracy when ground truth..."
+    },
+    {
+      "title": "Scale Can't Overcome Pragmatics: The Impact of Reporting Bias on Vision-Language Reasoning",
+      "url": "http://arxiv.org/abs/2602.23351v1",
+      "category": "cs.CL",
+      "one_liner": "纠正了“扩大规模就能提升VLM推理能力”的领域误区，指出VLM推理不足核心根源是训练数据的报告偏差，对VLM数据构建有重要指导价值。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "The lack of reasoning capabilities in Vision-Language Models (VLMs) has remained at the forefront of research discourse. We posit that this behavior stems from a reporting bias in their training data. That is, how people communicate about visual content by default omits tacit information needed to s..."
+    },
+    {
+      "title": "SOTAlign: Semi-Supervised Alignment of Unimodal Vision and Language Models via Optimal Transport",
+      "url": "http://arxiv.org/abs/2602.23353v1",
+      "category": "cs.LG",
+      "one_liner": "基于柏拉图表征假说，提出基于最优传输的半监督单模态视觉语言模型对齐方案，无需配对多模态训练数据，大幅降低对齐成本。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "The Platonic Representation Hypothesis posits that neural networks trained on different modalities converge toward a shared statistical model of the world. Recent work exploits this convergence by aligning frozen pretrained vision and language models with lightweight alignment layers, but typically ..."
+    },
+    {
+      "title": "FlashOptim: Optimizers for Memory Efficient Training",
+      "url": "http://arxiv.org/abs/2602.23349v1",
+      "category": "cs.LG",
+      "one_liner": "针对大模型训练中参数、梯度、优化器状态占用过多显存的痛点，提出内存高效的优化器框架，降低大模型训练的硬件门槛，实用性强。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Standard mixed-precision training of neural networks requires many bytes of accelerator memory for each model parameter. These bytes reflect not just the parameter itself, but also its gradient and one or more optimizer state variables. With each of these values typically requiring 4 bytes, training..."
+    },
+    {
+      "title": "CXReasonAgent: Evidence-Grounded Diagnostic Reasoning Agent for Chest X-rays",
+      "url": "http://arxiv.org/abs/2602.23276v1",
+      "category": "cs.AI",
+      "one_liner": "针对现有大视觉语言模型在胸部X线诊断中易生成无依据输出的问题，构建了证据驱动的诊断推理Agent，医疗AI落地应用价值高。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Chest X-ray plays a central role in thoracic diagnosis, and its interpretation inherently requires multi-step, evidence-grounded reasoning. However, large vision-language models (LVLMs) often generate plausible responses that are not faithfully grounded in diagnostic evidence and provide limited vis..."
+    },
+    {
+      "title": "Why Diffusion Language Models Struggle with Truly Parallel (Non-Autoregressive) Decoding?",
+      "url": "http://arxiv.org/abs/2602.23225v1",
+      "category": "cs.CL",
+      "one_liner": "回答了扩散语言模型领域的核心困惑，解释了为何扩散LM宣传支持并行解码实际却退化为类自回归动态，对后续研究有重要启发。",
+      "has_code": true,
+      "repo_url": "https://github.com/pixeli99/NAP.",
+      "repo_stars": 2,
+      "summary_preview": "Diffusion Language Models (DLMs) are often advertised as enabling parallel token generation, yet practical fast DLMs frequently converge to left-to-right, autoregressive (AR)-like decoding dynamics. In contrast, genuinely non-AR generation is promising because it removes AR's sequential bottleneck, ..."
+    },
+    {
+      "title": "Spatio-Temporal Token Pruning for Efficient High-Resolution GUI Agents",
+      "url": "http://arxiv.org/abs/2602.23235v1",
+      "category": "cs.CV",
+      "one_liner": "针对纯视觉高分辨率GUI Agent存在的严重效率瓶颈，提出时空token剪枝方案，减少冗余计算，大幅提升推理效率，助力GUI Agent落地。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Pure-vision GUI agents provide universal interaction capabilities but suffer from severe efficiency bottlenecks due to the massive spatiotemporal redundancy inherent in high-resolution screenshots and historical trajectories. We identify two critical misalignments in existing compression paradigms: ..."
+    }
+  ]
+}
