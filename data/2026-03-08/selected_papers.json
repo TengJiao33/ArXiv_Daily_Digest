@@ -1,0 +1,99 @@
+{
+  "date": "2026-03-08",
+  "total_scanned": 50,
+  "total_selected": 9,
+  "papers": [
+    {
+      "title": "FlashAttention-4: Algorithm and Kernel Pipelining Co-Design for Asymmetric Hardware Scaling",
+      "url": "http://arxiv.org/abs/2603.05451v1",
+      "category": "cs.CL",
+      "one_liner": "针对不对称硬件缩放，协同设计算法与内核流水线，优化Transformer注意力计算瓶颈，提升大模型、长上下文场景运行效率，工业落地价值极高。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: FlashAttention-4：面向非对称硬件扩展的算法与内核流水线协同设计\n\n**背景与痛点**: NVIDIA新一代Blackwell架构数据中心GPU（B200/GB200）呈现非对称硬件缩放特性：张量核吞吐量相比上一代Hopper翻倍，但共享内存带宽、指数功能单元吞吐量几乎没有提升。原有FlashAttention系列针对Hopper设计，无法适配新的瓶颈结构，非矩阵乘运算成为性能瓶颈，浪费新硬件算力。\n\n**核心创新**: 针对Blackwell的非对称瓶颈做算法与内核实现的协同设计，通过算法创新缓解共享内存访问、指数运算等非矩阵乘瓶颈，充分利用Blackwell新增的张量内存、异步张量核心、2-CTA MMA等硬件特性，同时基于Python嵌入的CuTe-DSL实现大幅提升编译速度和可扩展性。\n\n**技术细节**: 正向阶段重新设计乒乓流水线，利用异步MMA特性重叠张量核计算与softmax运算；通过多项式近似软件模拟指数运算分流硬件指数单元压力，新增条件软max缩放，可跳过不必要的中间重缩放操作。反向阶段利用张量内存存储中间结果减少共享内存流量，借助2-CTA MMA模式将共享内存流量减半，同时将dQ梯度的全局原子加法次数减半，额外提供低开销确定性执行模式支持可复现训练。\n\n**实验结果**: 在NVIDIA B200 GPU上测试，BF16精度下相比cuDNN 9.13获得最高1.3倍加速，相比Triton实现获得最高2.7倍加速，算力利用率达到71%，最高跑出1613 TFLOPS；编译速度相比原C++模板实现的FlashAttention-3快20-30倍，大幅提升开发效率。",
+      "summary_preview": "Attention, as a core layer of the ubiquitous Transformer architecture, is the bottleneck for large language models and long-context applications. While FlashAttention-3 optimized attention for Hopper GPUs through asynchronous execution and warp specialization, it primarily targets the H100 architect..."
+    },
+    {
+      "title": "Building AI Coding Agents for the Terminal: Scaffolding, Harness, Context Engineering, and Lessons Learned",
+      "url": "http://arxiv.org/abs/2603.05344v1",
+      "category": "cs.AI",
+      "one_liner": "当前AI编码助手正向终端原生Agent转型，本文分享了终端AI编码Agent搭建的脚手架、上下文工程等实践经验，对工业落地参考价值很高。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: 《构建终端原生AI编码智能体：架构搭建、运行编排、上下文工程与经验总结》\n\n**背景与痛点**: 当前AI编码辅助正从IDE嵌入式助手转向终端原生自治智能体，但工业界主流方案多闭源不透明，开源方案要么面向基准评测不适合日常开发，要么缺乏公开设计文档。现有终端智能体普遍存在长会话上下文溢出、误操作风险高、长会话指令注意力衰减三大核心问题。\n\n**核心创新**: 推出开源终端原生生产级编码智能体OPENDEV，遵循复合AI系统设计思想，通过分层工程设计系统性解决上下文管理、安全管控、多模型成本优化三大核心问题，填补了闭源工业实践和公开学术研究之间的空白，提供了可复用的终端智能体设计蓝图。\n\n**技术细节**: 采用会话-智能体-工作流-LLM四层分层架构，支持不同认知工作流独立绑定LLM平衡成本与性能；将规划委托给只读子智能体，从工具schema层面隔离写权限避免状态混乱；扩展标准ReAct循环增加前置思考和可选自我批评阶段；提出五级渐进自适应上下文压缩，配合事件驱动系统提醒对抗长会话指令衰减；实现五层纵深安全架构，懒加载工具注册机制支持MCP外部扩展。\n\n**实验结果**: 内部架构测试显示，自适应上下文压缩可减少观测层54%的峰值token占用，典型30轮开发会话中多数可避免触发高成本的全量紧急压缩；工程实践验证了参数化单一智能体、用户角色提醒注入等设计比传统分层继承架构更稳定可靠。",
+      "summary_preview": "The landscape of AI coding assistance is undergoing a fundamental shift from complex IDE plugins to versatile, terminal-native agents. Operating directly where developers manage source control, execute builds, and deploy environments, CLI-based agents offer unprecedented autonomy for long-horizon de..."
+    },
+    {
+      "title": "Judge Reliability Harness: Stress Testing the Reliability of LLM Judges",
+      "url": "http://arxiv.org/abs/2603.05399v1",
+      "category": "cs.AI",
+      "one_liner": "LLM评判目前被广泛用于基准测试与模型训练，但可靠性缺乏系统验证，本文提出开源框架专门做LLM评判可靠性压力测试，填补了工具链缺口。",
+      "has_code": true,
+      "repo_url": "https://github.com/RANDCorporation/judge-reliability-harness",
+      "repo_stars": 14,
+      "summary_preview": "We present the Judge Reliability Harness, an open source library for constructing validation suites that test the reliability of LLM judges. As LLM based scoring is widely deployed in AI benchmarks, more tooling is needed to efficiently assess the reliability of these methods. Given a benchmark data..."
+    },
+    {
+      "title": "Reasoning Theater: Disentangling Model Beliefs from Chain-of-Thought",
+      "url": "http://arxiv.org/abs/2603.05488v1",
+      "category": "cs.CL",
+      "one_liner": "本文揭示大模型思维链中存在“表演性推理”现象：模型早已得出结论却仍生成冗余推理，厘清了大模型推理机制，对推理研究有重要启发。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "We provide evidence of performative chain-of-thought (CoT) in reasoning models, where a model becomes strongly confident in its final answer, but continues generating tokens without revealing its internal belief. Our analysis compares activation probing, early forced answering, and a CoT monitor acr..."
+    },
+    {
+      "title": "POET-X: Memory-efficient LLM Training by Scaling Orthogonal Transformation",
+      "url": "http://arxiv.org/abs/2603.05500v1",
+      "category": "cs.LG",
+      "one_liner": "针对大语言模型训练内存效率低、稳定性差的痛点，提出基于正交变换重参数的训练方法，大幅降低内存开销，提升大模型训练可扩展性。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Efficient and stable training of large language models (LLMs) remains a core challenge in modern machine learning systems. To address this challenge, Reparameterized Orthogonal Equivalence Training (POET), a spectrum-preserving framework that optimizes each weight matrix through orthogonal equivalen..."
+    },
+    {
+      "title": "InfoFlow KV: Information-Flow-Aware KV Recomputation for Long Context",
+      "url": "http://arxiv.org/abs/2603.05353v1",
+      "category": "cs.LG",
+      "one_liner": "针对RAG长上下文问答中检索上下文预填充的效率瓶颈，提出信息流感知的KV重计算方法，提升长上下文RAG推理效率，实用性很强。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Retrieval-augmented generation (RAG) for long-context question answering is bottlenecked by inference-time prefilling over large retrieved contexts. A common strategy is to precompute key-value (KV) caches for individual documents and selectively recompute a small subset of tokens to restore global ..."
+    },
+    {
+      "title": "RoboPocket: Improve Robot Policies Instantly with Your Phone",
+      "url": "http://arxiv.org/abs/2603.05504v1",
+      "category": "cs.RO",
+      "one_liner": "针对机器人模仿学习数据收集效率低的瓶颈，提出用消费级手机即时优化机器人策略的方案，大幅降低机器人策略迭代门槛，落地性强。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Scaling imitation learning is fundamentally constrained by the efficiency of data collection. While handheld interfaces have emerged as a scalable solution for in-the-wild data acquisition, they predominantly operate in an open-loop manner: operators blindly collect demonstrations without knowing th..."
+    },
+    {
+      "title": "RealWonder: Real-Time Physical Action-Conditioned Video Generation",
+      "url": "http://arxiv.org/abs/2603.05449v1",
+      "category": "cs.CV",
+      "one_liner": "当前视频生成模型缺乏对3D动作物理后果的结构理解，本文提出实时物理动作条件视频生成方法，推进了可控物理一致视频生成发展。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Current video generation models cannot simulate physical consequences of 3D actions like forces and robotic manipulations, as they lack structural understanding of how actions affect 3D scenes. We present RealWonder, the first real-time system for action-conditioned video generation from a single im..."
+    },
+    {
+      "title": "On-Policy Self-Distillation for Reasoning Compression",
+      "url": "http://arxiv.org/abs/2603.05433v1",
+      "category": "cs.LG",
+      "one_liner": "大模型开放式推理过程存在大量冗余噪声，本文提出On-Policy自蒸馏方法压缩推理，让模型推理更简洁，可提升效率同时保持准确率。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Reasoning models think out loud, but much of what they say is noise. We introduce OPSDC (On-Policy Self-Distillation for Reasoning Compression), a method that teaches models to reason more concisely by   distilling their own concise behavior back into themselves. The entire approach reduces to one i..."
+    }
+  ]
+}
