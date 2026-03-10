@@ -1,0 +1,99 @@
+{
+  "date": "2026-03-10",
+  "total_scanned": 50,
+  "total_selected": 9,
+  "papers": [
+    {
+      "title": "How Far Can Unsupervised RLVR Scale LLM Training?",
+      "url": "http://arxiv.org/abs/2603.08660v1",
+      "category": "cs.LG",
+      "one_liner": "当前大语言模型训练面临监督数据瓶颈，该工作探索无监督可验证奖励强化训练的可扩展性，为后监督时代大模型训练提供了重要研究方向。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: 无监督可验证奖励强化学习能拓展大语言模型训练到什么程度？\n\n**背景与痛点**: 当前可验证奖励强化学习（RLVR）是提升大语言模型推理能力的核心方案，但严重依赖人工标注的真值标签，当大模型能力超越人类后，标注瓶颈愈发突出。现有无监督RLVR多依赖模型内部信号做奖励，虽有早期收益，但内在机制、能力边界始终缺乏系统的理论与实证分析。\n\n**核心创新**: 本文首次系统梳理无监督RLVR的方法分类，从理论上证明所有基于模型内部信号的方法共享统一的“分布锐化”机制——仅放大模型初始偏好，无法发现新知识。明确了内部方法的能力边界，提出了无监督的RL可训练性评估指标，指明了未来可拓展的研究方向。\n\n**技术细节**: 按奖励来源将无监督RLVR划分为内部奖励（含置信度类、集成投票类）和外部奖励（含未标注数据类、生成验证不对称类）。理论推导证明，内部奖励会形成“富者更富”的动态：每轮更新都会放大初始置信度最高答案的概率，最终几何收敛到完全集中于初始答案的确定性策略。提出“模型坍塌步”指标，以训练中奖励准确率降到1%的步数衡量模型初始对齐质量，无需真值即可预测RL可训练性。\n\n**实验结果**: 在DAPO、MATH500、AIME、AMC、Countdown等推理基准验证：所有内部奖励方法都会出现先升后降的性能坍塌，仅在128样本以内的小数据集上稳定，适合测试时训练；模型坍塌步对RL增益的预测精度优于常用的pass@k，计算成本降低5.6倍；基于生成验证不对称的外部方法无坍塌，可持续提升性能。",
+      "summary_preview": "Unsupervised reinforcement learning with verifiable rewards (URLVR) offers a pathway to scale LLM training beyond the supervision bottleneck by deriving rewards without ground truth labels. Recent works leverage model intrinsic signals, showing promising early gains, yet their potential and limitati..."
+    },
+    {
+      "title": "CODA: Difficulty-Aware Compute Allocation for Adaptive Reasoning",
+      "url": "http://arxiv.org/abs/2603.08659v1",
+      "category": "cs.CL",
+      "one_liner": "推理时扩展计算能提升大模型复杂任务性能，但会造成简单任务过度思考浪费算力，该工作提出难度感知自适应分配方案，兼顾性能与效率，实用性很强。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: CODA：面向自适应推理的难度感知计算分配\n\n**背景与痛点**: 当前大推理模型通过延长推理深度提升复杂任务性能，但普遍存在简单问题过度思考的问题，冗余推理带来大量不必要的推理成本。现有方法要么统一施加长度惩罚损害难例准确率，要么依赖用户手动指定推理预算，无法自动按实例难度动态分配计算资源。\n\n**核心创新**: 从最优效用视角将自适应推理建模为效用最大化问题，提出难度感知的计算分配方法CODA，无需外部难度标注或用户指定推理预算，通过策略内部的难度信号动态调节推理长度，实现简单任务降本、困难任务保性能的双赢，避免了传统方法的准确率效率折损。\n\n**技术细节**: 基于分组强化学习框架，对每个问题采样多组输出，用组内正确输出的占比作为当前策略感知的难度代理，占比越高问题越简单，反之越难。将难度映射为两个非负门控权重：简单例激活易侧门惩罚冗长输出，难例激活难侧门奖励更长的正确输出，长度调节项乘在基础正确奖励上，仅正确推理能获得长度奖励，避免模型单纯追求长度。\n\n**实验结果**: 在Qwen3 4B/8B/14B多个骨干、覆盖数学与通用推理共8个基准测试，CODA相比GRPO匹配甚至提升平均准确率，简单任务减少超过60%的推理token，相比传统长度惩罚方法不牺牲难例准确率，对训练集难度分布偏移也保持良好鲁棒性。",
+      "summary_preview": "The emergence of large reasoning models demonstrates that scaling inference-time compute significantly enhances performance on complex tasks. However, it often falls into another trap: overthinking simple problems, where repetitive rationales yield minimal accuracy gains at a disproportionately high..."
+    },
+    {
+      "title": "Agentic Critical Training",
+      "url": "http://arxiv.org/abs/2603.08706v1",
+      "category": "cs.AI",
+      "one_liner": "当前大语言Agent训练多依赖模仿学习，仅教授动作不区分对错，该方法引入成功与失败动作的对比训练，解决了现有训练范式的核心缺陷，创新性强。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Training large language models (LLMs) as autonomous agents often begins with imitation learning, but it only teaches agents what to do without understanding why: agents never contrast successful actions against suboptimal alternatives and thus lack awareness of action quality. Recent approaches atte..."
+    },
+    {
+      "title": "Grow, Don't Overwrite: Fine-tuning Without Forgetting",
+      "url": "http://arxiv.org/abs/2603.08647v1",
+      "category": "cs.LG",
+      "one_liner": "解决预训练大模型微调中的灾难性遗忘痛点，现有方法会损失模型原有基础能力，该方法提出增量生长式微调，不覆盖原有参数，工业落地价值高。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Adapting pre-trained models to specialized tasks often leads to catastrophic forgetting, where new knowledge overwrites foundational capabilities. Existing methods either compromise performance on the new task or struggle to balance training stability with efficient reuse of pre-trained knowledge. W..."
+    },
+    {
+      "title": "Evaluating Financial Intelligence in Large Language Models: Benchmarking SuperInvesting AI with LLM Engines",
+      "url": "http://arxiv.org/abs/2603.08704v1",
+      "category": "cs.AI",
+      "one_liner": "当前大模型在金融领域应用快速落地，但缺乏对金融推理能力的系统评测基准，该工作推出专业投资AI评测基准，有效推动金融大模型发展。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Large language models are increasingly used for financial analysis and investment research, yet systematic evaluation of their financial reasoning capabilities remains limited. In this work, we introduce the AI Financial Intelligence Benchmark (AFIB), a multi-dimensional evaluation framework designe..."
+    },
+    {
+      "title": "Scale Space Diffusion",
+      "url": "http://arxiv.org/abs/2603.08709v1",
+      "category": "cs.CV",
+      "one_liner": "结合扩散模型的时间步信息层级与尺度空间理论的层级结构，打通两个领域的共性层级假设，为扩散模型性能提升提供了创新思路。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Diffusion models degrade images through noise, and reversing this process reveals an information hierarchy across timesteps. Scale-space theory exhibits a similar hierarchy via low-pass filtering. We formalize this connection and show that highly noisy diffusion states contain no more information th..."
+    },
+    {
+      "title": "PostTrainBench: Can LLM Agents Automate LLM Post-Training?",
+      "url": "http://arxiv.org/abs/2603.08640v1",
+      "category": "cs.SE",
+      "one_liner": "探索大语言Agent能否自动化完成LLM后训练全流程，提出了首个对应评测基准，是AI自我改进方向的前沿探索，研究前瞻性强。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "AI agents have become surprisingly proficient at software engineering over the past year, largely due to improvements in reasoning capabilities. This raises a deeper question: can these systems extend their capabilities to automate AI research itself? In this paper, we explore post-training, the cri..."
+    },
+    {
+      "title": "MetaWorld-X: Hierarchical World Modeling via VLM-Orchestrated Experts for Humanoid Loco-Manipulation",
+      "url": "http://arxiv.org/abs/2603.08572v1",
+      "category": "cs.RO",
+      "one_liner": "针对人形机器人运动操纵任务的泛化难点，提出VLM编排专家的分层世界建模框架，提升了人形机器人组合泛化能力，是机器人领域前沿研究。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Learning natural, stable, and compositionally generalizable whole-body control policies for humanoid robots performing simultaneous locomotion and manipulation (loco-manipulation) remains a fundamental challenge in robotics. Existing reinforcement learning approaches typically rely on a single monol..."
+    },
+    {
+      "title": "Beyond Hungarian: Match-Free Supervision for End-to-End Object Detection",
+      "url": "http://arxiv.org/abs/2603.08514v1",
+      "category": "cs.CV",
+      "one_liner": "DETR类端到端目标检测依赖匈牙利算法做二分匹配，复杂度高约束多，该工作提出无匹配监督方案，摆脱对匈牙利算法的依赖，实用性创新强。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Recent DEtection TRansformer (DETR) based frameworks have achieved remarkable success in end-to-end object detection. However, the reliance on the Hungarian algorithm for bipartite matching between queries and ground truths introduces computational overhead and complicates the training dynamics. In ..."
+    }
+  ]
+}
