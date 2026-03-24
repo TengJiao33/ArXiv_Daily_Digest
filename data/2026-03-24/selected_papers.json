@@ -1,0 +1,99 @@
+{
+  "date": "2026-03-24",
+  "total_scanned": 50,
+  "total_selected": 9,
+  "papers": [
+    {
+      "title": "Chimera: Latency- and Performance-Aware Multi-agent Serving for Heterogeneous LLMs",
+      "url": "http://arxiv.org/abs/2603.22206v1",
+      "category": "cs.LG",
+      "one_liner": "解决现有LLM服务系统不兼容异构多智能体工作流的痛点，同时优化延迟和性能，对多Agent应用落地有极高工业实用价值",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: 奇美拉（Chimera）：面向异构大语言模型的延迟与性能感知多智能体推理调度服务\n\n**背景与痛点**: 当前多智能体任务多为多阶段依赖的工作流，每个阶段都需要调用大模型。现有大语言模型推理服务大多假设同构模型集群，现有路由方法忽略动态负载变化，调度机制未适配异构多阶段工作流，无法同时兼顾端到端延迟和任务性能。\n\n**核心创新**: 提出Chimera，面向异构大模型集群多智能体工作流的轻量级预测式调度中间件。它联合语义路由、工作流级输出长度预测、实时负载监测做模型选择和队列优化，在极低额外开销下同时提升端到端延迟和任务性能，还支持灵活调整二者的权衡。\n\n**技术细节**: 系统分为四个核心模块：1）语义路由用微调后的ModernBERT输出每个候选模型的置信分，估计模型解决当前请求的成功率；2）用CPU轻量运行的分位数随机森林，预测工作流剩余阶段总输出token数，支撑最短总作业优先调度；3）活动监视器统计各引擎在途请求token总量估算负载延迟；4）负载均衡选满足延迟约束的最高置信度模型，同一工作流复用模型分配，搭配老化机制防止饥饿。\n\n**实验结果**: 在APPS代码生成、MATH数学推理两个代表性多智能体任务上测试，对比vLLM、MLFQ、LTR等主流基线，平均降低端到端延迟1.2倍~2.4倍，提升任务性能8.0~9.5个百分点，额外调度开销占总延迟比例不超过2.2%，几乎可忽略。",
+      "summary_preview": "Multi-agent applications often execute complex tasks as multi-stage workflows, where each stage is an LLM call whose output becomes part of context for subsequent steps. Existing LLM serving systems largely assume homogeneous clusters with identical model replicas. This design overlooks the potentia..."
+    },
+    {
+      "title": "Scaling DoRA: High-Rank Adaptation via Factored Norms and Fused Kernels",
+      "url": "http://arxiv.org/abs/2603.22276v1",
+      "category": "cs.LG",
+      "one_liner": "针对现有DoRA前向计算开销大的问题，通过分解范数和融合内核优化，大幅提升大模型微调部署效率，实用性强",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: 扩展DoRA：基于分解范数和融合核的高秩适配\n\n**背景与痛点**: DoRA作为LoRA的改进版本，通过分离权重的方向和幅值提升微调效果，但主流框架计算行范数时必须先生成完整的BA稠密乘积矩阵，高秩配置下单层就需要数百MB临时内存，几百个适配层叠加后，普通单GPU容易出现OOM，速度也会大幅下降。\n\n**核心创新**: 本文不提出新的适配架构，而是针对DoRA做系统级优化，核心有两点：一是提出因式分解的范数计算方法，无需生成完整BA稠密矩阵，大幅降低临时内存占用；二是开发融合Triton核，把原DoRA的四步组合操作合并为单次遍历，减少4倍访存，还解决了近单位缩放区的数值灾难性抵消问题。\n\n**技术细节**: 分解范数将W加sBA的行平方范数拆分为基础项、交叉项和Gram项三部分，所有项都仅用低秩中间量，分块计算控制内存占用，理论内存最高可降低71倍。融合核采用显式保留小修正项的稳定形式，避免缩放因子接近1时的数值抵消；设计三级运行时自动分发：训练用融合反向核、推理用仅前向融合核，小尺寸或CPU自动回退到原生PyTorch执行。\n\n**实验结果**: 在6个8B到32B的视觉语言模型、跨4代共6款NVIDIA GPU上测试，相比HF PEFT原生DoRA实现，推理速度提升1.5到2.0倍，梯度计算速度提升1.5到1.9倍，峰值显存最高降低7GB，精度和收敛性与原生实现一致。",
+      "summary_preview": "Weight-Decomposed Low-Rank Adaptation (DoRA) extends LoRA by decoupling weight magnitude from direction, but its forward pass requires the row-wise norm of W + sBA, a computation that every major framework we surveyed implements by materializing the dense [d_out, d_in] product BA. At d_in = 8192 and..."
+    },
+    {
+      "title": "On the Direction of RLVR Updates for LLM Reasoning: Identification and Exploitation",
+      "url": "http://arxiv.org/abs/2603.22117v1",
+      "category": "cs.LG",
+      "one_liner": "深入分析RLVR提升大模型推理能力的参数更新方向，明确优化路径，对进一步改进大模型推理能力有重要研究指导意义",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Reinforcement learning with verifiable rewards (RLVR) has substantially improved the reasoning capabilities of large language models. While existing analyses identify that RLVR-induced changes are sparse, they primarily focus on the \\textbf{magnitude} of these updates, largely overlooking their \\tex..."
+    },
+    {
+      "title": "Confidence-Based Decoding is Provably Efficient for Diffusion Language Models",
+      "url": "http://arxiv.org/abs/2603.22248v1",
+      "category": "cs.LG",
+      "one_liner": "针对扩散语言模型的解码问题，从理论上证明置信度解码的效率，推动扩散语言模型这一新方向的实用化发展",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Diffusion language models (DLMs) have emerged as a promising alternative to autoregressive (AR) models for language modeling, allowing flexible generation order and parallel generation of multiple tokens. However, this flexibility introduces a challenge absent in AR models: the \\emph{decoding strate..."
+    },
+    {
+      "title": "ThinkJEPA: Empowering Latent World Models with Large Vision-Language Reasoning Model",
+      "url": "http://arxiv.org/abs/2603.22281v1",
+      "category": "cs.CV",
+      "one_liner": "将大视觉语言推理能力整合到潜世界模型中，解决现有潜世界模型缺乏推理能力的缺陷，推动世界模型前沿发展",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Recent progress in latent world models (e.g., V-JEPA2) has shown promising capability in forecasting future world states from video observations. Nevertheless, dense prediction from a short observation window limits temporal context and can bias predictors toward local, low-level extrapolation, maki..."
+    },
+    {
+      "title": "MARCUS: An agentic, multimodal vision-language model for cardiac diagnosis and management",
+      "url": "http://arxiv.org/abs/2603.22179v1",
+      "category": "cs.AI",
+      "one_liner": "面向心脏疾病诊断管理打造了Agentic多模态大模型，解决临床心脏检测结果解读难的痛点，医疗AI落地价值高",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Cardiovascular disease remains the leading cause of global mortality, with progress hindered by human interpretation of complex cardiac tests. Current AI vision-language models are limited to single-modality inputs and are non-interactive. We present MARCUS (Multimodal Autonomous Reasoning and Chat ..."
+    },
+    {
+      "title": "UniMotion: A Unified Framework for Motion-Text-Vision Understanding and Generation",
+      "url": "http://arxiv.org/abs/2603.22282v1",
+      "category": "cs.CV",
+      "one_liner": "是首个支持动作、文本、视觉三大模态同时完成理解与生成的统一框架，填补领域空白，多模态统一建模创新度高",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "We present UniMotion, to our knowledge the first unified framework for simultaneous understanding and generation of human motion, natural language, and RGB images within a single architecture. Existing unified models handle only restricted modality subsets (e.g., Motion-Text or static Pose-Image) an..."
+    },
+    {
+      "title": "Autoregressive vs. Masked Diffusion Language Models: A Controlled Comparison",
+      "url": "http://arxiv.org/abs/2603.22075v1",
+      "category": "cs.CL",
+      "one_liner": "在相同条件下控制变量对比自回归和掩码扩散语言模型，给出可靠实证结论，为该领域研究提供重要基准参考",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "We present a controlled empirical comparison between autoregressive (AR) and masked diffusion (MDLM) language models. Both models are trained on identical data (50M tokens from TinyStories), identical compute budget (20,000 steps, batch size 32, sequence length 512), and identical hardware (NVIDIA H..."
+    },
+    {
+      "title": "SPA: A Simple but Tough-to-Beat Baseline for Knowledge Injection",
+      "url": "http://arxiv.org/abs/2603.22213v1",
+      "category": "cs.LG",
+      "one_liner": "提出简单高效的大模型知识注入基线，效果媲美复杂方法，大幅降低领域知识注入落地成本，实用性很强",
+      "has_code": true,
+      "repo_url": "https://github.com/Tangkexian/SPA.",
+      "repo_stars": 2,
+      "summary_preview": "While large language models (LLMs) are pretrained on massive amounts of data, their knowledge coverage remains incomplete in specialized, data-scarce domains, motivating extensive efforts to study synthetic data generation for knowledge injection. We propose SPA (Scaling Prompt-engineered Augmentati..."
+    }
+  ]
+}
