@@ -1,0 +1,99 @@
+{
+  "date": "2026-03-26",
+  "total_scanned": 50,
+  "total_selected": 9,
+  "papers": [
+    {
+      "title": "Claudini: Autoresearch Discovers State-of-the-Art Adversarial Attack Algorithms for LLMs",
+      "url": "http://arxiv.org/abs/2603.24511v1",
+      "category": "cs.LG",
+      "one_liner": "提出LLM驱动的自主研究框架Claudini，自动发现面向LLM的SOTA对抗攻击算法，是AI自主研究方向的前沿探索，创新性强影响力大。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: Claudini：自动研究发现大语言模型的SOTA对抗攻击算法\n\n**背景与痛点**: 当前大语言模型对抗红队依赖人类设计攻击算法，已公开的三十余种方法仍存在明显性能瓶颈；传统自动优化仅做超参数搜索，无法改进算法结构，难以挖掘离散token优化攻击的最大潜力。\n\n**核心创新**: 基于Claude Code代码智能体实现对抗攻击算法的自动迭代研发，智能体不直接生成越狱prompt，而是从已有方法出发，自主设计、实现、评估并迭代改进攻击算法，相比传统AutoML超参数搜索能实现更大幅度的性能提升。\n\n**技术细节**: 将Claude Opus部署在沙箱计算集群，开放GPU作业提交权限，初始提供30余种已有攻击的代码、训练集损失评分函数和固定FLOPs计算预算约束，智能体自动循环迭代：分析现有结果→提出新算法变体→编码实现→GPU评测→基于结果优化。核心改进方向包括重组不同已有攻击的核心模块、嵌套超参数调优、新增逃逸局部最优的扰动机制。\n\n**实验结果**: 对GPT-OSS-Safeguard-20B的越狱任务，最佳Claudini攻击成功率达40%，现有方法最高不超过10%；对鲁棒性极强的Meta-SecAlign-70B提示注入任务，达到100%攻击成功率，最优基线仅56%，新算法跨模型跨任务泛化性良好。",
+      "summary_preview": "LLM agents like Claude Code can not only write code but also be used for autonomous AI research and engineering \\citep{rank2026posttrainbench, novikov2025alphaevolve}. We show that an \\emph{autoresearch}-style pipeline \\citep{karpathy2026autoresearch} powered by Claude Code discovers novel white-box..."
+    },
+    {
+      "title": "Polynomial Speedup in Diffusion Models with the Multilevel Euler-Maruyama Method",
+      "url": "http://arxiv.org/abs/2603.24594v1",
+      "category": "cs.LG",
+      "one_liner": "针对扩散模型采样效率低的核心痛点，提出多级欧拉-丸山方法，实现扩散模型的多项式加速，对扩散模型落地有很高实用价值。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: 基于多级欧拉-丸山方法的扩散模型多项式加速\n\n**背景与痛点**: 扩散模型采样的计算成本由分数网络的评估次数主导，要达到更小生成误差，必须增加采样步数同时增大网络规模，传统欧拉-丸山方法的总计算量随误差呈负(伽马+1)次缩放，现有加速方法大多只能带来常数级提升，无法改进计算量的指数阶。\n\n**核心创新**: 提出多级欧拉-丸山（ML-EM）方法，受多级蒙特卡洛思想启发，利用预训练的不同规模、精度、计算成本的分数网络，以低概率调用最高精度大网络、高概率调用低成本小网络，在伽马大于2的HTMC区域，将采样计算量复杂度从误差负(伽马+1)次降至负伽马次，实现多项式加速，可与现有加速方法结合。\n\n**技术细节**: ML-EM在每一步采样中，将漂移项分解为不同精度网络的差分项加权和，对每一层网络用伯努利采样决定是否调用，采样概率随网络精度升高指数降低，保证输出期望等于最大网络的漂移估计，满足无偏要求。理论证明在伽马大于2时可达到目标复杂度，还支持通过低方差梯度估计+前向梯度法，用SGD学习时间相关的调用概率，进一步优化效率，只需预训练不同规模UNet，小网络训练成本可忽略。\n\n**实验结果**: 在降采样至64×64的CelebA人脸数据集上验证，实测分数近似的伽马约为2.5，符合HTMC假设，DDPM生成达到相同MSE误差时最高可获得4倍速度提升，相同计算成本下误差可降低一个数量级，更大网络会带来更显著的加速效果。",
+      "summary_preview": "We introduce the Multilevel Euler-Maruyama (ML-EM) method compute solutions of SDEs and ODEs using a range of approximators $f^1,\\dots,f^k$ to the drift $f$ with increasing accuracy and computational cost, only requiring a few evaluations of the most accurate $f^k$ and many evaluations of the less c..."
+    },
+    {
+      "title": "CUA-Suite: Massive Human-annotated Video Demonstrations for Computer-Use Agents",
+      "url": "http://arxiv.org/abs/2603.24440v1",
+      "category": "cs.LG",
+      "one_liner": "针对计算机使用智能体数据稀缺的行业瓶颈，发布大规模人工标注的视频演示数据集CUA-Suite，将推动通用桌面智能体的技术进展。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Computer-use agents (CUAs) hold great promise for automating complex desktop workflows, yet progress toward general-purpose agents is bottlenecked by the scarcity of continuous, high-quality human demonstration videos. Recent work emphasizes that continuous video, not sparse screenshots, is the crit..."
+    },
+    {
+      "title": "Retrieval Improvements Do Not Guarantee Better Answers: A Study of RAG for AI Policy QA",
+      "url": "http://arxiv.org/abs/2603.24580v1",
+      "category": "cs.CL",
+      "one_liner": "纠正RAG领域「检索性能提升必然带来答案质量提升」的普遍误区，针对政策问答RAG做实证分析，对RAG工程落地有重要指导意义。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Retrieval-augmented generation (RAG) systems are increasingly used to analyze complex policy documents, but achieving sufficient reliability for expert usage remains challenging in domains characterized by dense legal language and evolving, overlapping regulatory frameworks. We study the application..."
+    },
+    {
+      "title": "UI-Voyager: A Self-Evolving GUI Agent Learning via Failed Experience",
+      "url": "http://arxiv.org/abs/2603.24533v1",
+      "category": "cs.LG",
+      "one_liner": "针对现有多模态大模型驱动的移动端GUI代理学习效率低的痛点，提出从失败经验学习的自进化框架，显著提升了代理的学习能力。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Autonomous mobile GUI agents have attracted increasing attention along with the advancement of Multimodal Large Language Models (MLLMs). However, existing methods still suffer from inefficient learning from failed trajectories and ambiguous credit assignment under sparse rewards for long-horizon GUI..."
+    },
+    {
+      "title": "Composer 2 Technical Report",
+      "url": "http://arxiv.org/abs/2603.24477v1",
+      "category": "cs.SE",
+      "one_liner": "发布面向智能体软件工程的专用模型Composer 2，具备出色的长程规划与编码能力，契合当前工业界软件开发Agent的落地需求。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Composer 2 is a specialized model designed for agentic software engineering. The model demonstrates strong long-term planning and coding intelligence while maintaining the ability to efficiently solve problems for interactive use. The model is trained in two phases: first, continued pretraining to i..."
+    },
+    {
+      "title": "MARCH: Multi-Agent Reinforced Self-Check for LLM Hallucination",
+      "url": "http://arxiv.org/abs/2603.24579v1",
+      "category": "cs.CL",
+      "one_liner": "针对RAG系统中LLM幻觉的核心痛点，提出多智能体强化自校验框架MARCH，有效提升LLM生成内容的可靠性，实用性很强。",
+      "has_code": true,
+      "repo_url": "https://github.com/Qwen-Applications/MARCH.",
+      "repo_stars": 8,
+      "summary_preview": "Hallucination remains a critical bottleneck for large language models (LLMs), undermining their reliability in real-world applications, especially in Retrieval-Augmented Generation (RAG) systems. While existing hallucination detection methods employ LLM-as-a-judge to verify LLM outputs against retri..."
+    },
+    {
+      "title": "AI-Supervisor: Autonomous AI Research Supervision via a Persistent Research World Model",
+      "url": "http://arxiv.org/abs/2603.24402v1",
+      "category": "cs.AI",
+      "one_liner": "针对现有自动AI研究系统无状态、线性流水线的缺陷，提出基于持久研究世界模型的自主监督框架，探索了AI自动研究的新方向。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Existing automated research systems operate as stateless, linear pipelines, generating outputs without maintaining a persistent understanding of the research landscape. They process papers sequentially, propose ideas without structured gap analysis, and lack mechanisms for agents to verify or refine..."
+    },
+    {
+      "title": "Analysing the Safety Pitfalls of Steering Vectors",
+      "url": "http://arxiv.org/abs/2603.24543v1",
+      "category": "cs.CR",
+      "one_liner": "针对当前流行的LLM激活转向技术，系统分析了其被忽略的安全隐患，填补了该方向安全研究的空白，对LLM对齐安全有重要价值。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Activation steering has emerged as a powerful tool to shape LLM behavior without the need for weight updates. While its inherent brittleness and unreliability are well-documented, its safety implications remain underexplored. In this work, we present a systematic safety audit of steering vectors obt..."
+    }
+  ]
+}
