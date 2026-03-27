@@ -1,0 +1,99 @@
+{
+  "date": "2026-03-27",
+  "total_scanned": 50,
+  "total_selected": 9,
+  "papers": [
+    {
+      "title": "Training the Knowledge Base through Evidence Distillation and Write-Back Enrichment",
+      "url": "http://arxiv.org/abs/2603.25737v1",
+      "category": "cs.AI",
+      "one_liner": "针对RAG系统知识库静态固化、事实碎片化的痛点，提出通过证据蒸馏和回写富集动态更新知识库，大幅提升RAG知识准确性，实用性强适合工业落地",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: 通过证据蒸馏与回写增强训练知识库\n\n**背景与痛点**: 当前检索增强生成（RAG）研究大多聚焦优化检索器和生成器，始终将知识库视为固定输入。原始知识库中查询所需的事实往往分散在多个文档、夹杂大量无关噪声，导致检索上下文不完整且被稀释。现有上下文优化方法都在推理时单次运行，知识增益无法累积复用。\n\n**核心创新**: 首次提出将RAG的知识库作为可训练组件优化，而非固定输入。提出WRITEBACK-RAG框架，利用标注样本挖掘检索行为中的知识缺口，将分散有效证据蒸馏为通用知识单元后回写增广知识库，作为一次性离线步骤，可兼容任意现有RAG pipeline，不增加推理开销。\n\n**技术细节**: 离线训练采用两级门控筛选：效用门在样本层筛选出检索能带来明确增益、且回答正确的训练样本；文档门在文档层筛选出对回答有实质贡献的证据片段，过滤噪声。之后用大模型将分散证据融合压缩为百科风格的通用紧凑知识单元，不暴露金标避免答案泄漏，单独构建回写索引。推理时检索同时覆盖原始库与回写库，无需修改原有逻辑。\n\n**实验结果**: 在6个主流知识任务基准、4种RAG方法、2种大语言模型主干上验证，所有48个测试设置均获得性能提升，平均绝对增益达2.14%。跨方法迁移实验证实，回写知识可跨RAG复用，增益确实来自知识库本身的优化。",
+      "summary_preview": "The knowledge base in a retrieval-augmented generation (RAG) system is typically assembled once and never revised, even though the facts a query requires are often fragmented across documents and buried in irrelevant content. We argue that the knowledge base should be treated as a trainable componen..."
+    },
+    {
+      "title": "S2D2: Fast Decoding for Diffusion LLMs via Training-Free Self-Speculation",
+      "url": "http://arxiv.org/abs/2603.25702v1",
+      "category": "cs.CL",
+      "one_liner": "针对扩散大语言模型解码速度慢的瓶颈，提出无需训练的自推测快速解码方法，可有效提升扩散LLM的生成效率，对扩散LLM落地有重要实用价值",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: S2D2：面向扩散大语言模型的无训练自投机快速解码\n\n**背景与痛点**: 块扩散大语言模型通过块内并行去噪获得比自回归更快的生成速度，但在实际加速需要的少去噪步场景下，主流的置信度阈值解码非常脆弱：激进阈值会严重损失生成质量，保守阈值仍会带来不必要的计算开销，现有改进方案要么需要额外训练，要么会增加推理时的额外计算量。\n\n**核心创新**: 利用块扩散模型本身的结构特性——将块大小缩小到1时模型天然退化为自回归模型，因此同一个预训练模型可以同时充当投机解码的草稿器和验证器，实现了完全无训练、无需额外模型的自投机解码框架，仅靠推理时的策略调整就提升了速度与质量的平衡。\n\n**技术细节**: 每个去噪步先由标准块扩散模式生成草稿token和对应概率，然后通过轻量路由策略判断是否值得启动验证，路由支持最小跨度、分数阈值、迟滞等多种规则，仅对第一个连续待解码mask区间做验证；通过构造特殊的验证注意力掩码，一次前向就能算出所有位置的自回归验证概率，再按标准投机采样规则接受token，遇到拒绝则重采样后回到标准扩散流程，无需额外训练即可适配现有块扩散模型。\n\n**实验结果**: 在GSM8K数学推理、MBPP/HumanEval代码生成、IFEval指令跟随多个基准测试了3个主流块扩散家族共5个模型，SDAR上最高获得相对于自回归4.7倍加速，比调优后的动态基线快1.57倍同时准确率提升4.5个点；LLaDA2.1上可获得相对于静态基线4.4倍加速，准确率还略高， consistently提升了速度精度边界。",
+      "summary_preview": "Block-diffusion language models offer a promising path toward faster-than-autoregressive generation by combining block-wise autoregressive decoding with within-block parallel denoising. However, in the few-step regime needed for practical acceleration, standard confidence-thresholded decoding is oft..."
+    },
+    {
+      "title": "Back to Basics: Revisiting ASR in the Age of Voice Agents",
+      "url": "http://arxiv.org/abs/2603.25727v1",
+      "category": "cs.AI",
+      "one_liner": "当前语音Agent落地中ASR在真实场景失败率高，现有评测未覆盖该问题，该文重新系统梳理ASR痛点，对语音Agent工程落地有重要指导意义",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Automatic speech recognition (ASR) systems have achieved near-human accuracy on curated benchmarks, yet still fail in real-world voice agents under conditions that current evaluations do not systematically cover. Without diagnostic tools that isolate specific failure factors, practitioners cannot an..."
+    },
+    {
+      "title": "PackForcing: Short Video Training Suffices for Long Video Sampling and Long Context Inference",
+      "url": "http://arxiv.org/abs/2603.25730v1",
+      "category": "cs.CV",
+      "one_liner": "针对自回归视频扩散模型长生成时KV缓存膨胀、时序重复、误差累积的痛点，提出短视频训练适配长视频推理，大幅降低长视频生成瓶颈",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Autoregressive video diffusion models have demonstrated remarkable progress, yet they remain bottlenecked by intractable linear KV-cache growth, temporal repetition, and compounding errors during long-video generation. To address these challenges, we present PackForcing, a unified framework that eff..."
+    },
+    {
+      "title": "Drive My Way: Preference Alignment of Vision-Language-Action Model for Personalized Driving",
+      "url": "http://arxiv.org/abs/2603.25740v1",
+      "category": "cs.RO",
+      "one_liner": "针对现有端到端自动驾驶模型无法适配不同用户个性化驾驶习惯的痛点，对视觉语言动作模型做偏好对齐，支持个性化驾驶，落地价值高",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Human driving behavior is inherently personal, which is shaped by long-term habits and influenced by short-term intentions. Individuals differ in how they accelerate, brake, merge, yield, and overtake across diverse situations. However, existing end-to-end autonomous driving systems either optimize ..."
+    },
+    {
+      "title": "Natural-Language Agent Harnesses",
+      "url": "http://arxiv.org/abs/2603.25723v1",
+      "category": "cs.CL",
+      "one_liner": "当前Agent开发中harness设计分散在业务代码，难以迁移和对比，该文提出标准化的Agent harness框架，极大便利Agent的开发与迭代",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Agent performance increasingly depends on \\emph{harness engineering}, yet harness design is usually buried in controller code and runtime-specific conventions, making it hard to transfer, compare, and study as a scientific object. We ask whether the high-level control logic of an agent harness can i..."
+    },
+    {
+      "title": "Revisiting On-Policy Distillation: Empirical Failure Modes and Simple Fixes",
+      "url": "http://arxiv.org/abs/2603.25562v1",
+      "category": "cs.LG",
+      "one_liner": "针对LLM后训练常用的在线策略蒸馏在长视野任务中的失效问题，实证分析失败模式并给出简单修复方案，大幅降低LLM后训练成本，实用性强",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "On-policy distillation (OPD) is appealing for large language model (LLM) post-training because it evaluates teacher feedback on student-generated rollouts rather than fixed teacher traces. In long-horizon settings, however, the common sampled-token variant is fragile: it reduces distribution matchin..."
+    },
+    {
+      "title": "R-C2: Cycle-Consistent Reinforcement Learning Improves Multimodal Reasoning",
+      "url": "http://arxiv.org/abs/2603.25720v1",
+      "category": "cs.AI",
+      "one_liner": "针对当前多模态模型常出现跨模态预测矛盾的问题，提出循环一致强化学习框架，有效提升多模态推理的鲁棒性与一致性",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Robust perception and reasoning require consistency across sensory modalities. Yet current multimodal models often violate this principle, yielding contradictory predictions for visual and textual representations of the same concept. Rather than masking these failures with standard voting mechanisms..."
+    },
+    {
+      "title": "Are LLMs Overkill for Databases?: A Study on the Finiteness of SQL",
+      "url": "http://arxiv.org/abs/2603.25568v1",
+      "category": "cs.DB",
+      "one_liner": "针对当前NL2SQL领域过度依赖大参数LLM的现状，研究SQL问题的有限性，探讨小模型的可行性，对降低数据库应用成本有重要启发",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Translating natural language to SQL for data retrieval has become more accessible thanks to code generation LLMs. But how hard is it to generate SQL code? While databases can become unbounded in complexity, the complexity of queries is bounded by real life utility and human needs. With a sample of 3..."
+    }
+  ]
+}
