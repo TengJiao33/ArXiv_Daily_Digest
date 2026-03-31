@@ -1,0 +1,99 @@
+{
+  "date": "2026-03-31",
+  "total_scanned": 50,
+  "total_selected": 9,
+  "papers": [
+    {
+      "title": "Adaptive Block-Scaled Data Types",
+      "url": "http://arxiv.org/abs/2603.28765v1",
+      "category": "cs.CL",
+      "one_liner": "针对大语言模型低比特量化落地痛点，提出自适应块缩放量化格式，兼顾硬件友好性与模型精度保留，对大模型低成本落地有重要实用价值",
+      "has_code": true,
+      "repo_url": "https://github.com/mit-han-lab/fouroversix.",
+      "repo_stars": 150,
+      "deep_summary": "**中文标题**: 自适应分块缩放数据类型\n\n**背景与痛点**: 当前新一代NVIDIA等硬件原生支持的NVFP4 4位量化，是大语言模型低精度训练推理的主流方案，但存在每个块内近最大值量化误差大的缺陷；此前的改进方案Four Over Six会浪费可用量化位、降低张量整体动态范围，无法适配不同分布的输入块，性能提升受限。\n\n**核心创新**: 提出自适应分块缩放数据类型框架，主打4位的IF4格式，允许每个16值块自适应选择FP4或INT4存储，复用NVFP4中原本闲置的缩放因子符号位存储选择标记，完全没有额外存储开销，同时解决了前代方案的动态范围损失问题，该思路还可推广到3位、6位等其他位宽。\n\n**技术细节**: 该方案延续NVFP4的分块规则，每16个参数共享一个8位E4M3缩放因子。量化时对每个块分别量化为FP4和缩放INT4两种格式，计算两种的量化均方误差，选择误差更小的格式存储，选择标记复用缩放因子的符号位存储，无额外内存开销。选择INT4时，量化前将块内值乘7/6对齐范围，解码时乘回6/7，保证整体动态范围和FP4一致，硬件仅需增加少量选择逻辑。\n\n**实验结果**: 在不同规模的Nemotron、Qwen系列大模型上测试，无论全4位预训练还是4位权值激活后训练量化，IF4均优于现有主流方案，平均下游任务准确率提升0.4-0.5个百分点，困惑度更低；硬件仅带来4.7%的MAC延迟增加，系统级性能影响极小。",
+      "summary_preview": "NVFP4 has grown increasingly popular as a 4-bit format for quantizing large language models due to its hardware support and its ability to retain useful information with relatively few bits per parameter. However, the format is not without limitations: recent work has shown that NVFP4 suffers from i..."
+    },
+    {
+      "title": "Stop Probing, Start Coding: Why Linear Probes and Sparse Autoencoders Fail at Compositional Generalisation",
+      "url": "http://arxiv.org/abs/2603.28744v1",
+      "category": "cs.LG",
+      "one_liner": "对当前流行的线性探针、稀疏自编码器解释大模型激活的思路提出根本质疑，指出其在超叠加下无法满足组合泛化要求，为可解释研究指明新方向",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: 停止探测，开始编码：线性探针与稀疏自编码器为何在组合泛化任务中失效\n\n**背景与痛点**: 本研究针对大语言模型可解释性领域的核心问题：大模型内部激活以线性混合方式编码高维隐概念，在超叠加场景（概念数量多于激活维度）下，主流方法线性探针、稀疏自编码器（SAE）都被发现存在分布外组合泛化失效问题，但此前未明确问题根源。\n\n**核心创新**: 本研究推翻了“SAE组合泛化失败源于摊销推理（将逐样本优化压缩为固定编码器）”的普遍认知，通过结构化控制实验拆解故障来源，证明问题核心瓶颈不是推理过程，而是字典学习本身，指明可扩展字典学习是该领域未来的核心研究方向。\n\n**技术细节**: 本研究在生成过程已知的可控合成数据上开展实验，构造组合偏移评估设定：训练集仅包含部分概念共现组合，测试集评估从未见过的新概念组合的泛化能力。设置多组消融对照，包含 oracle 基准、经典字典学习、各类主流SAE变种，以及保留SAE字典、替换编码器为逐样本推理的控制组，通过分层指标分别诊断各模块的问题。\n\n**实验结果**: 实验证实，带真实字典的逐样本推理在所有尺度都能实现接近完美的分布外性能，证明超叠加下的组合泛化问题本身可解；替换SAE编码器无法缩小性能差距，证实字典学习才是核心瓶颈；经典字典学习在中小尺度优于SAE和线性探针，大尺度下同样失效，现有SAE性能始终不优于直接线性探针。",
+      "summary_preview": "The linear representation hypothesis states that neural network activations encode high-level concepts as linear mixtures. However, under superposition, this encoding is a projection from a higher-dimensional concept space into a lower-dimensional activation space, and a linear decision boundary in ..."
+    },
+    {
+      "title": "Stepwise Credit Assignment for GRPO on Flow-Matching Models",
+      "url": "http://arxiv.org/abs/2603.28718v1",
+      "category": "cs.LG",
+      "one_liner": "针对流匹配模型的Flow-GRPO算法中均匀信用分配忽略生成时序结构的缺陷，提出分步信用分配方案，有效提升生成模型强化学习微调效果",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Flow-GRPO successfully applies reinforcement learning to flow models, but uses uniform credit assignment across all steps. This ignores the temporal structure of diffusion generation: early steps determine composition and content (low-frequency structure), while late steps resolve details and textur..."
+    },
+    {
+      "title": "SOLE-R1: Video-Language Reasoning as the Sole Reward for On-Robot Reinforcement Learning",
+      "url": "http://arxiv.org/abs/2603.28730v1",
+      "category": "cs.RO",
+      "one_liner": "提出将视频语言推理作为机器人强化学习的唯一奖励信号，解决了传统VLM奖励评估存在的偏差问题，推动具身机器人学习落地发展",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Vision-language models (VLMs) have shown impressive capabilities across diverse tasks, motivating efforts to leverage these models to supervise robot learning. However, when used as evaluators in reinforcement learning (RL), today's strongest models often fail under partial observability and distrib..."
+    },
+    {
+      "title": "MonitorBench: A Comprehensive Benchmark for Chain-of-Thought Monitorability in Large Language Models",
+      "url": "http://arxiv.org/abs/2603.28590v1",
+      "category": "cs.AI",
+      "one_liner": "针对大语言模型思维链常与最终输出因果不匹配、难以监控的痛点，推出首个CoT可监控性综合评测基准，推动大模型推理可靠性研究",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Large language models (LLMs) can generate chains of thought (CoTs) that are not always causally responsible for their final outputs. When such a mismatch occurs, the CoT no longer faithfully reflects the decision-critical factors driving the model's behavior, leading to the reduced CoT monitorabilit..."
+    },
+    {
+      "title": "AdaptToken: Entropy-based Adaptive Token Selection for MLLM Long Video Understanding",
+      "url": "http://arxiv.org/abs/2603.28696v1",
+      "category": "cs.CV",
+      "one_liner": "针对多模态大模型处理长视频时显存开销大、受上下文长度限制的痛点，提出基于熵的自适应token选择方法，兼顾预测性能与推理效率",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Long video understanding remains challenging for Multi-modal Large Language Models (MLLMs) due to high memory costs and context-length limits. Prior approaches mitigate this by scoring and selecting frames/tokens within short clips, but they lack a principled mechanism to (i) compare relevance acros..."
+    },
+    {
+      "title": "Towards a Medical AI Scientist",
+      "url": "http://arxiv.org/abs/2603.28589v1",
+      "category": "cs.AI",
+      "one_liner": "探索面向医疗领域的自主AI科学家系统，解决现有通用AI科研系统适配性不足的问题，有望大幅加速医学发现与新药研发进程",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Autonomous systems that generate scientific hypotheses, conduct experiments, and draft manuscripts have recently emerged as a promising paradigm for accelerating discovery. However, existing AI Scientists remain largely domain-agnostic, limiting their applicability to clinical medicine, where resear..."
+    },
+    {
+      "title": "On-the-fly Repulsion in the Contextual Space for Rich Diversity in Diffusion Transformers",
+      "url": "http://arxiv.org/abs/2603.28762v1",
+      "category": "cs.CV",
+      "one_liner": "解决当前文本到图像扩散Transformer生成结果多样性不足、容易收敛到窄范围常见解的痛点，提出上下文空间动态排斥方法提升生成多样性",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Modern Text-to-Image (T2I) diffusion models have achieved remarkable semantic alignment, yet they often suffer from a significant lack of variety, converging on a narrow set of visual solutions for any given prompt. This typicality bias presents a challenge for creative applications that require a w..."
+    },
+    {
+      "title": "See it to Place it: Evolving Macro Placements with Vision-Language Models",
+      "url": "http://arxiv.org/abs/2603.28733v1",
+      "category": "cs.LG",
+      "one_liner": "将视觉语言模型引入芯片宏观布局优化任务，利用VLMs的强理解能力解决复杂EDA优化问题，为芯片设计自动化提供了创新思路",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "We propose using Vision-Language Models (VLMs) for macro placement in chip floorplanning, a complex optimization task that has recently shown promising advancements through machine learning methods. Because human designers rely heavily on spatial reasoning to arrange components on the chip canvas, w..."
+    }
+  ]
+}
