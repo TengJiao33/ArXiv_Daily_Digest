@@ -1,0 +1,99 @@
+{
+  "date": "2026-04-07",
+  "total_scanned": 50,
+  "total_selected": 9,
+  "papers": [
+    {
+      "title": "TriAttention: Efficient Long Reasoning with Trigonometric KV Compression",
+      "url": "http://arxiv.org/abs/2604.04921v1",
+      "category": "cs.CL",
+      "one_liner": "解决大语言模型长推理带来的KV缓存内存瓶颈痛点，核心创新是提出基于三角变换的KV压缩方法，大幅降低内存占用，对长推理落地有很高实用价值。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: TriAttention：基于三角KV压缩的高效长推理\n\n**背景与痛点**: 针对大语言模型长链推理过程中，KV缓存持续增长带来的严重内存瓶颈问题。现有KV压缩方法均基于RoPE旋转后的空间估计token重要性，查询方向随位置旋转，仅最近少数查询可用，容易漏检长期休眠后才用到的关键token，导致推理精度大幅下降。\n\n**核心创新**: 本文发现在应用RoPE之前的空间中，绝大多数注意力头的Q/K向量会稳定聚集在固定非零中心，该特性是模型固有属性，跨内容跨任务稳定。基于此推导出注意力对不同距离键的偏好可通过三角级数预测，以此设计全新的KV重要性评分，避开了现有后RoPE方法的固有缺陷。\n\n**技术细节**: 首先离线校准提取每个注意力头各频率带的Q/K统计中心，用平均结果长度量化Q/K的聚集程度。推理时对每个键计算两个得分：三角级数得分预测不同未来查询距离下的预期注意力；范数得分通过聚集度自适应加权，为聚集度低的头补充信息。每生成128个token触发一次剪枝，保留得分最高的键，针对分组查询注意力做了归一化聚合处理。\n\n**实验结果**: 在AIME数学推理、MATH500、LongBench等多个基准测试，匹配全注意力推理精度的前提下，在AIME25上实现2.5倍吞吐量提升、10.7倍KV内存压缩，同效率下精度领先现有SOTA方法R-KV近一倍，可支持32B级模型单24GB消费级GPU完成长多轮任务。",
+      "summary_preview": "Extended reasoning in large language models (LLMs) creates severe KV cache memory bottlenecks. Leading KV cache compression methods estimate KV importance using attention scores from recent post-RoPE queries. However, queries rotate with position during RoPE, making representative queries very few, ..."
+    },
+    {
+      "title": "Early Stopping for Large Reasoning Models via Confidence Dynamics",
+      "url": "http://arxiv.org/abs/2604.04930v1",
+      "category": "cs.CL",
+      "one_liner": "解决大推理模型长思维链生成计算成本高、过度推理反而降低性能的问题，提出基于置信度动态的早停策略，兼顾性能与推理成本，实用性很强。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: 基于置信度动态的大推理模型早停方法\n**背景与痛点**: 大推理模型依赖长思维链解决复杂推理问题，不仅带来高昂的计算成本，还容易因过度思考降低输出性能。现有早停方法要么需要额外训练改造模型，要么仅依赖单步置信度阈值做判断，无法高效终止长期无进展的错误推理轨迹。\n**核心创新**: 本文观察到正确与错误推理轨迹的置信度演化存在显著差异：正确轨迹会较早达到稳定高置信度，错误轨迹置信度持续波动不稳定，且推理早期的置信度对轨迹正误的区分度更高。据此提出无需训练的CoDE-Stop早停方法。\n**技术细节**: 推理过程中每个自然推理步骤分界点，触发模型生成中间答案，以答案token的平均概率作为该步置信度。设置两个停止条件：一是阶梯上升的置信度阈值，当前置信度达标即停止；二是累计退化得分，每一步检测到置信度无提升则计入得分，对早期步骤赋予更高权重，退化得分超标也停止。\n**实验结果**: 在AIME、MATH500、GSM8K、GPQA-Diamond四个主流推理科学基准，测试四款不同规模的开源推理模型，CoDE-Stop相比标准全长度推理可减少25%-50%的总token用量，精度仅微降，比现有早停方法拥有更优的精度-算力 tradeoff，还可兼容各类提示优化方法进一步提效。",
+      "summary_preview": "Large reasoning models rely on long chain-of-thought generation to solve complex problems, but extended reasoning often incurs substantial computational cost and can even degrade performance due to overthinking. A key challenge is determining when the model should stop reasoning and produce the fina..."
+    },
+    {
+      "title": "MemMachine: A Ground-Truth-Preserving Memory System for Personalized AI Agents",
+      "url": "http://arxiv.org/abs/2604.04853v1",
+      "category": "cs.AI",
+      "one_liner": "解决现有LLM智能体持久化记忆难以维持个性化、事实连贯性与长程推理的问题，提出保留真值的记忆系统，显著提升智能体长期使用能力。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Large Language Model (LLM) agents require persistent memory to maintain personalization, factual continuity, and long-horizon reasoning, yet standard context-window and retrieval-augmented generation (RAG) pipelines degrade over multi-session interactions. We present MemMachine, an open-source memor..."
+    },
+    {
+      "title": "Vero: An Open RL Recipe for General Visual Reasoning",
+      "url": "http://arxiv.org/abs/2604.04917v1",
+      "category": "cs.CV",
+      "one_liner": "提出开源的通用视觉推理强化训练方案Vero，可支持跨图表、科学任务、空间理解等多类任务，填补了开源通用视觉推理方案的空白。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "What does it take to build a visual reasoner that works across charts, science, spatial understanding, and open-ended tasks? The strongest vision-language models (VLMs) show such broad visual reasoning is within reach, but the recipe behind them remains unclear, locked behind proprietary reinforceme..."
+    },
+    {
+      "title": "MinerU2.5-Pro: Pushing the Limits of Data-Centric Document Parsing at Scale",
+      "url": "http://arxiv.org/abs/2604.04771v1",
+      "category": "cs.CV",
+      "one_liner": "针对当前文档解析领域对训练数据系统性工程关注不足的问题，推出MinerU2.5-Pro，推升了规模化文档解析的性能上限，是RAG落地的核心基础技术。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Current document parsing methods compete primarily on model architecture innovation, while systematic engineering of training data remains underexplored. Yet SOTA models of different architectures and parameter scales exhibit highly consistent failure patterns on the same set of hard samples, sugges..."
+    },
+    {
+      "title": "QED-Nano: Teaching a Tiny Model to Prove Hard Theorems",
+      "url": "http://arxiv.org/abs/2604.04898v1",
+      "category": "cs.AI",
+      "one_liner": "面向复杂定理证明任务，实现了能证明难题的超小型模型QED-Nano，打破了复杂定理证明必须依赖大模型的共识，探索了轻量化推理的新方向。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Proprietary AI systems have recently demonstrated impressive capabilities on complex proof-based problems, with gold-level performance reported at the 2025 International Mathematical Olympiad (IMO). However, the training pipelines behind these systems remain largely undisclosed, and their reliance o..."
+    },
+    {
+      "title": "Incompleteness of AI Safety Verification via Kolmogorov Complexity",
+      "url": "http://arxiv.org/abs/2604.04876v1",
+      "category": "cs.AI",
+      "one_liner": "从柯尔莫哥洛夫复杂度的理论角度，证明了AI安全验证存在固有不完备性，揭示了安全验证领域的根本理论边界，对AI安全基础研究启发重大。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Ensuring that artificial intelligence (AI) systems satisfy formal safety and policy constraints is a central challenge in safety-critical domains. While limitations of verification are often attributed to combinatorial complexity and model expressiveness, we show that they arise from intrinsic infor..."
+    },
+    {
+      "title": "Optimizing LLM Prompt Engineering with DSPy Based Declarative Learning",
+      "url": "http://arxiv.org/abs/2604.04869v1",
+      "category": "cs.LG",
+      "one_liner": "解决当前LLM提示工程高度依赖人工经验设计的痛点，提出基于DSPy的声明式学习优化方案，降低提示工程门槛，有效提升任务性能。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Large Language Models (LLMs) have shown strong performance across a wide range of natural language processing tasks; however, their effectiveness is highly dependent on prompt design, structure, and embedded reasoning signals. Conventional prompt engineering methods largely rely on heuristic trial-a..."
+    },
+    {
+      "title": "Undetectable Conversations Between AI Agents via Pseudorandom Noise-Resilient Key Exchange",
+      "url": "http://arxiv.org/abs/2604.04757v1",
+      "category": "cs.CR",
+      "one_liner": "揭示了多智能体场景下的新型安全风险，证明不同AI代理可通过伪随机密钥交换实现不可检测的秘密通信，对AI代理安全防护研究有重要价值。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "AI agents are increasingly deployed to interact with other agents on behalf of users and organizations. We ask whether two such agents, operated by different entities, can carry out a parallel secret conversation while still producing a transcript that is computationally indistinguishable from an ho..."
+    }
+  ]
+}
