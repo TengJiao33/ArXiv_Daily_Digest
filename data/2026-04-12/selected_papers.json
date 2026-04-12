@@ -1,0 +1,99 @@
+{
+  "date": "2026-04-12",
+  "total_scanned": 50,
+  "total_selected": 9,
+  "papers": [
+    {
+      "title": "Act Wisely: Cultivating Meta-Cognitive Tool Use in Agentic Multimodal Models",
+      "url": "http://arxiv.org/abs/2604.08545v1",
+      "category": "cs.CV",
+      "one_liner": "解决当前多模态智能体存在元认知缺陷、无法合理选择使用工具的核心痛点，提出元认知能力培养方案，推动高能力任务型多模态智能体发展。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: 明智行动：在智能体多模态模型中培养元认知工具使用\n\n**背景与痛点**: 当前工具增强的多模态智能体普遍存在元认知缺陷，存在盲目调用工具的问题：哪怕问题可通过已有信息直接解决，也会触发工具调用，不仅带来严重延迟，还会引入额外噪声干扰推理。现有强化学习方案将精度与效率耦合为单奖励，惩罚过严抑制必要调用，惩罚过轻则被精度方差淹没，陷入两难无解。\n\n**核心创新**: 本文提出分层解耦策略优化框架HDPO，从根本上重构了优化目标，将精度与效率从竞争的标量目标转为分层条件目标，拆分为两个正交优化通道，只在正确推理轨迹中优化工具调用效率，自然催生出先学正确性、再学高效性的隐式认知课程。\n\n**技术细节**: HDPO保留两个独立优化通道：精度通道对所有采样轨迹用标准GRPO计算优势，全程优化任务正确性；效率通道仅统计回答正确的轨迹，工具奖励与调用次数成反比，仅当同prompt的正确轨迹不少于2条时才计算优势更新，最终总损失为两个通道损失的加权和。训练前还配套多阶段数据清洗，过滤掉 legacy 标注中不必要的工具调用示例和错误执行轨迹。\n\n**实验结果**: 在十余种主流多模态推理基准（涵盖视觉感知、文档理解、数学推理）测试，相比基线标准GRPO，Metis将不必要工具调用率从98%降至2%，多个基准精度提升2-3个百分点，取得开源多模态智能体中的SOTA，验证了减少冗余调用可提升推理精度。",
+      "summary_preview": "The advent of agentic multimodal models has empowered systems to actively interact with external environments. However, current agents suffer from a profound meta-cognitive deficit: they struggle to arbitrate between leveraging internal knowledge and querying external utilities. Consequently, they f..."
+    },
+    {
+      "title": "SUPERNOVA: Eliciting General Reasoning in LLMs with Reinforcement Learning on Natural Instructions",
+      "url": "http://arxiv.org/abs/2604.08477v1",
+      "category": "cs.AI",
+      "one_liner": "现有RLVR方法仅能提升大模型在数学、代码等形式化领域的推理能力，该工作将其拓展到自然指令，可激发大模型通用推理能力，价值突出。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "deep_summary": "**中文标题**: SUPERNOVA：基于自然指令强化学习激发大语言模型通用推理能力\n**背景与痛点**: 当前带可验证奖励的强化学习（RLVR）仅在数学、代码等形式化领域提升大模型推理效果，面向因果推断、时序理解等能力的通用推理领域，缺乏高质量可验证RL训练数据，现有网络爬取数据噪声大，人工标注成本高，且STEM领域推理训练的能力无法迁移到通用推理。\n**核心创新**: 提出面向通用推理RLVR的数据整理框架SUPERNOVA，核心思路是挖掘已有大规模人类标注指令调优数据的推理价值，将其改造适配RLVR训练要求，通过上百次控制实验总结出通用推理RL数据整理的可落地经验，不需要从零构建标注数据集。\n**技术细节**: 整体分三阶段流程：首先从SuperNI的1600个任务中筛选83个候选，把开放型任务改造成可验证的选择题/固定答案格式，过滤过难、过易样本，按单任务训练后下游验证集的增益计算任务效用并排序；对比两种混合策略：宏观混合选总体表现Top任务，微观混合为每个下游子任务选各自Top任务再合并；测试发现多种合成难度增强干预均不优于原始高质量数据，训练采用GRPO算法。\n**实验结果**: 在BBEH、Zebralogic、MMLU-Pro等通用推理基准测试，Qwen3全尺寸模型均获得稳定提升，BBEH测试集上不同规模相对提升最高达52.8%，4B规模的SUPERNOVA模型性能超过两倍参数量的Qwen3-8B，增益可跨模型家族迁移。",
+      "summary_preview": "Reinforcement Learning with Verifiable Rewards (RLVR) has significantly improved large language model (LLM) reasoning in formal domains such as mathematics and code. Despite these advancements, LLMs still struggle with general reasoning tasks requiring capabilities such as causal inference and tempo..."
+    },
+    {
+      "title": "Verify Before You Commit: Towards Faithful Reasoning in LLM Agents via Self-Auditing",
+      "url": "http://arxiv.org/abs/2604.08401v1",
+      "category": "cs.AI",
+      "one_liner": "解决LLM智能体中推理轨迹连贯但隐含逻辑错误、误导后续动作的痛点，提出行动前自审计机制，有效提升智能体推理忠实性，实用性强。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "In large language model (LLM) agents, reasoning trajectories are treated as reliable internal beliefs for guiding actions and updating memory. However, coherent reasoning can still violate logical or evidential constraints, allowing unsupported beliefs repeatedly stored and propagated across decisio..."
+    },
+    {
+      "title": "PSI: Shared State as the Missing Layer for Coherent AI-Generated Instruments in Personal AI Agents",
+      "url": "http://arxiv.org/abs/2604.08529v1",
+      "category": "cs.HC",
+      "one_liner": "解决个人AIAgent中自然语言生成的工具相互隔离、无法协同工作的痛点，提出PSI共享状态架构，让生成的自定义工具保持连贯一致性。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Personal AI tools can now be generated from natural-language requests, but they often remain isolated after creation. We present PSI, a shared-state architecture that turns independently generated modules into coherent instruments: persistent, connected, and chat-complementary artifacts accessible t..."
+    },
+    {
+      "title": "What Drives Representation Steering? A Mechanistic Case Study on Steering Refusal",
+      "url": "http://arxiv.org/abs/2604.08524v1",
+      "category": "cs.LG",
+      "one_liner": "steering向量是当前高效的LLM对齐方法，但学界缺乏对其内部工作机制的可解释性研究，该工作做了 mechanistic 案例研究，基础价值高。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Applying steering vectors to large language models (LLMs) is an efficient and effective model alignment technique, but we lack an interpretable explanation for how it works-- specifically, what internal mechanisms steering vectors affect and how this results in different model outputs. To investigat..."
+    },
+    {
+      "title": "Faithful GRPO: Improving Visual Spatial Reasoning in Multimodal Language Models via Constrained Policy Optimization",
+      "url": "http://arxiv.org/abs/2604.08476v1",
+      "category": "cs.CV",
+      "one_liner": "多模态大模型用GRPO训练提升视觉空间推理准确率后，普遍存在输出不忠实的问题，该工作提出约束策略优化改进GRPO，提升推理可靠性。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Multimodal reasoning models (MRMs) trained with reinforcement learning with verifiable rewards (RLVR) show improved accuracy on visual reasoning benchmarks. However, we observe that accuracy gains often come at the cost of reasoning quality: generated Chain-of-Thought (CoT) traces are frequently inc..."
+    },
+    {
+      "title": "KV Cache Offloading for Context-Intensive Tasks",
+      "url": "http://arxiv.org/abs/2604.08426v1",
+      "category": "cs.LG",
+      "one_liner": "长上下文LLM落地中，KV缓存是内存占用和推理延迟的核心瓶颈，该工作针对密集上下文任务研究KV缓存卸载，解决实际部署痛点，工业价值高。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "With the growing demand for long-context LLMs across a wide range of applications, the key-value (KV) cache has become a critical bottleneck for both latency and memory usage. Recently, KV-cache offloading has emerged as a promising approach to reduce memory footprint and inference latency while pre..."
+    },
+    {
+      "title": "PIArena: A Platform for Prompt Injection Evaluation",
+      "url": "http://arxiv.org/abs/2604.08499v1",
+      "category": "cs.CR",
+      "one_liner": "提示注入是大模型应用的核心安全风险，但当前领域缺少统一标准化的评估平台，该工作提出PIArena填补空白，推动大模型安全技术发展。",
+      "has_code": true,
+      "repo_url": "https://github.com/sleeepeer/PIArena.",
+      "repo_stars": 13,
+      "summary_preview": "Prompt injection attacks pose serious security risks across a wide range of real-world applications. While receiving increasing attention, the community faces a critical gap: the lack of a unified platform for prompt injection evaluation. This makes it challenging to reliably compare defenses, under..."
+    },
+    {
+      "title": "KnowU-Bench: Towards Interactive, Proactive, and Personalized Mobile Agent Evaluation",
+      "url": "http://arxiv.org/abs/2604.08455v1",
+      "category": "cs.AI",
+      "one_liner": "交互式个性化移动Agent是前沿方向，但现有基准无法覆盖其交互性、主动性、个性化的评估需求，该工作提出新基准填补领域空白。",
+      "has_code": false,
+      "repo_url": "",
+      "repo_stars": 0,
+      "summary_preview": "Personalized mobile agents that infer user preferences and calibrate proactive assistance hold great promise as everyday digital assistants, yet existing benchmarks fail to capture what this requires. Prior work evaluates preference recovery from static histories or intent prediction from fixed cont..."
+    }
+  ]
+}
