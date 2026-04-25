@@ -21,8 +21,9 @@ from scraper_arxiv import ArxivScraper
 from code_hunter import CodeHunter
 from processor import extract_batch
 from doubao_client import DoubaoClient
-from storage import append_papers
+from storage import append_papers, load_existing_ids
 from digest_builder import generate_weekly_digest
+from citation_tracker import track_all_seeds
 from notifier import HubNotifier
 
 
@@ -86,26 +87,52 @@ def run():
         print(f"{'─' * 55}")
 
         # 3a. ArXiv 定向搜索
-        print(f"\n[1/3] ArXiv 定向搜索...")
+        print(f"\n[1/4] ArXiv 定向搜索...")
         papers = scraper.fetch_papers(query, max_results=max_papers)
+
+        # 3b. Semantic Scholar 引用追踪
+        seed_papers = direction_conf.get("seed_papers", [])
+        if seed_papers:
+            print(f"\n[2/4] Semantic Scholar 引用追踪 ({len(seed_papers)} 篇种子)...")
+            cited_papers = track_all_seeds(seed_papers, delay=1.0)
+            # 合并：用 ArXiv ID 去重
+            existing_titles = {p["title"] for p in papers}
+            for cp in cited_papers:
+                if cp["title"] not in existing_titles and cp.get("summary"):
+                    papers.append(cp)
+                    existing_titles.add(cp["title"])
+            print(f"  → 合并后共 {len(papers)} 篇")
+        else:
+            print(f"\n[2/4] 无种子论文，跳过引用追踪")
 
         if not papers:
             print(f"[{direction_id}] ⚠️ 未获取到论文，跳过")
             daily_stats[direction_id] = 0
             continue
 
-        # 3b. 代码检查
-        print(f"\n[2/3] 检查代码仓库...")
-        papers = check_all_code(papers, hunter)
-        code_count = sum(1 for p in papers if p.get("has_code"))
-        print(f"  → {code_count}/{len(papers)} 篇附带代码")
+        # 先过滤掉已经存储过的论文，避免重复调豆包 API
+        existing_ids = load_existing_ids(direction_id)
+        from storage import extract_arxiv_id
+        new_papers = [p for p in papers if extract_arxiv_id(p.get("url", "")) not in existing_ids]
+        print(f"  → 去重后 {len(new_papers)} 篇需要处理（已存在 {len(papers) - len(new_papers)} 篇）")
 
-        # 3c. 豆包结构化提取
-        print(f"\n[3/3] 豆包结构化提取...")
-        papers = extract_batch(papers, client, delay=1.0)
+        if not new_papers:
+            print(f"[{direction_id}] ℹ️ 全部已存在，跳过")
+            daily_stats[direction_id] = 0
+            continue
 
-        # 3d. 存储到 JSONL
-        new_count = append_papers(direction_id, papers)
+        # 3c. 代码检查（只对新论文）
+        print(f"\n[3/4] 检查代码仓库...")
+        new_papers = check_all_code(new_papers, hunter)
+        code_count = sum(1 for p in new_papers if p.get("has_code"))
+        print(f"  → {code_count}/{len(new_papers)} 篇附带代码")
+
+        # 3d. 豆包结构化提取（只对新论文）
+        print(f"\n[4/4] 豆包结构化提取...")
+        new_papers = extract_batch(new_papers, client, delay=1.0)
+
+        # 3e. 存储到 JSONL
+        new_count = append_papers(direction_id, new_papers)
         daily_stats[direction_id] = new_count
 
     # 4. 打印每日统计
