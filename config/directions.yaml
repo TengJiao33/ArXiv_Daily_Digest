@@ -4,22 +4,27 @@
 
 directions:
   llm-truthfulness:
-    name: "LLM 真值性与幻觉"
-    description: "模型知道但不说、幻觉机制、真值干预、事实性检测"
-    arxiv_query: "(abs:truthfulness OR abs:hallucination OR abs:factuality) AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG)"
+    name: "LLM 真值性与事实性"
+    description: "模型知道但不说、幻觉机制、真值干预、事实性检测、Know-Say Gap"
+    # 限定 cs.CL + cs.LG，排除 cs.CV 视觉幻觉噪音
+    # 搜索词聚焦：文本LLM的真值性/事实性/幻觉，以及探针/干预相关
+    arxiv_query: '(abs:truthfulness OR abs:"factual recall" OR abs:factuality OR abs:"knowledge conflict" OR (abs:hallucination AND abs:"language model")) AND (cat:cs.CL OR cat:cs.LG)'
     keywords:
       - truthfulness
       - hallucination
       - factuality
+      - factual recall
       - probing
       - ITI
       - contrastive decoding
       - CAD
       - know-say gap
-    max_papers: 30
+      - knowledge conflict
+    max_papers: 25
     seed_papers:
       - "2310.06824"   # CAD - Shi et al. 2023
       - "2306.03341"   # RepE - Zou et al. 2023
+      - "2306.01693"   # ITI - Li et al. 2023
 
   representation-engineering:
     name: "表示工程与激活引导"
