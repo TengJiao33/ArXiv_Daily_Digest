@@ -1,0 +1,53 @@
+# Research Radar — 研究方向配置
+# 每个方向定义：ArXiv 搜索查询、关键词、种子论文
+# 你随时可以增删改方向，改完 push 即可生效
+
+directions:
+  llm-truthfulness:
+    name: "LLM 真值性与幻觉"
+    description: "模型知道但不说、幻觉机制、真值干预、事实性检测"
+    arxiv_query: "(abs:truthfulness OR abs:hallucination OR abs:factuality) AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG)"
+    keywords:
+      - truthfulness
+      - hallucination
+      - factuality
+      - probing
+      - ITI
+      - contrastive decoding
+      - CAD
+      - know-say gap
+    max_papers: 30
+    seed_papers:
+      - "2310.06824"   # CAD - Shi et al. 2023
+      - "2306.03341"   # RepE - Zou et al. 2023
+
+  representation-engineering:
+    name: "表示工程与激活引导"
+    description: "通过操纵模型内部表示来控制行为"
+    arxiv_query: '(abs:"representation engineering" OR abs:"activation steering" OR abs:"steering vector" OR abs:"linear probe") AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG)'
+    keywords:
+      - RepE
+      - steering
+      - activation
+      - residual stream
+      - intervention
+      - CCS
+      - LEACE
+    max_papers: 20
+    seed_papers:
+      - "2306.03341"   # RepE - Zou et al. 2023
+
+  mechanistic-interpretability:
+    name: "机械可解释性"
+    description: "理解 Transformer 内部计算机制"
+    arxiv_query: '(abs:"mechanistic interpretability" OR abs:"circuit analysis" OR abs:"logit lens" OR abs:"sparse autoencoder") AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG)'
+    keywords:
+      - mechanistic
+      - circuit
+      - logit lens
+      - superposition
+      - SAE
+      - sparse autoencoder
+      - feature
+    max_papers: 20
+    seed_papers: []

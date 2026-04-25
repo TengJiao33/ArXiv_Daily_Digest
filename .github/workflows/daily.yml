@@ -1,13 +1,13 @@
-name: ArXiv Daily Digest 每日推送
+name: Research Radar 每日定向采集
 
 on:
   schedule:
-    # 每天北京时间 10:40 (UTC 02:40)
-    - cron: '40 2 * * *'
+    # 每天北京时间 11:00 (UTC 03:00)
+    - cron: '0 3 * * *'
   workflow_dispatch:  # 支持手动触发
 
 jobs:
-  daily-digest:
+  daily-collect:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -24,7 +24,7 @@ jobs:
       - name: 安装依赖
         run: pip install -r requirements.txt
 
-      - name: 运行 ArXiv Daily Digest
+      - name: 运行 Research Radar
         env:
           DOUBAO_API_KEY: ${{ secrets.DOUBAO_API_KEY }}
           DOUBAO_ENDPOINT_ID: ${{ secrets.DOUBAO_ENDPOINT_ID }}
@@ -34,10 +34,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python main.py
 
-      - name: 提交存储数据
+      - name: 提交采集数据
         run: |
-          git config user.name "ArXiv Digest Bot"
-          git config user.email "bot@arxiv-digest.local"
+          git config user.name "Research Radar Bot"
+          git config user.email "bot@research-radar.local"
           git add data/ || true
-          git diff --cached --quiet || git commit -m "📊 $(date +%Y-%m-%d) 论文日报数据"
+          git diff --cached --quiet || git commit -m "📡 $(date +%Y-%m-%d) Research Radar 每日采集"
           git push || true

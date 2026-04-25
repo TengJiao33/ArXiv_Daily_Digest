@@ -1,65 +1,118 @@
 """
-数据存储模块
-每次运行保存筛选结果和生成的报告，便于追溯和分析。
+Research Radar — 数据存储模块
+按研究方向 + ISO 周组织数据，使用 JSONL 格式追加写入。
+自动去重（基于 ArXiv ID）。
 """
 
 import os
 import json
-from datetime import datetime
+import re
+from datetime import datetime, date
 
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 
 
-def save_run_data(selected_papers, report, total_scanned=0):
+def extract_arxiv_id(url):
+    """从 ArXiv URL 中提取论文 ID（去除版本号）"""
+    match = re.search(r'(\d{4}\.\d{4,5})', str(url))
+    return match.group(1) if match else str(url)
+
+
+def get_week_str(target_date=None):
+    """获取 ISO 周字符串，如 '2026-W17'"""
+    if target_date is None:
+        target_date = date.today()
+    year, week, _ = target_date.isocalendar()
+    return f"{year}-W{week:02d}"
+
+
+def get_week_dir(direction_id, target_date=None):
+    """获取指定方向当前周的目录路径"""
+    week_str = get_week_str(target_date)
+    return os.path.join(DATA_DIR, direction_id, week_str)
+
+
+def load_existing_ids(direction_id, target_date=None):
+    """加载当前周已有的论文 ID 集合（用于去重）"""
+    week_dir = get_week_dir(direction_id, target_date)
+    jsonl_path = os.path.join(week_dir, "papers.jsonl")
+
+    ids = set()
+    if os.path.exists(jsonl_path):
+        with open(jsonl_path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    try:
+                        paper = json.loads(line)
+                        ids.add(paper.get("id", ""))
+                    except json.JSONDecodeError:
+                        continue
+    return ids
+
+
+def append_papers(direction_id, papers):
     """
-    保存单次运行的数据。
-    存储路径: data/YYYY-MM-DD/
-      - selected_papers.json  (AI 筛选后的论文数据)
-      - report.md             (生成的推送报告)
+    将论文追加到当前周的 JSONL 文件。
+    自动去重（基于 arxiv_id），返回新增论文数量。
     """
-    date_str = datetime.now().strftime("%Y-%m-%d")
-    run_dir = os.path.join(DATA_DIR, date_str)
-    os.makedirs(run_dir, exist_ok=True)
+    week_dir = get_week_dir(direction_id)
+    os.makedirs(week_dir, exist_ok=True)
+    jsonl_path = os.path.join(week_dir, "papers.jsonl")
 
-    # 保存筛选后的论文数据
-    save_data = {
-        "date": date_str,
-        "total_scanned": total_scanned,
-        "total_selected": len(selected_papers),
-        "papers": [],
-    }
+    existing_ids = load_existing_ids(direction_id)
+    new_count = 0
 
-    for p in selected_papers:
-        item = {
-            "title": p.get("title", ""),
-            "url": p.get("url", ""),
-            "category": p.get("category", ""),
-            "one_liner": p.get("one_liner", ""),
-            "has_code": p.get("has_code", False),
-            "repo_url": p.get("repo_url", ""),
-            "repo_stars": p.get("repo_stars", 0),
-        }
-        # 深度摘要（如果有的话）
-        if p.get("deep_summary"):
-            item["deep_summary"] = p["deep_summary"]
-        # 摘要只保留前 300 字预览
-        if p.get("summary") and len(p["summary"]) > 300:
-            item["summary_preview"] = p["summary"][:300] + "..."
-        else:
-            item["summary_preview"] = p.get("summary", "")
+    with open(jsonl_path, "a", encoding="utf-8") as f:
+        for paper in papers:
+            arxiv_id = extract_arxiv_id(paper.get("url", ""))
 
-        save_data["papers"].append(item)
+            if arxiv_id in existing_ids:
+                continue
 
-    raw_path = os.path.join(run_dir, "selected_papers.json")
-    with open(raw_path, "w", encoding="utf-8") as f:
-        json.dump(save_data, f, ensure_ascii=False, indent=2, default=str)
-    print(f"[Storage] 筛选数据已保存: {raw_path}")
+            record = {
+                "id": arxiv_id,
+                "title": paper.get("title", ""),
+                "authors": paper.get("authors", []),
+                "url": paper.get("url", ""),
+                "pdf_url": paper.get("pdf_url", ""),
+                "category": paper.get("category", ""),
+                "published": str(paper.get("published", "")),
+                "collected": datetime.now().strftime("%Y-%m-%d"),
+                "abstract": paper.get("summary", ""),  # 保存原始英文摘要
+                "has_code": paper.get("has_code", False),
+                "repo_url": paper.get("repo_url", ""),
+                "repo_stars": paper.get("repo_stars", 0),
+                "extracted": paper.get("extracted", {}),
+                "extraction_depth": paper.get("extraction_depth", "none"),
+            }
 
-    # 保存报告
-    report_path = os.path.join(run_dir, "report.md")
-    with open(report_path, "w", encoding="utf-8") as f:
-        f.write(report)
-    print(f"[Storage] 报告已保存: {report_path}")
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+            existing_ids.add(arxiv_id)
+            new_count += 1
 
-    return run_dir
+    if new_count > 0:
+        print(f"[Storage] ✅ {direction_id}: {new_count} 篇新论文已追加")
+    else:
+        print(f"[Storage] ℹ️ {direction_id}: 无新论文（全部已存在）")
+
+    return new_count
+
+
+def load_week_papers(direction_id, target_date=None):
+    """加载指定周的所有论文数据"""
+    week_dir = get_week_dir(direction_id, target_date)
+    jsonl_path = os.path.join(week_dir, "papers.jsonl")
+
+    papers = []
+    if os.path.exists(jsonl_path):
+        with open(jsonl_path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    try:
+                        papers.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        continue
+    return papers

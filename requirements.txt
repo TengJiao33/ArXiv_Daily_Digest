@@ -1,6 +1,6 @@
-requests
-openai
-python-dotenv
-beautifulsoup4
 arxiv
+python-dotenv
+openai
+requests
 PyPDF2
+pyyaml
