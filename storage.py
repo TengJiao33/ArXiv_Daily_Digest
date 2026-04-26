@@ -33,22 +33,26 @@ def get_week_dir(direction_id, target_date=None):
     return os.path.join(DATA_DIR, direction_id, week_str)
 
 
-def load_existing_ids(direction_id, target_date=None):
-    """加载当前周已有的论文 ID 集合（用于去重）"""
-    week_dir = get_week_dir(direction_id, target_date)
-    jsonl_path = os.path.join(week_dir, "papers.jsonl")
-
+def load_existing_ids(direction_id):
+    """加载该方向所有历史周已有的论文 ID 集合（用于全局去重）"""
+    direction_dir = os.path.join(DATA_DIR, direction_id)
     ids = set()
-    if os.path.exists(jsonl_path):
-        with open(jsonl_path, "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if line:
-                    try:
-                        paper = json.loads(line)
-                        ids.add(paper.get("id", ""))
-                    except json.JSONDecodeError:
-                        continue
+    
+    if not os.path.exists(direction_dir):
+        return ids
+        
+    for week_folder in os.listdir(direction_dir):
+        jsonl_path = os.path.join(direction_dir, week_folder, "papers.jsonl")
+        if os.path.exists(jsonl_path):
+            with open(jsonl_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        try:
+                            paper = json.loads(line)
+                            ids.add(paper.get("id", ""))
+                        except json.JSONDecodeError:
+                            continue
     return ids
 
 
