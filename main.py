@@ -23,6 +23,7 @@ from processor import extract_batch
 from doubao_client import DoubaoClient
 from storage import append_papers, load_existing_ids
 from digest_builder import generate_weekly_digest
+from landscape_builder import generate_landscape
 from citation_tracker import track_all_seeds
 from notifier import HubNotifier
 
@@ -146,9 +147,10 @@ def run():
 
     # 5. 如果是周日，生成周报
     if date.today().weekday() == 6:  # 周日
-        print(f"\n📝 今天是周日，生成本周周报...")
+        print(f"\n📝 今天是周日，生成本周周报 + 研究版图...")
         for direction_id, direction_conf in directions.items():
             generate_weekly_digest(direction_id, direction_conf["name"])
+            generate_landscape(direction_id, direction_conf["name"])
 
         # 可选：推送周报摘要到微信
         try:
@@ -170,10 +172,11 @@ def run():
 # ─── 工具函数：手动生成周报 ────────────────────────────
 
 def generate_all_digests():
-    """手动触发所有方向的周报生成（不需要等到周日）"""
+    """手动触发所有方向的周报 + 研究版图生成（不需要等到周日）"""
     config = load_config()
     for direction_id, direction_conf in config.get("directions", {}).items():
         generate_weekly_digest(direction_id, direction_conf["name"])
+        generate_landscape(direction_id, direction_conf["name"])
 
 
 if __name__ == "__main__":

@@ -28,13 +28,17 @@ EXTRACTION_PROMPT = """从以下论文摘要中提取结构化信息。
   "assumptions": "论文隐含的关键假设（30-50字中文，如果不明显写'无明显假设'）",
   "future_work": "论文提到的未来工作方向（30-50字中文，如果没提到写'未提及'）",
   "baselines": ["对比的基线方法1", "基线方法2"],
-  "datasets": ["使用的数据集1", "数据集2"]
+  "datasets": ["使用的数据集1", "数据集2"],
+  "key_finding": "这篇论文最具体、最独特的发现是什么？要求：写出具体的机制、数值或现象，而非笼统描述。例如'检测层(14)≠校正层(16)，最佳监控深度因任务而异'而非'发现了新现象'。（一句话，30-60字中文）",
+  "theme": "这篇论文属于什么研究主题？用3-8个中文字概括，例如'层选择机制'、'安全引导'、'知识边界感知'、'探针分析'等"
 }}
 ```
 
 注意：
 - 全部用中文输出
-- limitations 和 assumptions 是最重要的字段，请认真提取
+- key_finding 是最重要的字段——要具体到机制、数值、现象层面，拒绝空泛描述
+- theme 要简短精准，同一研究主题的不同论文应使用相同的 theme 词
+- limitations 和 assumptions 请认真提取
 - 如果摘要信息不足，如实写"摘要未提及"，不要编造"""
 
 
@@ -49,6 +53,8 @@ def _empty_extracted():
         "future_work": "提取失败",
         "baselines": [],
         "datasets": [],
+        "key_finding": "提取失败",
+        "theme": "未分类",
     }
 
 
@@ -66,7 +72,7 @@ def extract_paper_info(paper, client):
         response, usage = client.chat_completion(
             messages=[{"role": "user", "content": prompt}],
             system_prompt=EXTRACTION_SYSTEM,
-            max_tokens=512,
+            max_tokens=640,
         )
 
         if not response:

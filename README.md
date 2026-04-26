@@ -1,132 +1,72 @@
-# ArXiv 论文早餐 🥞 — AI 每日精选
-arXiv Daily Digest
+# 🛰️ Research Radar — 研究方向定向雷达
 
-每天自动从 **ArXiv** 筛选 **全球最新** 的高质量 AI 论文，利用 **豆包大模型** 阅读论文全文并生成深度中文解读，推送到你的手机 📱，做你最美味的 AI 知识早餐。
-
-> 🎯 **全量阅读**：AI 通读论文全文（非摘要），捕捉公式、数据与核心细节。
-> 🌍 **中文解读**：分类、标题、内容全中文与通俗化，拒绝生硬翻译。
+> **前身**：ArXiv Daily Digest（论文早餐推送工具）  
+> **现在**：一个帮你在写第一行代码之前，就知道该不该写的系统。
 
 ---
 
-## 📱 早餐菜单 (推送效果)
+## 这个项目是什么？
 
-每日推送包含经过 AI 深度阅读的论文精选简报：
+这不是一个"论文推送工具"。
 
-> ### 🥞 ArXiv 论文早餐 | 2026-02-18 周二
->
-> **1. Attention Is All You Need — Revisited**
->
-> 🏷️ `cs.CL (计算语言学)` | 📄 [arXiv](https://arxiv.org/abs/2026.xxxxx)
-> 💻 [GitHub](https://github.com/xxx/xxx) ⭐ 1234
->
-> **中文标题**: 注意力机制的再思考：全量注意力优化
->
-> **背景与痛点**: 原始 Transformer 在长序列处理上存在显存瓶颈...
->
-> **核心创新**: 提出 "FlashAttention-V3"，通过...
->
-> **技术细节**: 算法流程如下：1. 对 QK 进行分块... 2. ...
->
-> **实验结果**: 在 LLaMA-3 训练中提速 30%...
->
-> *更多论文...*
+它的诞生源于一次失败的研究项目复盘：我们发现自己在没有地图的情况下，走进了一片已经被人翻遍的丛林。**我们缺的不是"读更多论文"的能力，而是一张持续更新的研究地图。**
+
+Research Radar 做的事情是：
+
+- 🎯 **定向追踪**多个研究方向，不是漫无目的地扫描
+- 🧠 **豆包 AI 做苦力**：每天自动采集 + 结构化提取（便宜、稳定）
+- 🤖 **Claude 做智囊**：你不定时带进来，对积累的数据做深度分析
+- 📡 **双通道发现**：ArXiv 关键词搜索 + Semantic Scholar 引用追踪，弥补盲区
+
+核心理念：**把"找到值得做的研究方向"这件事，从依赖导师经验和运气的黑箱，变成有工程支撑的、可复现的、AI 辅助的白箱流程。**
 
 ---
 
-## ✨ 核心特性
+## 🏗️ 系统架构
 
-| 特性 | 说明 |
-|------|------|
-| 🔍 **智能扫描** | 自动扫描 ArXiv `cs.CL`, `cs.LG`, `cs.AI` 等热门分类最新论文 |
-| 🧠 **全文阅读** | **独家功能**：下载论文 PDF 全文，喂给 AI 阅读（32k/128k 上下文），拒绝只看摘要的肤浅解读 |
-| 📝 **深度报告** | 包含背景痛点、核心创新、技术细节、实验结果的结构化中文报告 |
-| 🚫 **公式优化** | 专门针对手机阅读优化，复杂数学公式转为易读文本，**拒绝乱码** |
-| 🎯 **代码猎手** | 自动提取并标注 GitHub 仓库及 Star 数，一眼识别可复用成果 |
-| 📨 **多渠道推送** | 支持 Server酱 (微信服务号) + WXPusher，准时送达 |
-| ⏰ **准时开餐** | GitHub Actions 每天北京时间 **10:40** 自动触发，配合你的早餐时间 |
-
----
-
-## 🚀 快速开始
-
-### 1. 克隆项目
-
-```bash
-git clone https://github.com/TengJiao33/ArXiv_Daily_Digest.git
-cd ArXiv_Daily_Digest
 ```
-
-### 2. 创建虚拟环境
-
-```bash
-python -m venv .venv
-
-# Windows
-.venv\Scripts\activate
-
-# macOS/Linux
-source .venv/bin/activate
-```
-
-### 3. 安装依赖
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. 配置环境变量
-
-在项目根目录创建 `.env` 文件：
-
-```ini
-# 豆包 AI (必填)
-DOUBAO_API_KEY=你的_ark_api_key
-DOUBAO_ENDPOINT_ID=你的_endpoint_id
-
-# Server酱 - 方糖推送 (至少填一个推送渠道)
-SERVERCHAN_SENDKEY=你的_sendkey
-
-# WXPusher (可选)
-WXPUSHER_APP_TOKEN=你的_app_token
-WXPUSHER_UIDS=你的_uid
-
-# GitHub Token (可选，提高 API 限额)
-GITHUB_TOKEN=ghp_你的_token
-```
-
-> **获取方式**：
-> - 豆包 API Key：[火山引擎控制台](https://console.volcengine.com/ark)
-> - Server酱 SendKey：[sct.ftqq.com](https://sct.ftqq.com/sendkey)
-> - WXPusher：[wxpusher.zjiecode.com](https://wxpusher.zjiecode.com)
-> - GitHub Token：[github.com/settings/tokens](https://github.com/settings/tokens) → Classic → 仅勾选 `public_repo`
-
-### 5. 运行
-
-```bash
-python main.py
+┌─────────────────────────────────────────────────────────────┐
+│                    Research Radar                            │
+│                                                             │
+│  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐    │
+│  │  📡 定向采集  │   │  🧠 结构提取  │   │  📊 数据积累  │    │
+│  │              │   │              │   │              │    │
+│  │ ArXiv 搜索   │──→│ 豆包 AI      │──→│ JSONL 存储   │    │
+│  │ 引用追踪     │   │ problem      │   │ 按方向分类   │    │
+│  │ 代码检测     │   │ method       │   │ 按 ISO 周    │    │
+│  │              │   │ limitations  │   │ 自动去重     │    │
+│  └──────────────┘   └──────────────┘   └──────────────┘    │
+│           │                                    │            │
+│     每天自动跑                          你带 Claude 来看     │
+│    (GitHub Actions)                    (不定时深度分析)       │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## ⏰ 自动化推送 (GitHub Actions)
+## 📡 当前追踪的研究方向
 
-项目内置了 GitHub Actions 工作流，每天北京时间 **11:00** 自动运行。
+在 `config/directions.yaml` 中配置，随时可增删：
 
-### 配置步骤
+| 方向 | 说明 | 数据源 |
+|------|------|--------|
+| **LLM 真值性与事实性** | Know-Say Gap、幻觉机制、真值干预 | ArXiv + 3 篇种子论文引用网络 |
+| **表示工程与激活引导** | Steering Vector、RepE、激活干预 | ArXiv + 1 篇种子论文引用网络 |
+| **机械可解释性** | Circuit Analysis、SAE、Logit Lens | ArXiv |
 
-1. 推送代码到 GitHub 仓库
-2. 进入仓库 **Settings → Secrets and variables → Actions**
-3. 添加以下 Secrets：
+---
 
-| Secret 名称 | 说明 |
-|-------------|------|
-| `DOUBAO_API_KEY` | 豆包 API Key |
-| `DOUBAO_ENDPOINT_ID` | 豆包 Endpoint ID |
-| `SERVERCHAN_SENDKEY` | Server酱 SendKey |
-| `GH_PAT` | GitHub Personal Access Token (可选) |
+## 🔧 核心流程
 
-4. 在 **Actions** 页面确认工作流已启用
-5. 也可点击 **Run workflow** 手动触发测试
+每天 GitHub Actions 自动运行：
+
+1. **定向搜索**：按方向配置的 ArXiv 查询语句搜索最新论文
+2. **引用追踪**：通过 Semantic Scholar 追踪种子论文的被引者（发现关键词搜不到的论文）
+3. **去重**：跳过已存在的论文，只对新论文调 API（节省费用）
+4. **代码检测**：检查是否有 GitHub 仓库、Stars 数
+5. **结构化提取**：豆包 AI 从摘要中提取 `problem / method / contribution / limitations / baselines / datasets`
+6. **存储**：追加写入 JSONL 文件，按 `data/{方向}/{ISO周}/papers.jsonl` 组织
+7. **周报**：每周日自动生成周报（论文计数、高频 baseline、limitations 聚合）
 
 ---
 
@@ -134,59 +74,85 @@ python main.py
 
 ```
 ArXiv_Daily_Digest/
-├── .env                           # 环境变量配置 (不入库)
-├── .gitignore
-├── .github/workflows/daily.yml    # GitHub Actions 自动化
-├── requirements.txt               # Python 依赖
-├── main.py                        # 主流程编排 & AI 摘要 & 报告组装
-├── scraper_arxiv.py               # ArXiv 论文抓取
-├── code_hunter.py                 # GitHub 代码仓库验证
-├── doubao_client.py               # 豆包 AI API 客户端
-├── notifier.py                    # 消息推送 (Server酱 / WXPusher)
-├── storage.py                     # 数据持久化存储
-└── data/                          # 历史数据存储
-    └── 2026-02-17/
-        ├── raw_papers.json        # 原始抓取数据
-        └── report.md              # 生成的推送报告
+├── config/
+│   └── directions.yaml        # 研究方向配置（查询词、种子论文、关键词）
+├── data/
+│   ├── llm-truthfulness/
+│   │   └── 2026-W17/
+│   │       ├── papers.jsonl    # 结构化论文数据
+│   │       └── weekly_digest.md
+│   ├── representation-engineering/
+│   └── mechanistic-interpretability/
+├── main.py                    # 主流程编排
+├── scraper_arxiv.py           # ArXiv 定向搜索
+├── citation_tracker.py        # Semantic Scholar 引用追踪
+├── processor.py               # 豆包结构化提取
+├── doubao_client.py           # 豆包 API 客户端
+├── storage.py                 # JSONL 存储 + 去重
+├── digest_builder.py          # 周报生成
+├── code_hunter.py             # GitHub 代码仓库检测
+├── notifier.py                # 推送（Server酱 / WXPusher）
+└── .github/workflows/daily.yml
 ```
 
 ---
 
-## 🔧 核心流程
+## 🚀 快速开始
 
+### 1. 克隆 & 安装
+
+```bash
+git clone https://github.com/TengJiao33/ArXiv_Daily_Digest.git
+cd ArXiv_Daily_Digest
+python -m venv .venv && .venv\Scripts\activate  # Windows
+pip install -r requirements.txt
 ```
-ArXiv 论文  ──→  代码猎手验证  ──→  豆包 AI 摘要  ──→  组装报告  ──→  推送
-(cs.CL/LLM/       (提取 GitHub       (中文技术速览)     (Markdown)    (Server酱/
- Agent/RAG)        链接 → 验证仓库)                                    WXPusher)
-                                                           ↓
-                                                      💾 存储到 data/
+
+### 2. 配置 `.env`
+
+```ini
+# 豆包 AI (必填)
+DOUBAO_API_KEY=你的_ark_api_key
+DOUBAO_ENDPOINT_ID=你的_endpoint_id
+
+# GitHub Token (可选，提高 API 限额)
+GITHUB_TOKEN=ghp_你的_token
+
+# 推送渠道 (可选)
+SERVERCHAN_SENDKEY=你的_sendkey
 ```
 
-**筛选标准**：
-- 论文摘要中包含 GitHub 链接
-- 仓库非空且包含可运行代码标志（`requirements.txt`、`Dockerfile`、`setup.py` 等）
+### 3. 运行
 
-**异常处理机制**：
-- **无代码论文** → 自动跳过，只推送有代码的
-- **AI 超时/失败** → 显示"AI 偷懒了，请点击原链接查看"，不中断流程
-- **推送失败** → 控制台输出错误信息，报告仍保存到本地
+```bash
+python main.py
+```
+
+### 4. 自动化（GitHub Actions）
+
+项目内置 GitHub Actions，每天北京时间 11:00 自动运行。
+
+在仓库 **Settings → Secrets** 中配置 `DOUBAO_API_KEY`、`DOUBAO_ENDPOINT_ID`、`GH_PAT` 即可。
 
 ---
 
-## 📢 推送渠道说明
+## 💡 两层设计哲学
 
-### 方案 A：Server酱 (方糖) — 推荐
+| 层 | 执行者 | 频率 | 做什么 |
+|----|--------|------|--------|
+| **自动采集层** | 豆包（便宜） | 每天 | 搜论文、提取结构化信息、存 JSONL |
+| **深度分析层** | Claude（强力） | 你来了就做 | 读积累的数据、发现趋势、找研究空白 |
 
-1. 访问 [Server酱官网](https://sct.ftqq.com/sendkey) 微信登录
-2. 复制 **SendKey**（以 `SCT` 开头）
-3. 在"通道配置"中开启 **方糖服务号**，扫码关注
-4. 将 SendKey 填入 `.env` 文件
+**豆包是蚂蚁**：每天勤勤恳恳搬运数据，不需要你在场。  
+**Claude 是参谋**：你带着它走进堆满数据的房间，它帮你看出规律。
 
-### 方案 B：WXPusher — 支持多人订阅
+---
 
-1. 在 [WXPusher](https://wxpusher.zjiecode.com) 注册应用
-2. 获取 App Token 和 UID
-3. 填入 `.env` 文件
+## 📜 项目演化史
+
+- **v0**（2026-02）：ArXiv Daily Digest — 每天推送 AI 论文到手机的"论文早餐"
+- **v1**（2026-04-25）：Research Radar — 从消费型推送进化为生产型研究方向发现系统
+- **v1.1**（2026-04-25）：引用追踪 + 去重优化
 
 ---
 
