@@ -40,4 +40,5 @@ jobs:
           git config user.email "bot@research-radar.local"
           git add data/ || true
           git diff --cached --quiet || git commit -m "📡 $(date +%Y-%m-%d) Research Radar 每日采集"
+          git pull --rebase origin main || true
           git push || true
