@@ -20,6 +20,24 @@ directions:
       - CAD
       - know-say gap
       - knowledge conflict
+    relevance:
+      must_any:
+        - language model
+        - large language model
+        - llm
+        - transformer
+      topic_any:
+        - truthfulness
+        - hallucination
+        - factuality
+        - factual
+        - faithful
+        - faithfulness
+        - knowledge conflict
+        - internal knowledge
+        - parametric knowledge
+        - know-say
+        - source-supported
     max_papers: 25
     seed_papers:
       - "2310.06824"   # CAD - Shi et al. 2023
@@ -38,6 +56,21 @@ directions:
       - intervention
       - CCS
       - LEACE
+    relevance:
+      must_any:
+        - language model
+        - large language model
+        - llm
+        - transformer
+      topic_any:
+        - representation engineering
+        - activation steering
+        - steering vector
+        - linear probe
+        - residual stream
+        - intervention
+        - contrastive activation
+        - latent representation
     max_papers: 20
     seed_papers:
       - "2306.03341"   # RepE - Zou et al. 2023
@@ -54,5 +87,15 @@ directions:
       - SAE
       - sparse autoencoder
       - feature
+    relevance:
+      topic_any:
+        - mechanistic interpretability
+        - circuit analysis
+        - logit lens
+        - sparse autoencoder
+        - transformer circuit
+        - superposition
+        - attention head
+        - residual stream
     max_papers: 20
     seed_papers: []

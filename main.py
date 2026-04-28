@@ -26,6 +26,7 @@ from digest_builder import generate_weekly_digest
 from landscape_builder import generate_landscape
 from citation_tracker import track_all_seeds
 from notifier import HubNotifier
+from relevance_filter import filter_relevant_papers
 
 
 def load_config():
@@ -108,6 +109,23 @@ def run():
 
         if not papers:
             print(f"[{direction_id}] ⚠️ 未获取到论文，跳过")
+            daily_stats[direction_id] = 0
+            continue
+
+        # 按方向做二次过滤，拦截 ArXiv 查询和引用追踪带来的泛领域噪音
+        before_filter = len(papers)
+        papers, dropped_papers = filter_relevant_papers(papers, direction_conf)
+        if dropped_papers:
+            print(f"  → 方向相关性过滤：保留 {len(papers)} 篇，过滤 {len(dropped_papers)} 篇")
+            for p in dropped_papers[:5]:
+                print(f"    - 过滤: {p.get('title', '')[:80]}")
+            if len(dropped_papers) > 5:
+                print(f"    - ... 另有 {len(dropped_papers) - 5} 篇")
+        else:
+            print(f"  → 方向相关性过滤：{before_filter} 篇全部保留")
+
+        if not papers:
+            print(f"[{direction_id}] ⚠️ 过滤后无相关论文，跳过")
             daily_stats[direction_id] = 0
             continue
 
