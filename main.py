@@ -21,7 +21,7 @@ from scraper_arxiv import ArxivScraper
 from code_hunter import CodeHunter
 from processor import extract_batch
 from doubao_client import DoubaoClient
-from storage import append_papers, load_existing_ids
+from storage import append_papers, load_existing_ids, load_week_papers
 from digest_builder import generate_weekly_digest
 from landscape_builder import generate_landscape
 from citation_tracker import track_all_seeds
@@ -173,10 +173,7 @@ def run():
         # 可选：推送周报摘要到微信
         try:
             notifier = HubNotifier()
-            summary_lines = [f"📡 Research Radar 周报 | {date.today():%m/%d}"]
-            for did, count in daily_stats.items():
-                name = directions[did]["name"]
-                summary_lines.append(f"• {name}: 本周共 {count} 篇")
+            summary_lines = build_weekly_summary_lines(directions, daily_stats)
             notifier.send_all("\n".join(summary_lines), "📡 Research Radar 周报")
         except Exception:
             pass  # 推送失败不影响主流程
@@ -185,6 +182,20 @@ def run():
         print(f"   python -c \"from digest_builder import *; from storage import *; ...\"")
 
     print(f"\n🏁 Research Radar 采集完成")
+
+
+def build_weekly_summary_lines(directions, daily_stats, target_date=None):
+    """构建周报推送摘要，区分本周累计和本次运行新增。"""
+    if target_date is None:
+        target_date = date.today()
+
+    lines = [f"📡 Research Radar 周报 | {target_date:%m/%d}"]
+    for did, direction_conf in directions.items():
+        name = direction_conf["name"]
+        weekly_count = len(load_week_papers(did, target_date))
+        daily_count = daily_stats.get(did, 0)
+        lines.append(f"• {name}: 本周累计 {weekly_count} 篇，今日新增 {daily_count} 篇")
+    return lines
 
 
 # ─── 工具函数：手动生成周报 ────────────────────────────
