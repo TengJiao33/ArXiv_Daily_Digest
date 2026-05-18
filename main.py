@@ -27,6 +27,7 @@ from landscape_builder import generate_landscape
 from citation_tracker import track_all_seeds
 from notifier import HubNotifier
 from relevance_filter import filter_relevant_papers
+from hf_daily import get_trending_top_n, match_hf_upvotes
 
 
 def load_config():
@@ -150,7 +151,10 @@ def run():
         print(f"\n[4/4] 豆包结构化提取...")
         new_papers = extract_batch(new_papers, client, delay=1.0)
 
-        # 3e. 存储到 JSONL
+        # 3e. HF Daily Papers upvote 匹配
+        match_hf_upvotes(new_papers)
+
+        # 3f. 存储到 JSONL
         new_count = append_papers(direction_id, new_papers)
         daily_stats[direction_id] = new_count
 
@@ -163,23 +167,22 @@ def run():
         status = f"{count} 篇新增" if count > 0 else "无新增"
         print(f"  {name}: {status}")
 
-    # 5. 如果是周日，生成周报
+    # 5. 每日推送（每天都推，不只周日）
+    try:
+        notifier = HubNotifier()
+        daily_lines = build_daily_push_lines(directions, daily_stats)
+        notifier.send_all("\n".join(daily_lines), f"📡 Research Radar {date.today():%m/%d}")
+    except Exception as e:
+        print(f"[Push] 每日推送失败（不影响主流程）: {e}")
+
+    # 6. 如果是周日，额外生成周报 + 研究版图
     if date.today().weekday() == 6:  # 周日
         print(f"\n📝 今天是周日，生成本周周报 + 研究版图...")
         for direction_id, direction_conf in directions.items():
             generate_weekly_digest(direction_id, direction_conf["name"])
             generate_landscape(direction_id, direction_conf["name"])
-
-        # 可选：推送周报摘要到微信
-        try:
-            notifier = HubNotifier()
-            summary_lines = build_weekly_summary_lines(directions, daily_stats)
-            notifier.send_all("\n".join(summary_lines), "📡 Research Radar 周报")
-        except Exception:
-            pass  # 推送失败不影响主流程
     else:
-        print(f"\n💡 提示：周报将在每周日自动生成。手动生成请运行:")
-        print(f"   python -c \"from digest_builder import *; from storage import *; ...\"")
+        print(f"\n💡 提示：周报将在每周日自动生成。")
 
     print(f"\n🏁 Research Radar 采集完成")
 
@@ -195,6 +198,44 @@ def build_weekly_summary_lines(directions, daily_stats, target_date=None):
         weekly_count = len(load_week_papers(did, target_date))
         daily_count = daily_stats.get(did, 0)
         lines.append(f"• {name}: 本周累计 {weekly_count} 篇，今日新增 {daily_count} 篇")
+    return lines
+
+
+def build_daily_push_lines(directions, daily_stats, target_date=None):
+    """构建每日推送内容：各方向新增 + HF trending top-5。"""
+    if target_date is None:
+        target_date = date.today()
+
+    lines = [f"📡 Research Radar 每日速报 | {target_date:%m/%d}"]
+    lines.append("")
+
+    # 各方向新增统计
+    total_new = sum(daily_stats.values())
+    lines.append(f"**今日新增 {total_new} 篇**")
+    for did, direction_conf in directions.items():
+        name = direction_conf["name"]
+        count = daily_stats.get(did, 0)
+        if count > 0:
+            lines.append(f"  • {name}: +{count}")
+        else:
+            lines.append(f"  • {name}: 无新增")
+    lines.append("")
+
+    # HF Daily Papers trending top-5
+    lines.append("**🔥 HF 社区今日热门 Top-5**")
+    try:
+        trending = get_trending_top_n(target_date, n=5, min_upvotes=3)
+        if trending:
+            for i, p in enumerate(trending, 1):
+                title_short = p["title"][:50]
+                if len(p["title"]) > 50:
+                    title_short += "..."
+                lines.append(f"  {i}. [{p['hf_upvotes']}⬆] {title_short}")
+        else:
+            lines.append("  （今日暂无数据）")
+    except Exception:
+        lines.append("  （获取失败）")
+
     return lines
 
 

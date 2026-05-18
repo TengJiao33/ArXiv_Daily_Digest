@@ -45,9 +45,9 @@ directions:
       - "2306.01693"   # ITI - Li et al. 2023
 
   representation-engineering:
-    name: "表示工程与激活引导"
-    description: "通过操纵模型内部表示来控制行为"
-    arxiv_query: '(abs:"representation engineering" OR abs:"activation steering" OR abs:"steering vector" OR abs:"linear probe") AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG)'
+    name: "表示工程、激活引导与价值对齐干预"
+    description: "通过操纵模型内部表示来控制行为；含 alignment / safety / persona / refusal / value steering"
+    arxiv_query: '(abs:"representation engineering" OR abs:"activation steering" OR abs:"steering vector" OR abs:"linear probe" OR abs:"refusal direction" OR abs:"persona steering" OR abs:"value vector" OR abs:LEACE OR abs:"activation editing" OR abs:"inference-time alignment" OR abs:"contrastive activation") AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG)'
     keywords:
       - RepE
       - steering
@@ -56,6 +56,15 @@ directions:
       - intervention
       - CCS
       - LEACE
+      - ConVA
+      - value vector
+      - refusal direction
+      - persona steering
+      - activation editing
+      - inference-time alignment
+      - safety steering
+      - contrastive activation
+      - concept erasure
     relevance:
       must_any:
         - language model
@@ -71,9 +80,19 @@ directions:
         - intervention
         - contrastive activation
         - latent representation
-    max_papers: 20
+        - refusal
+        - persona
+        - value alignment
+        - value vector
+        - safety steering
+        - concept erasure
+        - activation editing
+    max_papers: 30
     seed_papers:
       - "2306.03341"   # RepE - Zou et al. 2023
+      - "2306.01693"   # ITI - Li et al. NeurIPS 2023
+      - "2507.11316"   # ConVA - Jin, Huang et al. ACL 2025
+      - "2401.16332"   # Tradeoffs Between Alignment and Helpfulness - ICML 2024 Spotlight
 
   mechanistic-interpretability:
     name: "机械可解释性"
