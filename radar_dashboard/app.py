@@ -114,6 +114,55 @@ def latest_week(papers):
     return weeks[-1] if weeks else ""
 
 
+EVALUATION_GROUPS = [
+    ("编辑有效性", ["成功", "质量", "准确", "recall", "accuracy", "effective", "edit"]),
+    ("局部性 / 副作用", ["局部", "locality", "specificity", "副作用", "side effect", "非目标", "无关"]),
+    ("泛化 / 鲁棒性", ["泛化", "general", "robust", "鲁棒", "跨", "多语言", "变体"]),
+    ("顺序 / 长期稳定", ["顺序", "sequential", "lifelong", "持续", "长期", "稳定", "退化"]),
+    ("遗忘-保留权衡", ["遗忘", "保留", "forget", "retain", "unlearning", "utility"]),
+    ("效率 / 规模", ["效率", "规模", "成本", "速度", "large-scale", "scal"]),
+    ("基准 / 代码资源", ["基准", "benchmark", "代码", "开源", "数据集"]),
+]
+
+
+FAILURE_GROUPS = [
+    ("冲突与串扰", ["冲突", "串扰", "干扰", "interference", "conflict", "无关知识"]),
+    ("遗忘不彻底 / 可恢复", ["不彻底", "恢复", "relearn", "attack", "绕过", "擦除"]),
+    ("通用能力下降", ["能力下降", "效用", "utility", "通用", "退化", "损害"]),
+    ("顺序编辑退化", ["顺序", "sequential", "持续", "长期", "累积", "稳定"]),
+    ("局部性不足 / 副作用", ["局部", "副作用", "side effect", "非目标", "扩散"]),
+    ("效率与规模瓶颈", ["成本", "效率", "规模", "大规模", "计算"]),
+    ("多模态 / 跨语言迁移失败", ["多模态", "跨语言", "VLM", "视觉", "语言"]),
+]
+
+
+def _group_text_signals(papers, field, rules, limit=6):
+    grouped = {label: {"label": label, "count": 0, "example": ""} for label, _ in rules}
+    other_examples = []
+
+    for paper in papers:
+        text = str(paper.get(field, "") or "").strip()
+        if not text or text in {"摘要未提及", "未提及", "提取失败"}:
+            continue
+
+        lowered = text.lower()
+        matched = False
+        for label, keywords in rules:
+            if any(keyword.lower() in lowered for keyword in keywords):
+                grouped[label]["count"] += 1
+                if not grouped[label]["example"]:
+                    grouped[label]["example"] = text
+                matched = True
+        if not matched and len(other_examples) < 3:
+            other_examples.append(text)
+
+    rows = [row for row in grouped.values() if row["count"]]
+    rows.sort(key=lambda row: row["count"], reverse=True)
+    if other_examples:
+        rows.append({"label": "其他具体信号", "count": len(other_examples), "example": other_examples[0]})
+    return rows[:limit]
+
+
 def summarize(papers):
     directions = load_directions()
     weeks = sorted({p["week"] for p in papers})
@@ -210,6 +259,8 @@ def summarize(papers):
         "limitations": limitation_counts.most_common(10),
         "failure_modes": failure_mode_counts.most_common(10),
         "evaluation_signals": evaluation_signal_counts.most_common(10),
+        "failure_mode_groups": _group_text_signals(current, "failure_mode", FAILURE_GROUPS),
+        "evaluation_signal_groups": _group_text_signals(current, "evaluation_signal", EVALUATION_GROUPS),
         "idea_hooks": idea_hooks[:10],
         "code_papers": code_papers,
     }

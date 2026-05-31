@@ -278,6 +278,56 @@ main {
   text-decoration: none;
 }
 
+.signal-card,
+.hook-card,
+.resource-card {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface-3);
+  padding: 10px;
+}
+
+.signal-card strong {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.signal-card p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.signal-card > span {
+  width: fit-content;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--muted);
+  padding: 3px 8px;
+  font-size: 11px;
+}
+
+.hook-card a,
+.resource-card a:first-child {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.hook-card > span,
+.resource-card span {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.repo-link {
+  width: fit-content;
+  border-radius: 6px;
+  background: var(--surface-2);
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
 .paper-section {
   margin-top: 18px;
   scroll-margin-top: 142px;
@@ -312,9 +362,27 @@ main {
   padding: 16px;
 }
 
+.show-more-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 0 16px 18px;
+}
+
+.show-more {
+  width: auto;
+  min-height: 38px;
+  padding: 0 18px;
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.hidden {
+  display: none !important;
+}
+
 .paper-card {
   display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.85fr);
+  grid-template-columns: minmax(0, 1.55fr) minmax(300px, 0.75fr);
   gap: 18px;
   border: 1px solid var(--line);
   border-left: 4px solid transparent;
@@ -453,23 +521,49 @@ main {
   line-height: 1.65;
   margin-top: 12px;
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
 .insight-list {
   display: grid;
-  gap: 8px;
+  gap: 10px;
   align-content: start;
   border-left: 1px solid var(--line);
   padding-left: 18px;
 }
 
+.read-why {
+  border-radius: 7px;
+  background: #f3f7f4;
+  border: 1px solid #d8e7de;
+  padding: 11px;
+}
+
+.read-why span,
+.insight {
+  display: grid;
+}
+
+.read-why span {
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.read-why p {
+  margin-top: 5px;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
 .insight {
   display: grid;
   gap: 5px;
-  padding-bottom: 8px;
+  padding-bottom: 10px;
   border-bottom: 1px solid var(--line);
 }
 
@@ -488,10 +582,6 @@ main {
   color: var(--text);
   font-size: 13px;
   line-height: 1.55;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
 .paper-actions {
@@ -700,6 +790,10 @@ main {
 
   .paper-card {
     padding: 13px;
+  }
+
+  .insight {
+    display: none;
   }
 
   .modal {

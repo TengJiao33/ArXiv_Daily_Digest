@@ -4,6 +4,8 @@ const state = {
   direction: "all",
   query: "",
   theme: "all",
+  paperLimit: 20,
+  allPapers: [],
   visiblePapers: [],
 };
 
@@ -30,6 +32,12 @@ function compactText(value, fallback = "未提及") {
     return fallback;
   }
   return text;
+}
+
+function truncateText(value, limit = 120) {
+  const text = compactText(value, "");
+  if (!text) return "";
+  return text.length > limit ? `${text.slice(0, limit)}...` : text;
 }
 
 async function fetchJson(url) {
@@ -144,6 +152,23 @@ function mergeDuplicatePapers(papers) {
   return [...merged.values()];
 }
 
+function sortReadingQueue(papers) {
+  return papers.slice().sort((a, b) => {
+    const scoreA =
+      priorityScore(a.read_priority) * 100 +
+      (a.has_code ? 12 : 0) +
+      (a.venue ? 8 : 0) +
+      Math.min(Number(a.repo_stars || 0), 50) / 10;
+    const scoreB =
+      priorityScore(b.read_priority) * 100 +
+      (b.has_code ? 12 : 0) +
+      (b.venue ? 8 : 0) +
+      Math.min(Number(b.repo_stars || 0), 50) / 10;
+    if (scoreA !== scoreB) return scoreB - scoreA;
+    return String(a.title || "").localeCompare(String(b.title || ""));
+  });
+}
+
 function setOptions(select, options, value) {
   select.innerHTML = options.map((option) => (
     `<option value="${escapeHtml(option.value)}">${escapeHtml(option.label)}</option>`
@@ -246,26 +271,28 @@ function renderVenues(summary) {
 }
 
 function renderFailureModes(summary) {
-  $("failureModesList").innerHTML = (summary.failure_modes || []).map(([text, count]) => (
-    `<li><span>${escapeHtml(text)}</span><span class="tag">${count}</span></li>`
+  const groups = summary.failure_mode_groups || [];
+  $("failureModesList").innerHTML = groups.map((item) => (
+    `<li class="signal-card"><strong>${escapeHtml(item.label)}</strong><p>${escapeHtml(truncateText(item.example, 88))}</p><span>${item.count} 篇</span></li>`
   )).join("") || `<li>本周摘要未显式提到 failure mode</li>`;
 }
 
 function renderEvaluationSignals(summary) {
-  $("evaluationSignalsList").innerHTML = (summary.evaluation_signals || []).map(([text, count]) => (
-    `<li><span>${escapeHtml(text)}</span><span class="tag">${count}</span></li>`
+  const groups = summary.evaluation_signal_groups || [];
+  $("evaluationSignalsList").innerHTML = groups.map((item) => (
+    `<li class="signal-card"><strong>${escapeHtml(item.label)}</strong><p>${escapeHtml(truncateText(item.example, 88))}</p><span>${item.count} 篇</span></li>`
   )).join("") || `<li>本周暂无明确评测信号</li>`;
 }
 
 function renderIdeaHooks(summary) {
-  $("ideaHooksList").innerHTML = (summary.idea_hooks || []).map((item) => (
-    `<li><span><span class="priority ${escapeHtml(item.read_priority)}">${escapeHtml(item.read_priority)}</span> ${escapeHtml(item.idea_hook)}</span><a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">${escapeHtml(item.title)}</a></li>`
+  $("ideaHooksList").innerHTML = (summary.idea_hooks || []).slice(0, 5).map((item) => (
+    `<li class="hook-card"><span><span class="priority ${escapeHtml(item.read_priority)}">${escapeHtml(item.read_priority)}</span> ${escapeHtml(truncateText(item.idea_hook, 96))}</span><a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">${escapeHtml(truncateText(item.title, 80))}</a></li>`
   )).join("") || `<li>本周暂无可延展 idea hook</li>`;
 }
 
 function renderCodePapers(summary) {
-  $("codeList").innerHTML = summary.code_papers.map((paper) => (
-    `<li><a href="${escapeHtml(paper.url)}" target="_blank" rel="noreferrer">${escapeHtml(paper.title)}</a><span>${escapeHtml(paper.direction_name)}</span>${paper.repo_url ? `<a href="${escapeHtml(paper.repo_url)}" target="_blank" rel="noreferrer">repo</a>` : ""}</li>`
+  $("codeList").innerHTML = (summary.code_papers || []).slice(0, 6).map((paper) => (
+    `<li class="resource-card"><a href="${escapeHtml(paper.url)}" target="_blank" rel="noreferrer">${escapeHtml(truncateText(paper.title, 82))}</a><span>${escapeHtml(paper.direction_name)}</span>${paper.repo_url ? `<a class="repo-link" href="${escapeHtml(paper.repo_url)}" target="_blank" rel="noreferrer">repo</a>` : ""}</li>`
   )).join("") || `<li>本周暂无带代码论文</li>`;
 }
 
@@ -297,13 +324,13 @@ function detailRow(label, value) {
   return `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(text)}</dd></div>`;
 }
 
-function insight(label, value) {
+function insight(label, value, limit = 110) {
   const text = compactText(value, "");
   if (!text) return "";
   return `
     <div class="insight">
       <span>${escapeHtml(label)}</span>
-      <p>${escapeHtml(text)}</p>
+      <p>${escapeHtml(truncateText(text, limit))}</p>
     </div>
   `;
 }
@@ -333,10 +360,12 @@ function paperCard(paper, index) {
         </div>
       </div>
       <aside class="insight-list" aria-label="结构化信号">
-        ${insight("关键发现", paper.key_finding)}
-        ${insight("评测信号", paper.evaluation_signal)}
-        ${insight("失败模式", paper.failure_mode)}
-        ${insight("Idea Hook", paper.idea_hook)}
+        <div class="read-why">
+          <span>为什么值得看</span>
+          <p>${escapeHtml(truncateText(paper.idea_hook || paper.key_finding || paper.contribution, 150))}</p>
+        </div>
+        ${insight("评测锚点", paper.evaluation_signal, 96)}
+        ${insight("主要风险", paper.failure_mode, 84)}
       </aside>
     </article>
   `;
@@ -351,10 +380,24 @@ async function loadPapers() {
     limit: "180",
   });
   const data = await fetchJson(`/api/papers?${params.toString()}`);
-  const papers = state.direction === "all" ? mergeDuplicatePapers(data.papers) : data.papers;
+  const papers = sortReadingQueue(state.direction === "all" ? mergeDuplicatePapers(data.papers) : data.papers);
+  state.allPapers = papers;
+  state.paperLimit = 20;
+  renderPaperList();
+}
+
+function renderPaperList() {
+  const papers = state.allPapers.slice(0, state.paperLimit);
   state.visiblePapers = papers;
-  $("paperCount").textContent = state.direction === "all" ? `${papers.length} 篇去重论文` : `${papers.length} 篇论文`;
+  $("paperCount").textContent = state.direction === "all"
+    ? `${state.allPapers.length} 篇去重论文 · high / code / venue 优先`
+    : `${state.allPapers.length} 篇论文 · high / code / venue 优先`;
   $("papers").innerHTML = papers.map((paper, index) => paperCard(paper, index)).join("") || `<p class="empty">没有匹配论文</p>`;
+  const hasMore = state.paperLimit < state.allPapers.length;
+  $("showMoreBtn").classList.toggle("hidden", !hasMore);
+  $("showMoreBtn").textContent = hasMore
+    ? `显示更多（${Math.min(state.paperLimit, state.allPapers.length)} / ${state.allPapers.length}）`
+    : "已经到底";
 }
 
 function openPaperDetail(index) {
@@ -454,6 +497,11 @@ $("searchInput").addEventListener("input", debounce((event) => {
 }, 180));
 
 $("refreshBtn").addEventListener("click", () => loadAll());
+
+$("showMoreBtn").addEventListener("click", () => {
+  state.paperLimit += 20;
+  renderPaperList();
+});
 
 $("papers").addEventListener("click", (event) => {
   const target = event.target instanceof Element ? event.target : null;
