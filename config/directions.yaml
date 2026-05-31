@@ -1,120 +1,189 @@
-# Research Radar — 研究方向配置
-# 每个方向定义：ArXiv 搜索查询、关键词、种子论文
-# 你随时可以增删改方向，改完 push 即可生效
+# Knowledge Editing Direction Radar — 研究方向配置
+# 2026-05-31 起，系统从泛化探索转为围绕 knowledge editing / unlearning / reliability 的定向雷达。
+# 每个方向定义：ArXiv 搜索查询、关键词、相关性过滤词、种子论文。
 
 directions:
-  llm-truthfulness:
-    name: "LLM 真值性与事实性"
-    description: "模型知道但不说、幻觉机制、真值干预、事实性检测、Know-Say Gap"
-    # 限定 cs.CL + cs.LG，排除 cs.CV 视觉幻觉噪音
-    # 搜索词聚焦：文本LLM的真值性/事实性/幻觉，以及探针/干预相关
-    arxiv_query: '(abs:truthfulness OR abs:"factual recall" OR abs:factuality OR abs:"knowledge conflict" OR (abs:hallucination AND abs:"language model")) AND (cat:cs.CL OR cat:cs.LG)'
+  knowledge-editing-core:
+    name: "知识编辑核心方法"
+    description: "ROME、MEMIT、MEND、SERAC、KN 等参数/记忆层面的知识编辑方法与后续改进。"
+    arxiv_query: '((abs:"knowledge editing" OR abs:"model editing" OR abs:"factual editing" OR abs:"editing large language models" OR abs:"rank-one model editing" OR abs:ROME OR abs:MEMIT OR abs:MEND OR abs:SERAC OR abs:"knowledge neurons") AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG))'
     keywords:
-      - truthfulness
-      - hallucination
-      - factuality
-      - factual recall
-      - probing
-      - ITI
-      - contrastive decoding
-      - CAD
-      - know-say gap
-      - knowledge conflict
+      - knowledge editing
+      - model editing
+      - factual editing
+      - ROME
+      - MEMIT
+      - MEND
+      - SERAC
+      - knowledge neurons
+      - locate-then-edit
+      - LocFT
+      - AlphaEdit
+      - SUIT
+      - ACE
+      - EAMET
+      - factual association
+      - counterfact
     relevance:
       must_any:
         - language model
         - large language model
         - llm
         - transformer
+        - pretrained model
       topic_any:
-        - truthfulness
-        - hallucination
-        - factuality
-        - factual
-        - faithful
-        - faithfulness
-        - knowledge conflict
-        - internal knowledge
-        - parametric knowledge
-        - know-say
-        - source-supported
-    max_papers: 25
-    seed_papers:
-      - "2310.06824"   # CAD - Shi et al. 2023
-      - "2306.03341"   # RepE - Zou et al. 2023
-      - "2306.01693"   # ITI - Li et al. 2023
-
-  representation-engineering:
-    name: "表示工程、激活引导与价值对齐干预"
-    description: "通过操纵模型内部表示来控制行为；含 alignment / safety / persona / refusal / value steering"
-    arxiv_query: '(abs:"representation engineering" OR abs:"activation steering" OR abs:"steering vector" OR abs:"linear probe" OR abs:"refusal direction" OR abs:"persona steering" OR abs:"value vector" OR abs:LEACE OR abs:"activation editing" OR abs:"inference-time alignment" OR abs:"contrastive activation") AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG)'
-    keywords:
-      - RepE
-      - steering
-      - activation
-      - residual stream
-      - intervention
-      - CCS
-      - LEACE
-      - ConVA
-      - value vector
-      - refusal direction
-      - persona steering
-      - activation editing
-      - inference-time alignment
-      - safety steering
-      - contrastive activation
-      - concept erasure
-    relevance:
-      must_any:
-        - language model
-        - large language model
-        - llm
-        - transformer
-      topic_any:
-        - representation engineering
-        - activation steering
-        - steering vector
-        - linear probe
-        - residual stream
-        - intervention
-        - contrastive activation
-        - latent representation
-        - refusal
-        - persona
-        - value alignment
-        - value vector
-        - safety steering
-        - concept erasure
-        - activation editing
+        - knowledge editing
+        - model editing
+        - factual editing
+        - rank-one model editing
+        - mass-editing
+        - memory editing
+        - knowledge neuron
+        - factual association
+        - counterfact
     max_papers: 30
     seed_papers:
-      - "2306.03341"   # RepE - Zou et al. 2023
-      - "2306.01693"   # ITI - Li et al. NeurIPS 2023
-      - "2507.11316"   # ConVA - Jin, Huang et al. ACL 2025
-      - "2401.16332"   # Tradeoffs Between Alignment and Helpfulness - ICML 2024 Spotlight
+      - "2104.08696"   # Knowledge Neurons
+      - "2110.11309"   # MEND
+      - "2202.05262"   # ROME
+      - "2206.06520"   # SERAC
+      - "2210.07229"   # MEMIT
+      - "2305.13172"   # Editing LLMs: Problems, Methods, and Opportunities
+      - "2401.01286"   # A Comprehensive Study of Knowledge Editing for LLMs
+      - "2410.02355"   # AlphaEdit
+      - "2509.22072"   # LocFT-BF / Fine-tuning Done Right in Model Editing
+      - "2510.07896"   # ACE: multi-hop factual recall editing
+      - "2505.11876"   # EAMET: robust massive editing
+      - "2509.24502"   # SUIT: subspace-aware KV mapping
 
-  mechanistic-interpretability:
-    name: "机械可解释性"
-    description: "理解 Transformer 内部计算机制"
-    arxiv_query: '(abs:"mechanistic interpretability" OR abs:"circuit analysis" OR abs:"logit lens" OR abs:"sparse autoencoder") AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG)'
+  model-unlearning:
+    name: "模型遗忘与反知识编辑"
+    description: "LLM unlearning、选择性遗忘、隐私/安全知识移除、保留-遗忘权衡与可验证评测。"
+    arxiv_query: '((abs:"machine unlearning" OR abs:"model unlearning" OR abs:"LLM unlearning" OR abs:"large language model unlearning" OR abs:"forget set" OR abs:"selective forgetting" OR abs:"right to be forgotten" OR abs:"hazardous knowledge" OR abs:"knowledge removal") AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG OR cat:cs.CR))'
     keywords:
-      - mechanistic
-      - circuit
-      - logit lens
-      - superposition
-      - SAE
-      - sparse autoencoder
-      - feature
+      - machine unlearning
+      - model unlearning
+      - LLM unlearning
+      - selective forgetting
+      - forget set
+      - retain set
+      - privacy
+      - hazardous knowledge
+      - knowledge removal
+      - TOFU
+      - WMDP
+      - RMU
+      - PURGE
+      - relearning attack
+    relevance:
+      must_any:
+        - language model
+        - large language model
+        - llm
+        - generative model
+        - transformer
+      topic_any:
+        - unlearning
+        - forgetting
+        - forget set
+        - retain set
+        - knowledge removal
+        - hazardous knowledge
+        - right to be forgotten
+        - privacy
+    max_papers: 25
+    seed_papers:
+      - "2401.06121"   # TOFU
+      - "2403.03218"   # WMDP
+      - "2603.09980"   # Explainable LLM Unlearning
+      - "2601.20568"   # PURGE / reinforcement unlearning
+      - "2510.17620"   # Forget to Know, Remember to Use
+      - "2505.16831"   # Unlearning Isn't Deletion
+
+  editing-reliability-evaluation:
+    name: "编辑可靠性与评测"
+    description: "知识编辑后的 locality、generality、specificity、portability、robustness、side effect 与长期稳定性。"
+    arxiv_query: '((abs:"knowledge editing" OR abs:"model editing" OR abs:"editing large language models" OR abs:"factual editing") AND (abs:reliability OR abs:robustness OR abs:locality OR abs:generality OR abs:specificity OR abs:portability OR abs:"side effect" OR abs:"sequential editing" OR abs:"lifelong editing" OR abs:benchmark) AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG))'
+    keywords:
+      - reliability
+      - robustness
+      - locality
+      - generality
+      - specificity
+      - portability
+      - side effect
+      - interference
+      - edit decay
+      - sequential editing
+      - lifelong normalization
+      - lifelong editing
+      - benchmark
+      - evaluation
+      - failure mode
+    relevance:
+      must_any:
+        - knowledge editing
+        - model editing
+        - factual editing
+        - edit
+      topic_any:
+        - reliability
+        - robust
+        - robustness
+        - locality
+        - generality
+        - specificity
+        - portability
+        - side effect
+        - sequential
+        - lifelong
+        - benchmark
+        - evaluation
+    max_papers: 30
+    seed_papers:
+      - "2305.13172"   # Editing LLMs: Problems, Methods, and Opportunities
+      - "2401.01286"   # A Comprehensive Study of Knowledge Editing for LLMs
+      - "2410.02355"   # AlphaEdit
+      - "2509.22072"   # LocFT-BF / lifelong editing
+      - "2505.11876"   # EAMET / robust massive editing
+      - "2510.02392"   # KnowledgeSmith
+      - "2510.01172"   # SPHERE
+      - "2605.11836"   # More Edits, More Stable
+      - "2602.10134"   # Reverse-Engineering Model Editing
+
+  editing-frameworks-tooling:
+    name: "编辑框架、工具与基准"
+    description: "EasyEdit、EasyEdit2、知识编辑框架、benchmark、代码工具链与方法集成。"
+    arxiv_query: '((abs:EasyEdit OR abs:"knowledge editing framework" OR abs:"model editing framework" OR abs:"editing framework" OR abs:"knowledge editing benchmark" OR abs:"model editing benchmark" OR abs:"editing toolkit" OR abs:"steering framework") AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG))'
+    keywords:
+      - EasyEdit
+      - EasyEdit2
+      - MoEEdit
+      - AAEditor
+      - framework
+      - toolkit
+      - benchmark
+      - editing framework
+      - steering framework
+      - evaluation framework
+      - method integration
+      - reproducibility
     relevance:
       topic_any:
-        - mechanistic interpretability
-        - circuit analysis
-        - logit lens
-        - sparse autoencoder
-        - transformer circuit
-        - superposition
-        - attention head
-        - residual stream
+        - EasyEdit
+        - framework
+        - toolkit
+        - benchmark
+        - evaluation
+        - knowledge editing
+        - model editing
+        - steering framework
+        - method integration
+        - reproducibility
     max_papers: 20
-    seed_papers: []
+    seed_papers:
+      - "2308.07269"   # EasyEdit
+      - "2504.15133"   # EasyEdit2
+      - "2410.02355"   # AlphaEdit
+      - "2602.10965"   # MoEEdit
+      - "2505.19855"   # AAEditor / agentic editing workflow

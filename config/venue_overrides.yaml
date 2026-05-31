@@ -1,0 +1,196 @@
+# 手工确认的 venue 标签。
+# 用途：arXiv 论文被会议接收后，给 dashboard 和周报贴上 ICLR/ICML/ACL/EMNLP/AAAI 等标签。
+# 优先级：by_arxiv > by_title > Semantic Scholar 自动识别。
+
+by_arxiv:
+  "2104.08696":
+    venue: "ACL"
+    year: 2022
+    type: "conference"
+    url: "https://aclanthology.org/2022.acl-long.581/"
+    confidence: "manual"
+  "2110.11309":
+    venue: "ICLR"
+    year: 2022
+    type: "poster"
+    url: "https://openreview.net/forum?id=0DcZxeWfOPt"
+    confidence: "manual"
+  "2202.05262":
+    venue: "NeurIPS"
+    year: 2022
+    type: "conference"
+    url: "https://proceedings.neurips.cc/paper_files/paper/2022/hash/6f1d43d5a82a37e89b0665b33bf3a182-Abstract-Conference.html"
+    confidence: "manual"
+  "2206.06520":
+    venue: "ICML"
+    year: 2022
+    type: "spotlight"
+    url: "https://icml.cc/virtual/2022/spotlight/17534"
+    confidence: "manual"
+  "2210.07229":
+    venue: "ICLR"
+    year: 2023
+    type: "conference"
+    url: "https://memit.baulab.info/"
+    confidence: "manual"
+  "2308.07269":
+    venue: "ACL"
+    year: 2024
+    type: "demo"
+    url: "https://aclanthology.org/2024.acl-demos.9/"
+    confidence: "manual"
+  "2504.15133":
+    venue: "EMNLP"
+    year: 2025
+    type: "demo"
+    url: "https://aclanthology.org/2025.emnlp-demos.38/"
+    confidence: "manual"
+  "2506.04226":
+    venue: "ACL"
+    year: 2025
+    type: "short"
+    url: "https://aclanthology.org/2025.acl-short.65/"
+    confidence: "manual"
+  "2403.03218":
+    venue: "ICML"
+    year: 2024
+    type: "conference"
+    url: "https://icml.cc/virtual/2024/poster/32695"
+    confidence: "manual"
+
+  "2509.22072":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=cfHuA5jsPt"
+    confidence: "manual"
+  "2510.07896":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=IuWIzmMvKo"
+    confidence: "manual"
+  "2505.11876":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=VJGVfJJ2wW"
+    confidence: "manual"
+  "2510.02392":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=znnA2Opw6v"
+    confidence: "manual"
+  "2509.24502":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=qz3BkyyHWJ"
+    confidence: "manual"
+  "2602.10965":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=BV4oHxGBx7"
+    confidence: "manual"
+  "2603.01285":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=sX9HbELwLO"
+    confidence: "manual"
+  "2603.09980":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=wec4qy2XIF"
+    confidence: "manual"
+  "2601.20568":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=BjWwqPE7mk"
+    confidence: "manual"
+  "2510.01172":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=CHsdtzCip6"
+    confidence: "manual"
+
+  "2605.11836":
+    venue: "ICML"
+    year: 2026
+    type: "poster"
+    url: "https://icml.cc/Downloads/2026"
+    confidence: "manual"
+  "2605.26670":
+    venue: "ICML"
+    year: 2026
+    type: "poster"
+    url: "https://icml.cc/Downloads/2026"
+    confidence: "manual"
+  "2602.10134":
+    venue: "ICML"
+    year: 2026
+    type: "poster"
+    url: "https://icml.cc/Downloads/2026"
+    confidence: "manual"
+  "2505.16831":
+    venue: "ICML"
+    year: 2026
+    type: "poster"
+    url: "https://icml.cc/Downloads/2026"
+    confidence: "manual"
+  "2510.17620":
+    venue: "ICML"
+    year: 2026
+    type: "poster"
+    url: "https://icml.cc/Downloads/2026"
+    confidence: "manual"
+
+  "2505.19855":
+    venue: "AAAI"
+    year: 2026
+    type: "special-track"
+    url: "https://ojs.aaai.org/index.php/AAAI/article/view/41097"
+    confidence: "manual"
+
+by_title:
+  "Scaling Knowledge Editing in LLMs to 100,000 Facts with Neural KV Database":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=Z0CX62CSJQ"
+    confidence: "manual"
+  "MobiEdit: Resource-efficient Knowledge Editing for Personalized On-device LLMs":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=fb7yTBOV3p"
+    confidence: "manual"
+  "Disentangling Knowledge Representations for Large Language Model Editing":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=PmRBeF2umZ"
+    confidence: "manual"
+  "AnyEdit++: Adaptive Long-Form Knowledge Editing via Bayesian Surprise":
+    venue: "ICML"
+    year: 2026
+    type: "poster"
+    url: "https://icml.cc/Downloads/2026"
+    confidence: "manual"
+  "TIME: Tensor-Factorized Mixture-of-Experts with Intrinsic Routing for Lifelong Multimodal Knowledge Editing":
+    venue: "ICML"
+    year: 2026
+    type: "poster"
+    url: "https://icml.cc/Downloads/2026"
+    confidence: "manual"
+  "Revisiting Parameter-Based Knowledge Editing in Large Language Models: Theoretical Limits and Empirical Evidence":
+    venue: "ICML"
+    year: 2026
+    type: "poster"
+    url: "https://icml.cc/Downloads/2026"
+    confidence: "manual"

@@ -1,5 +1,5 @@
 """
-Research Radar — 数据存储模块
+Knowledge Editing Direction Radar — 数据存储模块
 按研究方向 + ISO 周组织数据，使用 JSONL 格式追加写入。
 自动去重（基于 ArXiv ID）。
 """
@@ -88,6 +88,14 @@ def append_papers(direction_id, papers):
                 "has_code": paper.get("has_code", False),
                 "repo_url": paper.get("repo_url", ""),
                 "repo_stars": paper.get("repo_stars", 0),
+                "hf_upvotes": paper.get("hf_upvotes", 0),
+                "citation_count": paper.get("citation_count", 0),
+                "venue": paper.get("venue", ""),
+                "venue_year": paper.get("venue_year", ""),
+                "venue_type": paper.get("venue_type", ""),
+                "venue_url": paper.get("venue_url", ""),
+                "venue_confidence": paper.get("venue_confidence", ""),
+                "venue_source": paper.get("venue_source", ""),
                 "extracted": paper.get("extracted", {}),
                 "extraction_depth": paper.get("extraction_depth", "none"),
             }

@@ -1,5 +1,5 @@
 """
-Research Radar local dashboard.
+Knowledge Editing Direction Radar local dashboard.
 
 Run:
     python radar_dashboard/app.py
@@ -58,6 +58,10 @@ def load_papers():
                 except json.JSONDecodeError:
                     continue
                 extracted = paper.get("extracted") or {}
+                method_family = extracted.get("method_family") or extracted.get("theme", "未分类") or "未分类"
+                read_priority = str(extracted.get("read_priority", "low") or "low").lower()
+                if read_priority not in {"high", "medium", "low"}:
+                    read_priority = "low"
                 papers.append(
                     {
                         "id": paper.get("id", ""),
@@ -65,6 +69,7 @@ def load_papers():
                         "direction_name": directions.get(direction_id, {}).get("name", direction_id),
                         "week": week,
                         "title": paper.get("title", ""),
+                        "title_zh": extracted.get("title_zh", ""),
                         "authors": paper.get("authors", []),
                         "url": paper.get("url", ""),
                         "pdf_url": paper.get("pdf_url", ""),
@@ -72,15 +77,31 @@ def load_papers():
                         "published": paper.get("published", ""),
                         "collected": paper.get("collected", ""),
                         "abstract": paper.get("abstract") or paper.get("summary", ""),
+                        "abstract_zh": extracted.get("abstract_zh", ""),
                         "has_code": bool(paper.get("has_code")),
                         "repo_url": paper.get("repo_url", ""),
                         "repo_stars": paper.get("repo_stars", 0),
+                        "hf_upvotes": paper.get("hf_upvotes", 0),
+                        "citation_count": paper.get("citation_count", 0),
+                        "venue": paper.get("venue", ""),
+                        "venue_year": paper.get("venue_year", ""),
+                        "venue_type": paper.get("venue_type", ""),
+                        "venue_url": paper.get("venue_url", ""),
+                        "venue_confidence": paper.get("venue_confidence", ""),
+                        "venue_source": paper.get("venue_source", ""),
                         "problem": extracted.get("problem", ""),
                         "method": extracted.get("method", ""),
                         "contribution": extracted.get("contribution", ""),
                         "limitations": extracted.get("limitations", ""),
                         "key_finding": extracted.get("key_finding", ""),
                         "theme": extracted.get("theme", "未分类") or "未分类",
+                        "method_family": method_family,
+                        "edit_target": extracted.get("edit_target", ""),
+                        "evaluation_signal": extracted.get("evaluation_signal", ""),
+                        "failure_mode": extracted.get("failure_mode", ""),
+                        "idea_hook": extracted.get("idea_hook", ""),
+                        "read_priority": read_priority,
+                        "direction_fit": extracted.get("direction_fit", ""),
                         "baselines": extracted.get("baselines", []),
                         "datasets": extracted.get("datasets", []),
                     }
@@ -110,6 +131,8 @@ def summarize(papers):
                 "count": len(subset),
                 "code_count": sum(1 for p in subset if p["has_code"]),
                 "themes": Counter(p["theme"] for p in subset).most_common(8),
+                "method_families": Counter(p["method_family"] for p in subset).most_common(8),
+                "priorities": Counter(p["read_priority"] for p in subset).most_common(),
             }
         )
 
@@ -123,23 +146,48 @@ def summarize(papers):
         trend.append(row)
 
     theme_counts = Counter(p["theme"] for p in current if p["theme"] and p["theme"] != "未分类")
+    method_family_counts = Counter(
+        p["method_family"] for p in current if p["method_family"] and p["method_family"] != "未分类"
+    )
+    priority_counts = Counter(p["read_priority"] for p in current)
+    venue_counts = Counter(p["venue"] for p in current if p.get("venue"))
     category_counts = Counter(p["category"] or "unknown" for p in current)
     limitation_counts = Counter()
+    failure_mode_counts = Counter()
+    evaluation_signal_counts = Counter()
+    idea_hooks = []
     for paper in current:
         limitation = paper.get("limitations", "").strip()
         if limitation and limitation not in {"摘要未提及", "未提及", "提取失败"}:
             limitation_counts[limitation] += 1
+        failure = paper.get("failure_mode", "").strip()
+        if failure and failure not in {"摘要未提及", "未提及", "提取失败"}:
+            failure_mode_counts[failure] += 1
+        signal = paper.get("evaluation_signal", "").strip()
+        if signal and signal not in {"摘要未提及", "未提及", "提取失败"}:
+            evaluation_signal_counts[signal] += 1
+        hook = paper.get("idea_hook", "").strip()
+        if hook and hook not in {"暂不明显", "提取失败"}:
+            idea_hooks.append(
+                {
+                    "title": paper["title"],
+                    "url": paper["url"],
+                    "idea_hook": hook,
+                    "read_priority": paper["read_priority"],
+                    "direction_name": paper["direction_name"],
+                }
+            )
 
     code_papers = [
         {
-            "title": p["title"],
-            "url": p["url"],
-            "repo_url": p["repo_url"],
-            "repo_stars": p["repo_stars"],
-            "direction_name": p["direction_name"],
+            "title": p.get("title", ""),
+            "url": p.get("url", ""),
+            "repo_url": p.get("repo_url", ""),
+            "repo_stars": p.get("repo_stars", 0),
+            "direction_name": p.get("direction_name", ""),
         }
         for p in current
-        if p["has_code"]
+        if p.get("has_code")
     ]
 
     return {
@@ -150,8 +198,14 @@ def summarize(papers):
         "directions": by_direction,
         "trend": trend,
         "themes": theme_counts.most_common(16),
+        "method_families": method_family_counts.most_common(16),
+        "priorities": priority_counts.most_common(),
+        "venues": venue_counts.most_common(12),
         "categories": category_counts.most_common(10),
         "limitations": limitation_counts.most_common(10),
+        "failure_modes": failure_mode_counts.most_common(10),
+        "evaluation_signals": evaluation_signal_counts.most_common(10),
+        "idea_hooks": idea_hooks[:10],
         "code_papers": code_papers,
     }
 
@@ -168,20 +222,29 @@ def search_papers(papers, params):
     if direction and direction != "all":
         result = [p for p in result if p["direction_id"] == direction]
     if theme and theme != "all":
-        result = [p for p in result if p["theme"] == theme]
+        result = [p for p in result if p["theme"] == theme or p["method_family"] == theme]
     if query:
         def matches(paper):
             haystack = " ".join(
                 str(paper.get(key, ""))
                 for key in [
                     "title",
+                    "title_zh",
                     "abstract",
+                    "abstract_zh",
+                    "venue",
                     "problem",
                     "method",
                     "contribution",
                     "limitations",
                     "key_finding",
                     "theme",
+                    "method_family",
+                    "edit_target",
+                    "evaluation_signal",
+                    "failure_mode",
+                    "idea_hook",
+                    "direction_fit",
                     "category",
                 ]
             ).lower()
@@ -230,7 +293,7 @@ class RadarHandler(SimpleHTTPRequestHandler):
                 subset = [p for p in subset if p["week"] == week]
             if direction != "all":
                 subset = [p for p in subset if p["direction_id"] == direction]
-            self.send_json({"themes": Counter(p["theme"] for p in subset).most_common(40)})
+            self.send_json({"themes": Counter(p["method_family"] for p in subset).most_common(40)})
             return
         super().do_GET()
 
@@ -239,7 +302,7 @@ def main():
     host = "127.0.0.1"
     port = int(os.environ.get("RADAR_DASHBOARD_PORT", "7860"))
     server = ThreadingHTTPServer((host, port), RadarHandler)
-    print(f"Research Radar Dashboard running at http://{host}:{port}")
+    print(f"Knowledge Editing Radar Dashboard running at http://{host}:{port}")
     server.serve_forever()
 
 

@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Research Radar Dashboard</title>
-  <link rel="stylesheet" href="/style.css">
+  <title>Knowledge Editing Direction Radar</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="topbar">
     <div>
-      <h1>Research Radar</h1>
-      <p id="subtitle">Loading local research signals...</p>
+      <h1>Knowledge Editing Radar</h1>
+      <p id="subtitle">Loading editing / unlearning / reliability signals...</p>
     </div>
     <div class="toolbar">
       <select id="weekSelect" aria-label="week"></select>
@@ -56,16 +56,37 @@
 
       <div class="panel">
         <div class="panel-head">
-          <h2>Theme 分布</h2>
+          <h2>方法族分布</h2>
         </div>
         <div id="themeCloud" class="chip-cloud"></div>
       </div>
 
       <div class="panel">
         <div class="panel-head">
-          <h2>Limitations</h2>
+          <h2>A 会标签</h2>
         </div>
-        <ul id="limitationsList" class="compact-list"></ul>
+        <ul id="venueList" class="compact-list"></ul>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>失败模式</h2>
+        </div>
+        <ul id="failureModesList" class="compact-list"></ul>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>评测信号</h2>
+        </div>
+        <ul id="evaluationSignalsList" class="compact-list"></ul>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Idea Hook</h2>
+        </div>
+        <ul id="ideaHooksList" class="compact-list"></ul>
       </div>
 
       <div class="panel">
@@ -82,12 +103,20 @@
           <h2>论文浏览</h2>
           <p id="paperCount">0 papers</p>
         </div>
-        <input id="searchInput" type="search" placeholder="搜索 title / method / limitation / theme">
+        <input id="searchInput" type="search" placeholder="搜索 title / method / failure / idea / family">
       </div>
       <div id="papers" class="papers"></div>
     </section>
   </main>
 
-  <script src="/app.js"></script>
+  <div id="paperModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="论文详情">
+    <div class="modal-card">
+      <button id="modalClose" class="modal-close" type="button" aria-label="Close">×</button>
+      <div id="detailContent"></div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

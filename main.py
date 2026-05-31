@@ -1,10 +1,10 @@
 """
-Research Radar — 研究方向定向雷达
+Knowledge Editing Direction Radar — 知识编辑方向定向雷达
 主流程：加载方向配置 → 逐方向 ArXiv 定向采集 → 豆包结构化提取 → JSONL 存储 → 周报生成
 
 设计分工：
   - 豆包（自动、便宜）：每日定向采集 + 结构化提取
-  - Claude（按需、强力）：你不定时带进来做深度分析
+  - Claude（按需、强力）：你不定时带进来做深度分析与选题判断
 """
 
 import os
@@ -28,6 +28,7 @@ from citation_tracker import track_all_seeds
 from notifier import HubNotifier
 from relevance_filter import filter_relevant_papers
 from hf_daily import get_trending_top_n, match_hf_upvotes
+from venue_resolver import annotate_venues
 
 
 def load_config():
@@ -56,7 +57,7 @@ def check_all_code(papers, hunter):
 def run():
     """主流程"""
     print("=" * 55)
-    print("🛰️  Research Radar — 研究方向定向雷达")
+    print("🛰️  Knowledge Editing Direction Radar")
     print("=" * 55)
 
     # 1. 加载配置
@@ -154,7 +155,10 @@ def run():
         # 3e. HF Daily Papers upvote 匹配
         match_hf_upvotes(new_papers)
 
-        # 3f. 存储到 JSONL
+        # 3f. Venue 标注：手工锚点优先，Semantic Scholar 补全
+        annotate_venues(new_papers, use_semantic_scholar=True, delay=0.2)
+
+        # 3g. 存储到 JSONL
         new_count = append_papers(direction_id, new_papers)
         daily_stats[direction_id] = new_count
 
@@ -171,7 +175,7 @@ def run():
     try:
         notifier = HubNotifier()
         daily_lines = build_daily_push_lines(directions, daily_stats)
-        notifier.send_all("\n".join(daily_lines), f"📡 Research Radar {date.today():%m/%d}")
+        notifier.send_all("\n".join(daily_lines), f"📡 KE Radar {date.today():%m/%d}")
     except Exception as e:
         print(f"[Push] 每日推送失败（不影响主流程）: {e}")
 
@@ -184,7 +188,7 @@ def run():
     else:
         print(f"\n💡 提示：周报将在每周日自动生成。")
 
-    print(f"\n🏁 Research Radar 采集完成")
+    print(f"\n🏁 Knowledge Editing Direction Radar 采集完成")
 
 
 def build_weekly_summary_lines(directions, daily_stats, target_date=None):
@@ -192,7 +196,7 @@ def build_weekly_summary_lines(directions, daily_stats, target_date=None):
     if target_date is None:
         target_date = date.today()
 
-    lines = [f"📡 Research Radar 周报 | {target_date:%m/%d}"]
+    lines = [f"📡 Knowledge Editing Radar 周报 | {target_date:%m/%d}"]
     for did, direction_conf in directions.items():
         name = direction_conf["name"]
         weekly_count = len(load_week_papers(did, target_date))
@@ -206,7 +210,7 @@ def build_daily_push_lines(directions, daily_stats, target_date=None):
     if target_date is None:
         target_date = date.today()
 
-    lines = [f"📡 Research Radar 每日速报 | {target_date:%m/%d}"]
+    lines = [f"📡 Knowledge Editing Radar 每日速报 | {target_date:%m/%d}"]
     lines.append("")
 
     # 各方向新增统计

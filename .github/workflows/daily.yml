@@ -1,4 +1,4 @@
-name: Research Radar 每日定向采集
+name: Knowledge Editing Radar 每日定向采集
 
 on:
   schedule:
@@ -24,7 +24,7 @@ jobs:
       - name: 安装依赖
         run: pip install -r requirements.txt
 
-      - name: 运行 Research Radar
+      - name: 运行 Knowledge Editing Radar
         env:
           DOUBAO_API_KEY: ${{ secrets.DOUBAO_API_KEY }}
           DOUBAO_ENDPOINT_ID: ${{ secrets.DOUBAO_ENDPOINT_ID }}
@@ -34,11 +34,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python main.py
 
+      - name: 生成静态 Dashboard 快照
+        run: python radar_dashboard/build_static.py
+
       - name: 提交采集数据
         run: |
-          git config user.name "Research Radar Bot"
-          git config user.email "bot@research-radar.local"
-          git add data/ || true
-          git diff --cached --quiet || git commit -m "📡 $(date +%Y-%m-%d) Research Radar 每日采集"
+          git config user.name "Knowledge Editing Radar Bot"
+          git config user.email "bot@knowledge-editing-radar.local"
+          git add data/ radar_dashboard/static/data.js || true
+          git diff --cached --quiet || git commit -m "📡 $(date +%Y-%m-%d) Knowledge Editing Radar 每日采集"
           git pull --rebase origin main || true
           git push || true
