@@ -119,6 +119,10 @@ def summarize(papers):
     weeks = sorted({p["week"] for p in papers})
     current_week = latest_week(papers)
     current = [p for p in papers if p["week"] == current_week] if current_week else papers
+    unique_current = {
+        (p.get("id") or p.get("url") or p.get("title", "").lower())
+        for p in current
+    }
 
     by_direction = []
     for direction_id, conf in directions.items():
@@ -194,6 +198,7 @@ def summarize(papers):
         "current_week": current_week,
         "weeks": weeks,
         "total_papers": len(current),
+        "unique_papers": len(unique_current),
         "total_code": sum(1 for p in current if p["has_code"]),
         "directions": by_direction,
         "trend": trend,

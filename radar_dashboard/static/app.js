@@ -8,7 +8,7 @@ const state = {
 };
 
 const colors = ["#2f7d62", "#3867a6", "#a64f3c", "#9a6b20", "#6f5aa8"];
-const staticData = window.location.protocol === "file:" ? (window.RADAR_STATIC_DATA || null) : null;
+const staticData = window.RADAR_STATIC_DATA || null;
 
 const $ = (id) => document.getElementById(id);
 
@@ -18,6 +18,18 @@ function escapeHtml(value) {
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
+}
+
+function venueClass(venue) {
+  return String(venue || "").toLowerCase().replace(/[^a-z0-9-]/g, "");
+}
+
+function compactText(value, fallback = "未提及") {
+  const text = String(value || "").trim();
+  if (!text || ["提取失败", "摘要未提及", "未提及", "暂不明显"].includes(text)) {
+    return fallback;
+  }
+  return text;
 }
 
 async function fetchJson(url) {
@@ -93,6 +105,45 @@ function filterStaticPapers(params) {
     .slice(0, limit);
 }
 
+function priorityScore(value) {
+  return { high: 3, medium: 2, low: 1 }[String(value || "").toLowerCase()] || 0;
+}
+
+function mergeDuplicatePapers(papers) {
+  const merged = new Map();
+  for (const paper of papers) {
+    const key = paper.id || paper.url || String(paper.title || "").toLowerCase();
+    if (!merged.has(key)) {
+      merged.set(key, {
+        ...paper,
+        direction_names: [paper.direction_name].filter(Boolean),
+      });
+      continue;
+    }
+
+    const current = merged.get(key);
+    const directions = new Set([...(current.direction_names || []), paper.direction_name].filter(Boolean));
+    const better =
+      priorityScore(paper.read_priority) > priorityScore(current.read_priority) ||
+      (Boolean(paper.venue) && !current.venue) ||
+      (Boolean(paper.has_code) && !current.has_code);
+    const base = better ? { ...current, ...paper } : current;
+    merged.set(key, {
+      ...base,
+      has_code: Boolean(current.has_code || paper.has_code),
+      repo_url: current.repo_url || paper.repo_url || "",
+      repo_stars: Math.max(Number(current.repo_stars || 0), Number(paper.repo_stars || 0)),
+      venue: current.venue || paper.venue || "",
+      venue_year: current.venue_year || paper.venue_year || "",
+      venue_type: current.venue_type || paper.venue_type || "",
+      venue_url: current.venue_url || paper.venue_url || "",
+      direction_names: [...directions],
+      direction_name: [...directions].join(" / "),
+    });
+  }
+  return [...merged.values()];
+}
+
 function setOptions(select, options, value) {
   select.innerHTML = options.map((option) => (
     `<option value="${escapeHtml(option.value)}">${escapeHtml(option.label)}</option>`
@@ -103,10 +154,10 @@ function setOptions(select, options, value) {
 function renderSummary() {
   const summary = state.summary;
   const source = staticData ? `静态快照 · ${staticData.generated_at || "local"}` : "实时 API";
-  $("subtitle").textContent = `Knowledge editing / unlearning / reliability · ${summary.current_week || "no week"} · ${source}`;
-  $("totalPapers").textContent = summary.total_papers;
+  $("subtitle").textContent = `knowledge editing / unlearning / reliability · ${summary.current_week || "no week"} · ${source}`;
+  $("totalPapers").textContent = summary.unique_papers || summary.total_papers;
   $("totalCode").textContent = summary.total_code;
-  $("directionCount").textContent = summary.directions.length;
+  $("directionCount").textContent = summary.total_papers;
   $("currentWeek").textContent = summary.current_week || "-";
 
   const weekOptions = [
@@ -131,13 +182,6 @@ function renderSummary() {
   renderCodePapers(summary);
 }
 
-function renderVenues(summary) {
-  const venues = summary.venues || [];
-  $("venueList").innerHTML = venues.map(([venue, count]) => (
-    `<li><span class="venue venue-${escapeHtml(String(venue).toLowerCase())}">${escapeHtml(venue)}</span> <span class="tag">${count}</span></li>`
-  )).join("") || `<li>本周暂无已识别 A 会标签</li>`;
-}
-
 function renderTrend(summary) {
   const maxTotal = Math.max(1, ...summary.trend.map((row) => row.total));
   $("trendChart").innerHTML = summary.trend.map((row) => {
@@ -146,7 +190,7 @@ function renderTrend(summary) {
       const width = row.total ? (count / row.total) * 100 : 0;
       return `<span class="trend-seg" title="${escapeHtml(direction.name)}: ${count}" style="width:${width}%;background:${colors[index % colors.length]}"></span>`;
     }).join("");
-    const barWidth = row.total ? Math.max(6, (row.total / maxTotal) * 100) : 2;
+    const barWidth = row.total ? Math.max(8, (row.total / maxTotal) * 100) : 2;
     return `
       <div class="trend-row">
         <span>${escapeHtml(row.week)}</span>
@@ -165,7 +209,7 @@ function renderDirections(summary) {
     const high = (direction.priorities || []).find(([name]) => name === "high");
     const highText = high ? `<span>${high[1]} high</span>` : "";
     return `
-      <article class="direction-card" style="border-left:4px solid ${colors[index % colors.length]}">
+      <article class="direction-card" style="border-left-color:${colors[index % colors.length]}">
         <h3>${escapeHtml(direction.name)}</h3>
         <p>${escapeHtml(direction.description)}</p>
         <div class="direction-stats">
@@ -182,7 +226,7 @@ function renderDirections(summary) {
 function renderMethodFamilies(summary) {
   const families = summary.method_families || [];
   const chips = families.map(([family, count]) => (
-    `<button class="chip ${state.theme === family ? "active" : ""}" type="button" data-theme="${escapeHtml(family)}">${escapeHtml(family)} · ${count}</button>`
+    `<button class="chip ${state.theme === family ? "active" : ""}" type="button" data-theme="${escapeHtml(family)}">${escapeHtml(family)} <strong>${count}</strong></button>`
   )).join("");
   $("themeCloud").innerHTML = `<button class="chip ${state.theme === "all" ? "active" : ""}" type="button" data-theme="all">全部</button>${chips || `<span class="empty-inline">暂无数据</span>`}`;
   $("themeCloud").querySelectorAll("button").forEach((button) => {
@@ -194,27 +238,34 @@ function renderMethodFamilies(summary) {
   });
 }
 
+function renderVenues(summary) {
+  const venues = summary.venues || [];
+  $("venueList").innerHTML = venues.map(([venue, count]) => (
+    `<li><span class="venue venue-${venueClass(venue)}">${escapeHtml(venue)}</span><span>${count} 篇</span></li>`
+  )).join("") || `<li>本周暂无已识别 A 会标签</li>`;
+}
+
 function renderFailureModes(summary) {
   $("failureModesList").innerHTML = (summary.failure_modes || []).map(([text, count]) => (
-    `<li>${escapeHtml(text)} <span class="tag">${count}</span></li>`
+    `<li><span>${escapeHtml(text)}</span><span class="tag">${count}</span></li>`
   )).join("") || `<li>本周摘要未显式提到 failure mode</li>`;
 }
 
 function renderEvaluationSignals(summary) {
   $("evaluationSignalsList").innerHTML = (summary.evaluation_signals || []).map(([text, count]) => (
-    `<li>${escapeHtml(text)} <span class="tag">${count}</span></li>`
+    `<li><span>${escapeHtml(text)}</span><span class="tag">${count}</span></li>`
   )).join("") || `<li>本周暂无明确评测信号</li>`;
 }
 
 function renderIdeaHooks(summary) {
   $("ideaHooksList").innerHTML = (summary.idea_hooks || []).map((item) => (
-    `<li><span class="priority ${escapeHtml(item.read_priority)}">${escapeHtml(item.read_priority)}</span> ${escapeHtml(item.idea_hook)}<br><a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">${escapeHtml(item.title)}</a></li>`
+    `<li><span><span class="priority ${escapeHtml(item.read_priority)}">${escapeHtml(item.read_priority)}</span> ${escapeHtml(item.idea_hook)}</span><a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">${escapeHtml(item.title)}</a></li>`
   )).join("") || `<li>本周暂无可延展 idea hook</li>`;
 }
 
 function renderCodePapers(summary) {
   $("codeList").innerHTML = summary.code_papers.map((paper) => (
-    `<li><a href="${escapeHtml(paper.url)}" target="_blank" rel="noreferrer">${escapeHtml(paper.title)}</a><br><span>${escapeHtml(paper.direction_name)}</span>${paper.repo_url ? ` · <a href="${escapeHtml(paper.repo_url)}" target="_blank" rel="noreferrer">repo</a>` : ""}</li>`
+    `<li><a href="${escapeHtml(paper.url)}" target="_blank" rel="noreferrer">${escapeHtml(paper.title)}</a><span>${escapeHtml(paper.direction_name)}</span>${paper.repo_url ? `<a href="${escapeHtml(paper.repo_url)}" target="_blank" rel="noreferrer">repo</a>` : ""}</li>`
   )).join("") || `<li>本周暂无带代码论文</li>`;
 }
 
@@ -223,12 +274,16 @@ function venueBadge(paper) {
   const year = paper.venue_year ? ` ${paper.venue_year}` : "";
   const type = paper.venue_type ? ` · ${paper.venue_type}` : "";
   const label = `${paper.venue}${year}${type}`;
-  const cls = `venue venue-${String(paper.venue).toLowerCase()}`;
-  const content = `<span class="${escapeHtml(cls)}">${escapeHtml(label)}</span>`;
+  const content = `<span class="venue venue-${venueClass(paper.venue)}">${escapeHtml(label)}</span>`;
   if (paper.venue_url) {
     return `<a class="venue-link" href="${escapeHtml(paper.venue_url)}" target="_blank" rel="noreferrer">${content}</a>`;
   }
   return content;
+}
+
+function directionBadges(paper) {
+  const names = paper.direction_names && paper.direction_names.length ? paper.direction_names : [paper.direction_name];
+  return names.filter(Boolean).map((name) => `<span class="tag">${escapeHtml(name)}</span>`).join("");
 }
 
 function chips(values) {
@@ -237,41 +292,52 @@ function chips(values) {
 }
 
 function detailRow(label, value) {
-  const text = String(value || "").trim();
+  const text = compactText(value, "");
   if (!text) return "";
   return `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(text)}</dd></div>`;
 }
 
-function paperCard(paper, index) {
-  const authors = Array.isArray(paper.authors) ? paper.authors.slice(0, 4).join(", ") : "";
+function insight(label, value) {
+  const text = compactText(value, "");
+  if (!text) return "";
   return `
-    <article class="paper-card">
-      <h3><a href="${escapeHtml(paper.url)}" target="_blank" rel="noreferrer">${escapeHtml(paper.title)}</a></h3>
-      ${paper.title_zh ? `<p class="paper-title-zh">${escapeHtml(paper.title_zh)}</p>` : ""}
-      <div class="paper-meta">
-        ${venueBadge(paper)}
-        <span class="tag">${escapeHtml(paper.direction_name)}</span>
-        <span class="tag">${escapeHtml(paper.week)}</span>
-        <span class="tag">${escapeHtml(paper.method_family || paper.theme)}</span>
-        <span class="priority ${escapeHtml(paper.read_priority)}">${escapeHtml(paper.read_priority)}</span>
-        ${paper.has_code ? `<span class="tag code">代码</span>` : ""}
+    <div class="insight">
+      <span>${escapeHtml(label)}</span>
+      <p>${escapeHtml(text)}</p>
+    </div>
+  `;
+}
+
+function paperCard(paper, index) {
+  const titleZh = compactText(paper.title_zh, "");
+  const abstractZh = compactText(paper.abstract_zh, "");
+  const priority = paper.read_priority || "low";
+  return `
+    <article class="paper-card paper-priority-${escapeHtml(priority)}">
+      <div class="paper-main">
+        <div class="paper-meta">
+          ${venueBadge(paper)}
+          ${directionBadges(paper)}
+          <span class="tag">${escapeHtml(paper.method_family || paper.theme || "未分类")}</span>
+          <span class="priority ${escapeHtml(priority)}">${escapeHtml(priority)}</span>
+          ${paper.has_code ? `<span class="tag code">代码</span>` : ""}
+        </div>
+        <h3><a href="${escapeHtml(paper.url)}" target="_blank" rel="noreferrer">${escapeHtml(paper.title)}</a></h3>
+        ${titleZh ? `<p class="paper-title-zh">${escapeHtml(titleZh)}</p>` : ""}
+        ${abstractZh ? `<p class="card-abstract">${escapeHtml(abstractZh)}</p>` : ""}
+        <div class="paper-actions">
+          <button class="detail-btn" type="button" data-detail-index="${index}">详情</button>
+          <a href="${escapeHtml(paper.url)}" target="_blank" rel="noreferrer">arXiv</a>
+          ${paper.pdf_url ? `<a href="${escapeHtml(paper.pdf_url)}" target="_blank" rel="noreferrer">PDF</a>` : ""}
+          ${paper.repo_url ? `<a href="${escapeHtml(paper.repo_url)}" target="_blank" rel="noreferrer">Code</a>` : ""}
+        </div>
       </div>
-      <dl>
-        <div><dt>Method Family</dt><dd>${escapeHtml(paper.method_family || "未分类")}</dd></div>
-        <div><dt>Method</dt><dd>${escapeHtml(paper.method || "未提取")}</dd></div>
-        <div><dt>Key Finding</dt><dd>${escapeHtml(paper.key_finding || "未提取")}</dd></div>
-        <div><dt>Evaluation Signal</dt><dd>${escapeHtml(paper.evaluation_signal || "摘要未提及")}</dd></div>
-        <div><dt>Failure Mode</dt><dd>${escapeHtml(paper.failure_mode || "摘要未提及")}</dd></div>
-        <div><dt>Idea Hook</dt><dd>${escapeHtml(paper.idea_hook || "暂不明显")}</dd></div>
-        <div><dt>Direction Fit</dt><dd>${escapeHtml(paper.direction_fit || "未提取")}</dd></div>
-      </dl>
-      <div class="paper-actions">
-        <button class="detail-btn" type="button" data-detail-index="${index}">详情</button>
-        <a href="${escapeHtml(paper.url)}" target="_blank" rel="noreferrer">arXiv</a>
-        ${paper.pdf_url ? `<a href="${escapeHtml(paper.pdf_url)}" target="_blank" rel="noreferrer">PDF</a>` : ""}
-        ${paper.repo_url ? `<a href="${escapeHtml(paper.repo_url)}" target="_blank" rel="noreferrer">Code</a>` : ""}
-      </div>
-      ${authors ? `<p class="paper-authors">${escapeHtml(authors)}</p>` : ""}
+      <aside class="insight-list" aria-label="结构化信号">
+        ${insight("关键发现", paper.key_finding)}
+        ${insight("评测信号", paper.evaluation_signal)}
+        ${insight("失败模式", paper.failure_mode)}
+        ${insight("Idea Hook", paper.idea_hook)}
+      </aside>
     </article>
   `;
 }
@@ -285,9 +351,10 @@ async function loadPapers() {
     limit: "180",
   });
   const data = await fetchJson(`/api/papers?${params.toString()}`);
-  state.visiblePapers = data.papers;
-  $("paperCount").textContent = `${data.papers.length} papers`;
-  $("papers").innerHTML = data.papers.map((paper, index) => paperCard(paper, index)).join("") || `<p class="empty">没有匹配论文</p>`;
+  const papers = state.direction === "all" ? mergeDuplicatePapers(data.papers) : data.papers;
+  state.visiblePapers = papers;
+  $("paperCount").textContent = state.direction === "all" ? `${papers.length} 篇去重论文` : `${papers.length} 篇论文`;
+  $("papers").innerHTML = papers.map((paper, index) => paperCard(paper, index)).join("") || `<p class="empty">没有匹配论文</p>`;
 }
 
 function openPaperDetail(index) {
@@ -302,11 +369,11 @@ function openPaperDetail(index) {
         <h2>${escapeHtml(paper.title)}</h2>
         ${paper.title_zh ? `<p>${escapeHtml(paper.title_zh)}</p>` : ""}
       </div>
-      <span class="priority ${escapeHtml(paper.read_priority)}">${escapeHtml(paper.read_priority || "low")}</span>
+      <span class="priority ${escapeHtml(paper.read_priority || "low")}">${escapeHtml(paper.read_priority || "low")}</span>
     </div>
     <p class="paper-authors">${escapeHtml(authors)}</p>
     <div class="paper-meta">
-      <span class="tag">${escapeHtml(paper.direction_name)}</span>
+      ${directionBadges(paper)}
       <span class="tag">${escapeHtml(paper.week)}</span>
       <span class="tag">${escapeHtml(paper.method_family || paper.theme || "未分类")}</span>
       ${paper.has_code ? `<span class="tag code">代码</span>` : ""}
@@ -318,17 +385,17 @@ function openPaperDetail(index) {
       ${paper.abstract ? `<details><summary>英文摘要</summary><p>${escapeHtml(paper.abstract)}</p></details>` : ""}
     </section>
     <dl class="detail-grid">
-      ${detailRow("Problem", paper.problem)}
-      ${detailRow("Method", paper.method)}
-      ${detailRow("Contribution", paper.contribution)}
-      ${detailRow("Key Finding", paper.key_finding)}
-      ${detailRow("Method Family", paper.method_family)}
-      ${detailRow("Edit Target", paper.edit_target)}
-      ${detailRow("Evaluation Signal", paper.evaluation_signal)}
-      ${detailRow("Failure Mode", paper.failure_mode)}
+      ${detailRow("问题", paper.problem)}
+      ${detailRow("方法", paper.method)}
+      ${detailRow("贡献", paper.contribution)}
+      ${detailRow("关键发现", paper.key_finding)}
+      ${detailRow("方法族", paper.method_family)}
+      ${detailRow("编辑对象", paper.edit_target)}
+      ${detailRow("评测信号", paper.evaluation_signal)}
+      ${detailRow("失败模式", paper.failure_mode)}
       ${detailRow("Idea Hook", paper.idea_hook)}
-      ${detailRow("Direction Fit", paper.direction_fit)}
-      ${detailRow("Limitations", paper.limitations)}
+      ${detailRow("方向契合", paper.direction_fit)}
+      ${detailRow("局限", paper.limitations)}
     </dl>
     <section class="detail-section">
       <h3>Baselines</h3>

@@ -1,15 +1,17 @@
 :root {
-  --bg: #f5f7f4;
+  --bg: #f5f6f3;
   --surface: #ffffff;
-  --surface-2: #edf1ee;
-  --text: #1e2623;
-  --muted: #67716c;
-  --line: #dce4df;
+  --surface-2: #eef3ef;
+  --surface-3: #f8faf8;
+  --text: #17201c;
+  --muted: #64706a;
+  --line: #d8e2dc;
   --green: #2f7d62;
   --blue: #3867a6;
   --red: #a64f3c;
   --gold: #9a6b20;
-  --shadow: 0 12px 28px rgba(37, 49, 44, 0.08);
+  --purple: #6f5aa8;
+  --shadow: 0 10px 24px rgba(35, 45, 40, 0.07);
 }
 
 * {
@@ -21,22 +23,28 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
 }
 
 .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  padding: 24px 32px;
+  padding: 18px 32px;
   border-bottom: 1px solid var(--line);
-  background: var(--surface);
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
 }
 
-h1, h2, p {
+h1,
+h2,
+h3,
+p {
   margin: 0;
 }
 
@@ -50,7 +58,7 @@ h2 {
   line-height: 1.25;
 }
 
-#subtitle,
+.brand p,
 .paper-tools p {
   color: var(--muted);
   margin-top: 6px;
@@ -66,7 +74,7 @@ h2 {
 select,
 input,
 button {
-  height: 38px;
+  min-height: 38px;
   border: 1px solid var(--line);
   border-radius: 6px;
   background: var(--surface);
@@ -80,12 +88,18 @@ input {
 }
 
 button {
-  width: 38px;
   cursor: pointer;
 }
 
+.icon-button {
+  width: 38px;
+  padding: 0;
+}
+
 main {
-  padding: 24px 32px 40px;
+  max-width: 1520px;
+  margin: 0 auto;
+  padding: 24px 32px 44px;
 }
 
 .overview {
@@ -117,8 +131,9 @@ main {
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1.25fr 1fr;
+  grid-template-columns: minmax(0, 1.12fr) minmax(360px, 0.88fr);
   gap: 16px;
+  align-items: start;
 }
 
 .panel {
@@ -173,43 +188,60 @@ main {
 
 .direction-card {
   border: 1px solid var(--line);
+  border-left: 4px solid var(--green);
   border-radius: 8px;
-  padding: 12px;
+  padding: 12px 14px;
+  background: var(--surface-3);
 }
 
 .direction-card h3 {
-  margin: 0 0 8px;
+  margin-bottom: 8px;
   font-size: 14px;
 }
 
 .direction-card p {
   color: var(--muted);
   font-size: 12px;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 .direction-stats {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   color: var(--muted);
   font-size: 12px;
   margin-top: 10px;
 }
 
-.chip-cloud {
+.chip-cloud,
+.paper-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
+}
+
+.chip-cloud {
+  align-items: flex-start;
 }
 
 .chip {
+  width: auto;
+  min-height: 30px;
   border: 1px solid var(--line);
   background: var(--surface-2);
   color: var(--text);
   border-radius: 999px;
-  padding: 6px 10px;
+  padding: 5px 10px;
   font-size: 12px;
   cursor: pointer;
+  white-space: nowrap;
+}
+
+.chip strong {
+  color: var(--muted);
+  font-weight: 600;
+  margin-left: 4px;
 }
 
 .chip.active {
@@ -227,9 +259,11 @@ main {
 }
 
 .compact-list li {
+  display: grid;
+  gap: 5px;
   color: var(--muted);
   font-size: 13px;
-  line-height: 1.45;
+  line-height: 1.5;
   border-bottom: 1px solid var(--line);
   padding-bottom: 10px;
 }
@@ -246,6 +280,7 @@ main {
 
 .paper-section {
   margin-top: 18px;
+  scroll-margin-top: 142px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -253,35 +288,61 @@ main {
 }
 
 .paper-tools {
+  position: sticky;
+  top: 75px;
+  z-index: 8;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 16px;
   padding: 16px;
   border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
 }
 
 #searchInput {
-  width: min(520px, 48vw);
+  width: min(560px, 48vw);
 }
 
 .papers {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: 1fr;
+  gap: 12px;
   padding: 16px;
 }
 
 .paper-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.85fr);
+  gap: 18px;
   border: 1px solid var(--line);
+  border-left: 4px solid transparent;
   border-radius: 8px;
-  padding: 14px;
+  padding: 16px;
+  min-width: 0;
+  background: var(--surface);
+}
+
+.paper-priority-high {
+  border-left-color: var(--red);
+}
+
+.paper-priority-medium {
+  border-left-color: var(--gold);
+}
+
+.paper-priority-low {
+  border-left-color: var(--blue);
+}
+
+.paper-main {
   min-width: 0;
 }
 
 .paper-card h3 {
-  margin: 0;
-  font-size: 15px;
+  margin-top: 8px;
+  font-size: 17px;
   line-height: 1.35;
 }
 
@@ -298,10 +359,7 @@ main {
 }
 
 .paper-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 10px 0;
+  margin: 0;
 }
 
 .tag {
@@ -310,6 +368,7 @@ main {
   color: var(--muted);
   padding: 4px 7px;
   font-size: 11px;
+  line-height: 1.2;
 }
 
 .tag.code {
@@ -327,24 +386,25 @@ main {
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0;
+  line-height: 1.2;
   color: #fff;
   background: #495057;
 }
 
 .venue-iclr {
-  background: #6f5aa8;
+  background: var(--purple);
 }
 
 .venue-icml {
-  background: #3867a6;
+  background: var(--blue);
 }
 
 .venue-acl {
-  background: #2f7d62;
+  background: var(--green);
 }
 
 .venue-emnlp {
-  background: #a64f3c;
+  background: var(--red);
 }
 
 .venue-naacl,
@@ -356,13 +416,14 @@ main {
 .venue-aaai,
 .venue-neurips,
 .venue-colm {
-  background: #9a6b20;
+  background: var(--gold);
 }
 
 .priority {
   border-radius: 5px;
   padding: 4px 7px;
   font-size: 11px;
+  line-height: 1.2;
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -382,28 +443,55 @@ main {
   color: var(--blue);
 }
 
-.empty-inline {
-  color: var(--muted);
+.card-abstract {
+  color: #33413b;
+  background: var(--surface-3);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 10px 11px;
   font-size: 13px;
-  padding: 6px 0;
+  line-height: 1.65;
+  margin-top: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.paper-card dl {
+.insight-list {
   display: grid;
   gap: 8px;
-  margin: 0;
+  align-content: start;
+  border-left: 1px solid var(--line);
+  padding-left: 18px;
 }
 
-.paper-card dt {
+.insight {
+  display: grid;
+  gap: 5px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.insight:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.insight span {
   color: var(--muted);
   font-size: 11px;
   text-transform: uppercase;
 }
 
-.paper-card dd {
-  margin: 2px 0 0;
+.insight p {
+  color: var(--text);
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .paper-actions {
@@ -411,13 +499,13 @@ main {
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 12px;
+  margin-top: 14px;
   font-size: 13px;
 }
 
 .detail-btn {
   width: auto;
-  height: 28px;
+  min-height: 30px;
   padding: 0 10px;
   color: var(--blue);
   background: var(--surface-2);
@@ -435,12 +523,13 @@ main {
   margin-top: 10px;
 }
 
+.empty,
+.empty-inline,
 .muted {
   color: var(--muted);
 }
 
 .empty {
-  color: var(--muted);
   padding: 24px;
 }
 
@@ -479,8 +568,9 @@ main {
   top: 0;
   float: right;
   width: 34px;
-  height: 34px;
+  min-height: 34px;
   margin-left: 12px;
+  padding: 0;
   font-size: 22px;
   line-height: 1;
 }
@@ -575,12 +665,48 @@ main {
 
   .overview,
   .dashboard-grid,
-  .papers,
   .detail-grid {
     grid-template-columns: 1fr;
   }
 
+  .overview {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .paper-card {
+    grid-template-columns: 1fr;
+  }
+
+  .insight-list {
+    border-left: none;
+    border-top: 1px solid var(--line);
+    padding-left: 0;
+    padding-top: 12px;
+  }
+
   #searchInput {
     width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .topbar {
+    padding: 14px 16px;
+  }
+
+  .metric strong {
+    font-size: 24px;
+  }
+
+  .paper-card {
+    padding: 13px;
+  }
+
+  .modal {
+    padding: 10px;
+  }
+
+  .modal-card {
+    padding: 16px;
   }
 }

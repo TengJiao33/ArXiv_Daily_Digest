@@ -8,21 +8,21 @@
 </head>
 <body>
   <header class="topbar">
-    <div>
+    <div class="brand">
       <h1>Knowledge Editing Radar</h1>
       <p id="subtitle">Loading editing / unlearning / reliability signals...</p>
     </div>
     <div class="toolbar">
       <select id="weekSelect" aria-label="week"></select>
       <select id="directionSelect" aria-label="direction"></select>
-      <button id="refreshBtn" type="button" title="Refresh">↻</button>
+      <button id="refreshBtn" class="icon-button" type="button" title="Refresh" aria-label="Refresh">↻</button>
     </div>
   </header>
 
   <main>
     <section class="overview">
       <article class="metric">
-        <span>本周论文</span>
+        <span>去重论文</span>
         <strong id="totalPapers">0</strong>
       </article>
       <article class="metric">
@@ -30,7 +30,7 @@
         <strong id="totalCode">0</strong>
       </article>
       <article class="metric">
-        <span>追踪方向</span>
+        <span>方向命中</span>
         <strong id="directionCount">0</strong>
       </article>
       <article class="metric">
@@ -91,19 +91,19 @@
 
       <div class="panel">
         <div class="panel-head">
-          <h2>有代码论文</h2>
+          <h2>代码资源</h2>
         </div>
         <ul id="codeList" class="compact-list"></ul>
       </div>
     </section>
 
-    <section class="paper-section">
+    <section id="papers-section" class="paper-section">
       <div class="paper-tools">
         <div>
           <h2>论文浏览</h2>
           <p id="paperCount">0 papers</p>
         </div>
-        <input id="searchInput" type="search" placeholder="搜索 title / method / failure / idea / family">
+        <input id="searchInput" type="search" placeholder="搜索标题 / 中文摘要 / 方法族 / failure / idea">
       </div>
       <div id="papers" class="papers"></div>
     </section>
