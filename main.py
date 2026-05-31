@@ -137,6 +137,10 @@ def run():
         new_papers = [p for p in papers if extract_arxiv_id(p.get("url", "")) not in existing_ids]
         print(f"  → 去重后 {len(new_papers)} 篇需要处理（已存在 {len(papers) - len(new_papers)} 篇）")
 
+        if len(new_papers) > max_papers:
+            print(f"  → 本次处理上限 {max_papers} 篇，避免首次 citation expansion 过量调用豆包")
+            new_papers = new_papers[:max_papers]
+
         if not new_papers:
             print(f"[{direction_id}] ℹ️ 全部已存在，跳过")
             daily_stats[direction_id] = 0

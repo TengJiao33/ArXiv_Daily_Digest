@@ -59,11 +59,12 @@ RA 工作是现实入口，但系统本身不把具体人名或组名写成显�
 2. **引用追踪**：通过 Semantic Scholar 追踪种子论文的被引者。
 3. **相关性过滤**：按方向配置过滤泛领域噪声。
 4. **去重**：跳过已存在论文，只对新论文调 API。
-5. **代码检测**：检查是否有 GitHub 仓库和 stars。
-6. **结构化提取**：豆包从摘要提取 `title_zh / abstract_zh / problem / method / method_family / edit_target / evaluation_signal / failure_mode / idea_hook / read_priority / direction_fit` 等字段。
-7. **Venue 标注**：先读 `config/venue_overrides.yaml` 的人工确认标签，再用 Semantic Scholar 补全 ICLR / ICML / ACL / EMNLP / NeurIPS / AAAI 等 venue。
-8. **存储**：追加写入 `data/{direction}/{ISO-week}/papers.jsonl`。
-9. **周报与版图**：每周日自动生成 `weekly_digest.md` 和 `landscape.md`。
+5. **处理上限**：每个方向最多处理 `max_papers` 篇新论文，避免首次 citation expansion 过量消耗豆包额度。
+6. **代码检测**：检查是否有 GitHub 仓库和 stars。
+7. **结构化提取**：豆包从摘要提取 `title_zh / abstract_zh / problem / method / method_family / edit_target / evaluation_signal / failure_mode / idea_hook / read_priority / direction_fit` 等字段。
+8. **Venue 标注**：先读 `config/venue_overrides.yaml` 的人工确认标签，再用 Semantic Scholar 补全 ICLR / ICML / ACL / EMNLP / NeurIPS / AAAI 等 venue。
+9. **存储**：追加写入 `data/{direction}/{ISO-week}/papers.jsonl`。
+10. **周报与版图**：每周日自动生成 `weekly_digest.md` 和 `landscape.md`。
 
 ---
 
