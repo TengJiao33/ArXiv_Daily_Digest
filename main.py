@@ -8,6 +8,7 @@ Knowledge Editing Direction Radar — 知识编辑方向定向雷达
 """
 
 import os
+import sys
 import yaml
 import concurrent.futures
 from datetime import datetime, date
@@ -29,6 +30,12 @@ from notifier import HubNotifier
 from relevance_filter import filter_relevant_papers
 from hf_daily import get_trending_top_n, match_hf_upvotes
 from venue_resolver import annotate_venues
+
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 
 def load_config():
