@@ -1,5 +1,5 @@
 """
-Knowledge Editing Direction Radar — 数据存储模块
+ArXiv_Daily_Digest — 数据存储模块
 按研究方向 + ISO 周组织数据，使用 JSONL 格式追加写入。
 按方向做历史去重，优先使用 ArXiv ID，必要时回退到 URL 或标题。
 """

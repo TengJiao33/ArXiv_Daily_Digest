@@ -1,5 +1,5 @@
 """
-Knowledge Editing Direction Radar — 周报生成模块
+ArXiv_Daily_Digest — 周报生成模块
 每周日自动汇总本周各方向的论文数据，生成面向读论文排序和选题判断的 Markdown 周报。
 """
 
@@ -196,7 +196,7 @@ def generate_weekly_digest(direction_id, direction_name, target_date=None):
         lines.append("")
 
     lines.append("---")
-    lines.append(f"*自动生成于 {date.today():%Y-%m-%d} | Knowledge Editing Direction Radar*")
+    lines.append(f"*自动生成于 {date.today():%Y-%m-%d} | ArXiv_Daily_Digest*")
 
     os.makedirs(week_dir, exist_ok=True)
     digest_path = os.path.join(week_dir, "weekly_digest.md")

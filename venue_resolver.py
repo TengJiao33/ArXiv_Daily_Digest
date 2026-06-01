@@ -1,5 +1,5 @@
 """
-Venue labeling for Knowledge Editing Direction Radar.
+Venue labeling for ArXiv_Daily_Digest.
 
 The crawler still starts from arXiv/Semantic Scholar, but accepted papers often
 need venue context to become useful in a research radar. This module first uses

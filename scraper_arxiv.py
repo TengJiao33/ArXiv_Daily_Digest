@@ -1,5 +1,5 @@
 """
-ArXiv 论文抓取模块（Knowledge Editing Direction Radar 版）
+ArXiv_Daily_Digest — ArXiv 论文抓取模块
 支持从 directions.yaml 读取多个研究方向，逐方向定向搜索。
 """
 

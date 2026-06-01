@@ -1,5 +1,5 @@
 """
-Knowledge Editing Direction Radar — 论文结构化信息提取模块
+ArXiv_Daily_Digest — 论文结构化信息提取模块
 使用豆包 AI 从论文摘要中提取 problem/method/limitations 等结构化字段。
 这是整个系统的"翻译层"——把英文摘要变成可分析的结构化数据。
 """

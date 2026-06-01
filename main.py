@@ -1,8 +1,9 @@
 """
-Knowledge Editing Direction Radar.
+ArXiv_Daily_Digest.
 
-Daily pipeline: load direction config, collect papers, enrich metadata, extract
-research signals, persist JSONL records, and generate weekly artifacts.
+Daily pipeline for the Knowledge Editing Radar dashboard: load direction config,
+collect papers, enrich metadata, extract research signals, persist JSONL records,
+and generate weekly artifacts.
 """
 
 import copy
@@ -116,7 +117,7 @@ def remember_enriched_papers(papers, enrichment_cache):
 def run():
     """主流程"""
     print("=" * 55)
-    print("🛰️  Knowledge Editing Direction Radar")
+    print("🛰️  ArXiv_Daily_Digest")
     print("=" * 55)
 
     # 1. 加载配置
@@ -260,7 +261,7 @@ def run():
     else:
         print(f"\n💡 提示：周报将在每周日自动生成。")
 
-    print(f"\n🏁 Knowledge Editing Direction Radar 采集完成")
+    print(f"\n🏁 ArXiv_Daily_Digest 采集完成")
 
 
 def build_daily_push_lines(directions, daily_stats, target_date=None):
@@ -268,7 +269,7 @@ def build_daily_push_lines(directions, daily_stats, target_date=None):
     if target_date is None:
         target_date = date.today()
 
-    lines = [f"📡 Knowledge Editing Radar 每日速报 | {target_date:%m/%d}"]
+    lines = [f"📡 ArXiv_Daily_Digest 每日速报 | {target_date:%m/%d}"]
     lines.append("")
 
     # 各方向新增统计

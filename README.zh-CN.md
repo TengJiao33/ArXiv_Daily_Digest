@@ -1,4 +1,4 @@
-# Knowledge Editing Radar
+# ArXiv_Daily_Digest
 
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 ![Dashboard](https://img.shields.io/badge/Dashboard-Static%20HTML%20%2B%20Local%20API-2f7d62)
@@ -8,7 +8,7 @@
 
 [English](README.md)
 
-Knowledge Editing Radar 是面向知识编辑、模型遗忘与编辑可靠性的定向研究情报系统。它负责采集近期论文，补全代码、会议、引用和社区热度信号，抽取结构化研究字段，并通过本地 dashboard 形成日常阅读和选题判断入口。
+ArXiv_Daily_Digest 是研究论文 digest 与 dashboard 项目。当前核心界面是 Knowledge Editing Radar dashboard，聚焦知识编辑、模型遗忘与编辑可靠性。它负责采集近期论文，补全代码、会议、引用和社区热度信号，抽取结构化研究字段，并通过本地 dashboard 形成日常阅读和选题判断入口。
 
 ## 核心功能
 
@@ -22,7 +22,7 @@ Knowledge Editing Radar 是面向知识编辑、模型遗忘与编辑可靠性�
 
 ## Dashboard
 
-Dashboard 是核心功能，不再作为隐藏工具存在。
+Knowledge Editing Radar dashboard 是核心功能，不再作为隐藏工具存在。
 
 直接打开根目录入口：
 

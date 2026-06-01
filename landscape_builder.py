@@ -1,5 +1,5 @@
 """
-Knowledge Editing Direction Radar — 研究版图生成模块
+ArXiv_Daily_Digest — 研究版图生成模块
 从每周 JSONL 数据中读取论文的 key_finding、method_family 和 theme 字段，
 优先按 method_family 分组，生成一份结构化的"研究版图" landscape.md。
 
@@ -159,7 +159,7 @@ def generate_landscape(direction_id, direction_name, target_date=None):
 
     # 底部
     lines.append("---")
-    lines.append(f"*Knowledge Editing Direction Radar 自动生成 | {date.today():%Y-%m-%d}*")
+    lines.append(f"*ArXiv_Daily_Digest 自动生成 | {date.today():%Y-%m-%d}*")
 
     landscape_text = "\n".join(lines)
 

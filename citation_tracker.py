@@ -1,5 +1,5 @@
 """
-Knowledge Editing Direction Radar — Semantic Scholar 引用追踪模块
+ArXiv_Daily_Digest — Semantic Scholar 引用追踪模块
 通过种子论文的被引列表发现新论文，弥补关键词搜索的盲区。
 Semantic Scholar API 免费、无需 key。
 """

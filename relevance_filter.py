@@ -1,5 +1,5 @@
 """
-Knowledge Editing Direction Radar — 方向相关性过滤
+ArXiv_Daily_Digest — 方向相关性过滤
 在 ArXiv 搜索与引用追踪合并后，按方向配置做轻量二次过滤。
 """
 

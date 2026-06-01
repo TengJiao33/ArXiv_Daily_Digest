@@ -1,4 +1,4 @@
-# Knowledge Editing Radar
+# ArXiv_Daily_Digest
 
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 ![Dashboard](https://img.shields.io/badge/Dashboard-Static%20HTML%20%2B%20Local%20API-2f7d62)
@@ -8,7 +8,7 @@
 
 [中文](README.zh-CN.md)
 
-Knowledge Editing Radar is a focused research-intelligence system for knowledge editing, model unlearning, and editing reliability. It collects recent papers, enriches them with reproducibility and venue signals, extracts structured research fields, and exposes the result through a first-class local dashboard.
+ArXiv_Daily_Digest is a research digest and dashboard project. Its current core surface is the Knowledge Editing Radar dashboard, focused on knowledge editing, model unlearning, and editing reliability. It collects recent papers, enriches them with reproducibility and venue signals, extracts structured research fields, and exposes the result through a first-class local dashboard.
 
 ## Core Features
 
@@ -22,7 +22,7 @@ Knowledge Editing Radar is a focused research-intelligence system for knowledge 
 
 ## Dashboard
 
-The dashboard is a core product surface, not a side utility.
+The Knowledge Editing Radar dashboard is a core product surface, not a side utility.
 
 Open the repository-root entry:
 

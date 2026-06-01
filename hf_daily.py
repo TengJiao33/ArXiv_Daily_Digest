@@ -1,5 +1,5 @@
 """
-Knowledge Editing Direction Radar — HuggingFace Daily Papers 补充源
+ArXiv_Daily_Digest — HuggingFace Daily Papers 补充源
 从 HF Daily Papers API 拉取每日 trending 论文，提供 upvote 信号。
 不替代 ArXiv 主流程，仅作为"社区热度"补充信号。
 

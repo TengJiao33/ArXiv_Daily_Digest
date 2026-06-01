@@ -1,5 +1,5 @@
 """
-Knowledge Editing Direction Radar local dashboard.
+ArXiv_Daily_Digest local dashboard.
 
 Run:
     python radar_dashboard/app.py
@@ -358,7 +358,7 @@ def main():
     host = "127.0.0.1"
     port = int(os.environ.get("RADAR_DASHBOARD_PORT", "7860"))
     server = ThreadingHTTPServer((host, port), RadarHandler)
-    print(f"Knowledge Editing Radar Dashboard running at http://{host}:{port}")
+    print(f"ArXiv_Daily_Digest dashboard running at http://{host}:{port}")
     server.serve_forever()
 
 
