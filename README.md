@@ -1,147 +1,87 @@
-# Knowledge Editing Direction Radar
+# Knowledge Editing Radar
 
-> 前身：ArXiv Daily Digest / Research Radar
-> 现在：围绕 **knowledge editing / unlearning / reliability** 的定向研究雷达。
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+![Dashboard](https://img.shields.io/badge/Dashboard-Static%20HTML%20%2B%20Local%20API-2f7d62)
+![Automation](https://img.shields.io/badge/Automation-GitHub%20Actions-2088FF?logo=githubactions&logoColor=white)
+![Scope](https://img.shields.io/badge/Scope-Knowledge%20Editing%20Radar-3867a6)
+![Data](https://img.shields.io/badge/Data-JSONL%20Research%20Signals-7a5bb3)
 
-2026-05-31 起，这个项目从“帮我寻找研究方向”的探索工具，转为“在确定研究空间内持续追踪问题、方法、评测和选题钩子”的研究基础设施。
+[中文](README.zh-CN.md)
 
----
+Knowledge Editing Radar is a focused research-intelligence system for knowledge editing, model unlearning, and editing reliability. It collects recent papers, enriches them with reproducibility and venue signals, extracts structured research fields, and exposes the result through a first-class local dashboard.
 
-## 这个项目是什么？
+## Core Features
 
-Knowledge Editing Direction Radar 每天自动追踪知识编辑、模型遗忘和编辑可靠性相关论文，并把论文摘要转换成适合研究决策的结构化信号。
+| Feature | Role |
+| --- | --- |
+| Static dashboard | Primary reading surface. Open `index.html` from the repository root, no server required. |
+| Daily collection | Scheduled GitHub Actions workflow for ArXiv search, citation expansion, relevance filtering, and storage. |
+| Structured extraction | Converts abstracts into method family, edit target, evaluation signal, failure mode, idea hook, and priority fields. |
+| Evidence signals | Tracks code repositories, GitHub stars, Hugging Face Daily Paper upvotes, Semantic Scholar citations, and venue labels. |
+| Weekly artifacts | Generates `weekly_digest.md` and `landscape.md` for each active research direction. |
 
-它关心的不只是“今天有什么新论文”，而是：
+## Dashboard
 
-- 这篇论文属于哪个 **method family**
-- 它编辑或遗忘的对象是什么
-- 它的评测信号是 locality、generality、specificity、portability、robustness，还是 retain-forget tradeoff
-- 它暴露了什么 failure mode
-- 它有没有代码、benchmark 或可复现工具
-- 它能不能接出一个值得继续想的 idea hook
+The dashboard is a core product surface, not a side utility.
 
-RA 工作是现实入口，但系统本身不把具体人名或组名写成显式规则；默认追踪的是学术方向、方法生态和可复现证据。
+Open the repository-root entry:
 
----
-
-## 当前追踪方向
-
-在 `config/directions.yaml` 中配置，当前四条 active 子线是：
-
-| 方向 | 说明 | 代表种子 |
-|------|------|----------|
-| **知识编辑核心方法** | ROME、MEMIT、MEND、SERAC、KN 等参数/记忆层面的知识编辑方法与后续改进 | KN、MEND、ROME、SERAC、MEMIT |
-| **模型遗忘与反知识编辑** | LLM unlearning、选择性遗忘、隐私/安全知识移除、保留-遗忘权衡 | TOFU |
-| **编辑可靠性与评测** | locality、generality、specificity、portability、robustness、side effect、sequential editing | Editing LLMs survey、AlphaEdit |
-| **编辑框架、工具与基准** | EasyEdit、EasyEdit2、benchmark、toolkit、方法集成与复现工具链 | EasyEdit、EasyEdit2、AlphaEdit |
-
-第一版 seed anchors：
-
-- KN: `2104.08696`
-- MEND: `2110.11309`
-- ROME: `2202.05262`
-- SERAC: `2206.06520`
-- MEMIT: `2210.07229`
-- Editing LLMs survey: `2305.13172`
-- EasyEdit: `2308.07269`
-- Comprehensive KE study: `2401.01286`
-- TOFU: `2401.06121`
-- AlphaEdit: `2410.02355`
-- EasyEdit2: `2504.15133`
-
----
-
-## 核心流程
-
-每天 GitHub Actions 自动运行：
-
-1. **定向搜索**：按四条子线的 ArXiv 查询语句搜索最新论文。
-2. **引用追踪**：通过 Semantic Scholar 追踪种子论文的被引者。
-3. **相关性过滤**：按方向配置过滤泛领域噪声。
-4. **去重**：跳过已存在论文，只对新论文调 API。
-5. **处理上限**：每个方向最多处理 `max_papers` 篇新论文，避免首次 citation expansion 过量消耗豆包额度。
-6. **代码检测**：检查是否有 GitHub 仓库和 stars。
-7. **结构化提取**：豆包从摘要提取 `title_zh / abstract_zh / problem / method / method_family / edit_target / evaluation_signal / failure_mode / idea_hook / read_priority / direction_fit` 等字段。
-8. **Venue 标注**：先读 `config/venue_overrides.yaml` 的人工确认标签，再用 Semantic Scholar 补全 ICLR / ICML / ACL / EMNLP / NeurIPS / AAAI 等 venue。
-9. **存储**：追加写入 `data/{direction}/{ISO-week}/papers.jsonl`。
-10. **周报与版图**：每周日自动生成 `weekly_digest.md` 和 `landscape.md`。
-
----
-
-## 本地 Dashboard
-
-默认使用静态入口，不需要启动端口：
-
-```bash
-python radar_dashboard/build_static.py
+```text
+index.html
 ```
+
+That file redirects to:
 
 ```text
 radar_dashboard/static/index.html
 ```
 
-需要实时 API 时，也可以启动 server mode：
+The static dashboard reads `radar_dashboard/static/data.js`, so it works directly from the filesystem. After new data is collected, refresh the static snapshot with:
+
+```bash
+python radar_dashboard/build_static.py
+```
+
+For API-backed local development:
 
 ```bash
 python radar_dashboard/app.py
 ```
 
-默认地址是 `http://127.0.0.1:7860`。
-
-Dashboard 默认读取当前 `directions.yaml` 中的 active 方向，因此旧探索期数据不会占据主视图。它会展示：
-
-- 本周论文、代码论文和方向数量
-- 近几周趋势
-- 方法族分布
-- failure mode 聚合
-- evaluation signal 聚合
-- ICLR / ICML / ACL / EMNLP 等彩色 venue 标签
-- idea hook 列表
-- 带代码论文
-- 可按方向、周、method family 和关键词筛选的论文卡片；点开详情后展示标题、中文标题、中文摘要、英文摘要、提取字段、数据集、baseline 和链接
-
----
-
-## 数据与归档
-
-旧目录仍保留在 `data/` 下，不删除、不迁移：
-
-- `data/llm-truthfulness/`
-- `data/representation-engineering/`
-- `data/mechanistic-interpretability/`
-
-这些是探索期 archive，记录从泛化找方向到定向研究空间的转变。新数据会按新的四条方向自动创建目录。
-
----
-
-## 项目结构
+Default URL:
 
 ```text
-ArXiv_Daily_Digest/
-├── config/
-│   ├── directions.yaml          # 当前 active 研究方向
-│   └── venue_overrides.yaml      # 人工确认的会议/期刊标签
-├── data/                        # JSONL 数据、周报、研究版图
-├── radar_dashboard/             # 本地研究视图
-├── main.py                      # 主流程编排
-├── scraper_arxiv.py             # ArXiv 定向搜索
-├── citation_tracker.py          # Semantic Scholar 引用追踪
-├── relevance_filter.py          # 方向相关性过滤
-├── processor.py                 # 豆包结构化提取
-├── doubao_client.py             # 豆包 API 客户端
-├── storage.py                   # JSONL 存储与全局去重
-├── digest_builder.py            # 周报生成
-├── landscape_builder.py         # 方法版图生成
-├── code_hunter.py               # GitHub 仓库检测
-├── hf_daily.py                  # HuggingFace Daily Papers 热度补充
-├── venue_resolver.py            # A 会 venue 标签识别与补全
-├── notifier.py                  # Server 酱 / WXPusher 推送
-└── .github/workflows/daily.yml  # 每日自动采集
+http://127.0.0.1:7860
 ```
 
----
+## Research Scope
 
-## 快速开始
+Active directions are defined in `config/directions.yaml`.
+
+| Direction | Focus |
+| --- | --- |
+| Knowledge editing core methods | ROME, MEMIT, MEND, SERAC, Knowledge Neurons, locate-then-edit methods, and mass editing. |
+| Model unlearning | LLM unlearning, selective forgetting, privacy/safety knowledge removal, and retain-forget tradeoffs. |
+| Editing reliability and evaluation | Locality, generality, specificity, portability, robustness, side effects, and long-term stability. |
+| Editing frameworks, tooling, and benchmarks | EasyEdit, EasyEdit2, benchmarks, toolkits, integration layers, and reproducibility infrastructure. |
+
+## Pipeline
+
+```mermaid
+flowchart LR
+  A["directions.yaml"] --> B["ArXiv search"]
+  A --> C["Semantic Scholar citation expansion"]
+  B --> D["Relevance filter"]
+  C --> D
+  D --> E["Deduplication"]
+  E --> F["Code, HF, venue enrichment"]
+  F --> G["Doubao structured extraction"]
+  G --> H["data/{direction}/{ISO-week}/papers.jsonl"]
+  H --> I["Static dashboard data.js"]
+  H --> J["Weekly digest and landscape"]
+```
+
+## Quick Start
 
 ```bash
 git clone https://github.com/TengJiao33/ArXiv_Daily_Digest.git
@@ -151,40 +91,67 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-配置 `.env`：
+Open the dashboard:
 
-```ini
-DOUBAO_API_KEY=你的_ark_api_key
-DOUBAO_ENDPOINT_ID=你的_endpoint_id
-GITHUB_TOKEN=ghp_你的_token
-SERVERCHAN_SENDKEY=你的_sendkey
+```text
+index.html
 ```
 
-运行采集：
+Run a collection cycle:
 
 ```bash
 python main.py
 ```
 
-注意：`python main.py` 会访问外部 API 并消耗豆包额度；本地查看已有数据只需要启动 dashboard。
+`python main.py` calls external APIs and may consume Doubao quota. Opening the static dashboard only reads local files.
 
----
+## Configuration
 
-## 自动化
+Create `.env` in the repository root:
 
-GitHub Actions 保持每日运行：北京时间 11:00。
+```ini
+DOUBAO_API_KEY=your_ark_api_key
+DOUBAO_ENDPOINT_ID=your_endpoint_id
+GITHUB_TOKEN=ghp_your_token
+SERVERCHAN_SENDKEY=optional_serverchan_key
+WXPUSHER_APP_TOKEN=optional_wxpusher_app_token
+WXPUSHER_UIDS=optional_wxpusher_uids
+```
 
-仓库 Secrets 需要配置：
+GitHub Actions uses the same secret names. The scheduled workflow runs daily at 03:00 UTC, which is 11:00 in Asia/Shanghai.
 
-- `DOUBAO_API_KEY`
-- `DOUBAO_ENDPOINT_ID`
-- `GITHUB_TOKEN`
-- 可选：`SERVERCHAN_SENDKEY`
-- 可选：`WXPUSHER_APP_TOKEN`
-- 可选：`WXPUSHER_UIDS`
+## Data Layout
 
----
+```text
+data/
+  knowledge-editing-core/
+    2026-W23/
+      papers.jsonl
+      weekly_digest.md
+      landscape.md
+  model-unlearning/
+  editing-reliability-evaluation/
+  editing-frameworks-tooling/
+```
+
+Historical exploration directories such as `data/llm-truthfulness/`, `data/representation-engineering/`, and `data/mechanistic-interpretability/` are preserved as archive data. The dashboard defaults to active directions from `config/directions.yaml`.
+
+## Repository Layout
+
+```text
+ArXiv_Daily_Digest/
+  index.html                    # Click-to-open dashboard entry
+  config/                       # Active directions and venue overrides
+  data/                         # JSONL records and generated research artifacts
+  radar_dashboard/              # Static dashboard and optional local API server
+  main.py                       # Daily collection pipeline
+  processor.py                  # Structured extraction
+  storage.py                    # JSONL persistence and direction-level deduplication
+  digest_builder.py             # Weekly digest generation
+  landscape_builder.py          # Weekly landscape generation
+  .github/workflows/daily.yml   # Scheduled collection workflow
+```
 
 ## License
 
-MIT License
+No license file is currently included.

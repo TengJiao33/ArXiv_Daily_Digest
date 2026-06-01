@@ -1,7 +1,7 @@
 """
 Knowledge Editing Direction Radar — 数据存储模块
 按研究方向 + ISO 周组织数据，使用 JSONL 格式追加写入。
-自动去重（基于 ArXiv ID）。
+按方向做历史去重，优先使用 ArXiv ID，必要时回退到 URL 或标题。
 """
 
 import os
@@ -19,6 +19,18 @@ def extract_arxiv_id(url):
     return match.group(1) if match else str(url)
 
 
+def normalize_paper_id(paper):
+    """生成稳定论文 ID，优先使用 arXiv ID，其次保留外部 URL，最后回退到标题。"""
+    for field in ("id", "arxiv_id", "url", "pdf_url"):
+        value = str(paper.get(field, "") or "").strip()
+        if not value:
+            continue
+        return extract_arxiv_id(value)
+
+    title = re.sub(r"\s+", " ", str(paper.get("title", "") or "").strip().lower())
+    return title
+
+
 def get_week_str(target_date=None):
     """获取 ISO 周字符串，如 '2026-W17'"""
     if target_date is None:
@@ -34,7 +46,7 @@ def get_week_dir(direction_id, target_date=None):
 
 
 def load_existing_ids(direction_id):
-    """加载该方向所有历史周已有的论文 ID 集合（用于全局去重）"""
+    """加载该方向所有历史周已有的论文 ID 集合。"""
     direction_dir = os.path.join(DATA_DIR, direction_id)
     ids = set()
     
@@ -50,7 +62,7 @@ def load_existing_ids(direction_id):
                     if line:
                         try:
                             paper = json.loads(line)
-                            ids.add(paper.get("id", ""))
+                            ids.add(normalize_paper_id(paper))
                         except json.JSONDecodeError:
                             continue
     return ids
@@ -70,7 +82,7 @@ def append_papers(direction_id, papers):
 
     with open(jsonl_path, "a", encoding="utf-8") as f:
         for paper in papers:
-            arxiv_id = extract_arxiv_id(paper.get("url", ""))
+            arxiv_id = normalize_paper_id(paper)
 
             if arxiv_id in existing_ids:
                 continue
@@ -111,20 +123,3 @@ def append_papers(direction_id, papers):
 
     return new_count
 
-
-def load_week_papers(direction_id, target_date=None):
-    """加载指定周的所有论文数据"""
-    week_dir = get_week_dir(direction_id, target_date)
-    jsonl_path = os.path.join(week_dir, "papers.jsonl")
-
-    papers = []
-    if os.path.exists(jsonl_path):
-        with open(jsonl_path, "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if line:
-                    try:
-                        papers.append(json.loads(line))
-                    except json.JSONDecodeError:
-                        continue
-    return papers

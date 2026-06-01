@@ -173,15 +173,3 @@ def generate_landscape(direction_id, direction_name, target_date=None):
           f"版图已生成 ({len(papers)} 篇, {len(family_groups)} 个方法族)")
     return landscape_path
 
-
-# ─── 命令行直接运行时，为所有方向生成版图 ──────────────────
-if __name__ == "__main__":
-    import yaml
-
-    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                               "config", "directions.yaml")
-    with open(config_path, "r", encoding="utf-8") as f:
-        config = yaml.safe_load(f)
-
-    for did, dconf in config.get("directions", {}).items():
-        generate_landscape(did, dconf["name"])

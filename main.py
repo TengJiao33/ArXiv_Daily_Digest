@@ -1,17 +1,16 @@
 """
-Knowledge Editing Direction Radar — 知识编辑方向定向雷达
-主流程：加载方向配置 → 逐方向 ArXiv 定向采集 → 豆包结构化提取 → JSONL 存储 → 周报生成
+Knowledge Editing Direction Radar.
 
-设计分工：
-  - 豆包（自动、便宜）：每日定向采集 + 结构化提取
-  - Claude（按需、强力）：你不定时带进来做深度分析与选题判断
+Daily pipeline: load direction config, collect papers, enrich metadata, extract
+research signals, persist JSONL records, and generate weekly artifacts.
 """
 
+import copy
 import os
 import sys
 import yaml
 import concurrent.futures
-from datetime import datetime, date
+from datetime import date
 from dotenv import load_dotenv
 
 # 确保 .env 从项目根目录加载（而非当前工作目录）
@@ -22,7 +21,7 @@ from scraper_arxiv import ArxivScraper
 from code_hunter import CodeHunter
 from processor import extract_batch
 from doubao_client import DoubaoClient
-from storage import append_papers, load_existing_ids, load_week_papers
+from storage import append_papers, load_existing_ids, normalize_paper_id
 from digest_builder import generate_weekly_digest
 from landscape_builder import generate_landscape
 from citation_tracker import track_all_seeds
@@ -61,6 +60,59 @@ def check_all_code(papers, hunter):
     return results
 
 
+ENRICHMENT_CACHE_FIELDS = [
+    "has_code",
+    "repo_url",
+    "repo_stars",
+    "hf_upvotes",
+    "venue",
+    "venue_year",
+    "venue_type",
+    "venue_url",
+    "venue_confidence",
+    "venue_source",
+    "extracted",
+    "extraction_depth",
+]
+
+
+def paper_identity(paper):
+    """Return a stable key for reusing expensive enrichment within one run."""
+    return normalize_paper_id(paper).lower()
+
+
+def apply_cached_enrichment(paper, cached_paper):
+    """Copy model/API-derived metadata while preserving this direction's source record."""
+    for field in ENRICHMENT_CACHE_FIELDS:
+        if field in cached_paper:
+            paper[field] = copy.deepcopy(cached_paper[field])
+
+    if not paper.get("citation_count") and cached_paper.get("citation_count"):
+        paper["citation_count"] = cached_paper["citation_count"]
+
+
+def split_cached_papers(papers, enrichment_cache):
+    """Apply cached enrichment and return papers that still need external calls."""
+    uncached = []
+    cached_count = 0
+    for paper in papers:
+        key = paper_identity(paper)
+        cached_paper = enrichment_cache.get(key)
+        if cached_paper:
+            apply_cached_enrichment(paper, cached_paper)
+            cached_count += 1
+        else:
+            uncached.append(paper)
+    return uncached, cached_count
+
+
+def remember_enriched_papers(papers, enrichment_cache):
+    for paper in papers:
+        key = paper_identity(paper)
+        if key and paper.get("extracted"):
+            enrichment_cache[key] = copy.deepcopy(paper)
+
+
 def run():
     """主流程"""
     print("=" * 55)
@@ -87,6 +139,7 @@ def run():
 
     # 3. 逐方向采集 + 提取 + 存储
     daily_stats = {}
+    enrichment_cache = {}
 
     for direction_id, direction_conf in directions.items():
         name = direction_conf["name"]
@@ -139,9 +192,8 @@ def run():
             continue
 
         # 先过滤掉已经存储过的论文，避免重复调豆包 API
-        existing_ids = load_existing_ids(direction_id)
-        from storage import extract_arxiv_id
-        new_papers = [p for p in papers if extract_arxiv_id(p.get("url", "")) not in existing_ids]
+        existing_ids = {str(pid).lower() for pid in load_existing_ids(direction_id)}
+        new_papers = [p for p in papers if paper_identity(p) not in existing_ids]
         print(f"  → 去重后 {len(new_papers)} 篇需要处理（已存在 {len(papers) - len(new_papers)} 篇）")
 
         if len(new_papers) > max_papers:
@@ -153,21 +205,30 @@ def run():
             daily_stats[direction_id] = 0
             continue
 
-        # 3c. 代码检查（只对新论文）
-        print(f"\n[3/4] 检查代码仓库...")
-        new_papers = check_all_code(new_papers, hunter)
-        code_count = sum(1 for p in new_papers if p.get("has_code"))
-        print(f"  → {code_count}/{len(new_papers)} 篇附带代码")
+        uncached_papers, cached_count = split_cached_papers(new_papers, enrichment_cache)
+        if cached_count:
+            print(f"  → 复用本次运行已处理论文 {cached_count} 篇，避免重复调外部 API")
 
-        # 3d. 豆包结构化提取（只对新论文）
-        print(f"\n[4/4] 豆包结构化提取...")
-        new_papers = extract_batch(new_papers, client, delay=1.0)
+        if uncached_papers:
+            # 3c. 代码检查（只对新论文）
+            print(f"\n[3/4] 检查代码仓库...")
+            uncached_papers = check_all_code(uncached_papers, hunter)
+            code_count = sum(1 for p in uncached_papers if p.get("has_code"))
+            print(f"  → {code_count}/{len(uncached_papers)} 篇附带代码")
 
-        # 3e. HF Daily Papers upvote 匹配
-        match_hf_upvotes(new_papers)
+            # 3d. 豆包结构化提取（只对新论文）
+            print(f"\n[4/4] 豆包结构化提取...")
+            uncached_papers = extract_batch(uncached_papers, client, delay=1.0)
 
-        # 3f. Venue 标注：手工锚点优先，Semantic Scholar 补全
-        annotate_venues(new_papers, use_semantic_scholar=True, delay=0.2)
+            # 3e. HF Daily Papers upvote 匹配
+            match_hf_upvotes(uncached_papers)
+
+            # 3f. Venue 标注：手工锚点优先，Semantic Scholar 补全
+            annotate_venues(uncached_papers, use_semantic_scholar=True, delay=0.2)
+            remember_enriched_papers(uncached_papers, enrichment_cache)
+        else:
+            print(f"\n[3/4] 代码检查：全部使用缓存")
+            print(f"[4/4] 豆包结构化提取：全部使用缓存")
 
         # 3g. 存储到 JSONL
         new_count = append_papers(direction_id, new_papers)
@@ -200,20 +261,6 @@ def run():
         print(f"\n💡 提示：周报将在每周日自动生成。")
 
     print(f"\n🏁 Knowledge Editing Direction Radar 采集完成")
-
-
-def build_weekly_summary_lines(directions, daily_stats, target_date=None):
-    """构建周报推送摘要，区分本周累计和本次运行新增。"""
-    if target_date is None:
-        target_date = date.today()
-
-    lines = [f"📡 Knowledge Editing Radar 周报 | {target_date:%m/%d}"]
-    for did, direction_conf in directions.items():
-        name = direction_conf["name"]
-        weekly_count = len(load_week_papers(did, target_date))
-        daily_count = daily_stats.get(did, 0)
-        lines.append(f"• {name}: 本周累计 {weekly_count} 篇，今日新增 {daily_count} 篇")
-    return lines
 
 
 def build_daily_push_lines(directions, daily_stats, target_date=None):
@@ -252,17 +299,6 @@ def build_daily_push_lines(directions, daily_stats, target_date=None):
         lines.append("  （获取失败）")
 
     return lines
-
-
-# ─── 工具函数：手动生成周报 ────────────────────────────
-
-def generate_all_digests():
-    """手动触发所有方向的周报 + 研究版图生成（不需要等到周日）"""
-    config = load_config()
-    for direction_id, direction_conf in config.get("directions", {}).items():
-        generate_weekly_digest(direction_id, direction_conf["name"])
-        generate_landscape(direction_id, direction_conf["name"])
-
 
 if __name__ == "__main__":
     run()

@@ -5,3 +5,4 @@ __pycache__/
 .vscode/
 data/_legacy/
 output/
+.codex-*.png

@@ -48,53 +48,59 @@
         <div id="trendChart" class="trend-chart"></div>
       </div>
 
-      <div class="panel">
-        <div class="panel-head">
-          <h2>方向概览</h2>
-        </div>
-        <div id="directionCards" class="direction-cards"></div>
-      </div>
+      <div class="dashboard-columns">
+        <div class="dashboard-column">
+          <div class="panel directions-panel">
+            <div class="panel-head">
+              <h2>方向概览</h2>
+            </div>
+            <div id="directionCards" class="direction-cards"></div>
+          </div>
 
-      <div class="panel">
-        <div class="panel-head">
-          <h2>方法族分布</h2>
-        </div>
-        <div id="themeCloud" class="chip-cloud"></div>
-      </div>
+          <div class="panel evaluations-panel">
+            <div class="panel-head">
+              <h2>评测信号</h2>
+            </div>
+            <ul id="evaluationSignalsList" class="compact-list"></ul>
+          </div>
 
-      <div class="panel">
-        <div class="panel-head">
-          <h2>A 会标签</h2>
+          <div class="panel code-panel">
+            <div class="panel-head">
+              <h2>代码资源</h2>
+            </div>
+            <ul id="codeList" class="compact-list"></ul>
+          </div>
         </div>
-        <ul id="venueList" class="compact-list"></ul>
-      </div>
 
-      <div class="panel">
-        <div class="panel-head">
-          <h2>失败模式</h2>
-        </div>
-        <ul id="failureModesList" class="compact-list"></ul>
-      </div>
+        <div class="dashboard-column">
+          <div class="panel methods-panel">
+            <div class="panel-head">
+              <h2>方法族分布</h2>
+            </div>
+            <div id="themeCloud" class="chip-cloud"></div>
+          </div>
 
-      <div class="panel">
-        <div class="panel-head">
-          <h2>评测信号</h2>
-        </div>
-        <ul id="evaluationSignalsList" class="compact-list"></ul>
-      </div>
+          <div class="panel venues-panel">
+            <div class="panel-head">
+              <h2>A 会标签</h2>
+            </div>
+            <ul id="venueList" class="compact-list"></ul>
+          </div>
 
-      <div class="panel">
-        <div class="panel-head">
-          <h2>选题钩子</h2>
-        </div>
-        <ul id="ideaHooksList" class="compact-list"></ul>
-      </div>
+          <div class="panel failures-panel">
+            <div class="panel-head">
+              <h2>失败模式</h2>
+            </div>
+            <ul id="failureModesList" class="compact-list"></ul>
+          </div>
 
-      <div class="panel">
-        <div class="panel-head">
-          <h2>代码资源</h2>
+          <div class="panel hooks-panel">
+            <div class="panel-head">
+              <h2>选题钩子</h2>
+            </div>
+            <ul id="ideaHooksList" class="compact-list"></ul>
+          </div>
         </div>
-        <ul id="codeList" class="compact-list"></ul>
       </div>
     </section>
 

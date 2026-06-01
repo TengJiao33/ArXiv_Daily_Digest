@@ -91,9 +91,3 @@ def track_all_seeds(seed_papers, delay=1.0):
     print(f"[CitTracker] 📊 共发现 {len(all_papers)} 篇引用论文（已去重）")
     return all_papers
 
-
-if __name__ == "__main__":
-    # 测试：查 CAD (Shi et al. 2023) 的被引
-    papers = get_citing_papers("2310.06824", limit=5)
-    for p in papers:
-        print(f"  [{p.get('year', '?')}] {p['title'][:60]}...")

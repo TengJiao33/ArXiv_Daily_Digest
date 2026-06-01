@@ -4,7 +4,8 @@
   --surface-2: #eef3ef;
   --surface-3: #f8faf8;
   --text: #17201c;
-  --muted: #64706a;
+  --text-secondary: #3f4d47;
+  --muted: #52605a;
   --line: #d8e2dc;
   --green: #2f7d62;
   --blue: #3867a6;
@@ -91,6 +92,10 @@ input {
   padding: 0 12px;
 }
 
+input::placeholder {
+  color: #7a8580;
+}
+
 button {
   cursor: pointer;
 }
@@ -101,7 +106,7 @@ button {
 }
 
 main {
-  max-width: 1520px;
+  max-width: 1880px;
   margin: 0 auto;
   padding: 24px 32px 44px;
 }
@@ -135,7 +140,7 @@ main {
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.12fr) minmax(360px, 0.88fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
   align-items: start;
 }
@@ -151,6 +156,20 @@ main {
 
 .wide {
   grid-column: 1 / -1;
+}
+
+.dashboard-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(420px, 1fr);
+  gap: 16px;
+  align-items: start;
+  grid-column: 1 / -1;
+}
+
+.dashboard-column {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
 }
 
 .panel-head {
@@ -187,7 +206,7 @@ main {
 
 .direction-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -201,8 +220,8 @@ main {
 
 .direction-head {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 14px;
+  grid-template-columns: 1fr;
+  gap: 10px;
   align-items: start;
 }
 
@@ -213,7 +232,7 @@ main {
 }
 
 .direction-desc {
-  color: var(--muted);
+  color: var(--text-secondary);
   font-size: 14px;
   line-height: 1.65;
   margin-top: 12px;
@@ -223,21 +242,21 @@ main {
   display: grid;
   grid-template-columns: repeat(3, minmax(58px, 1fr));
   gap: 8px;
-  min-width: 246px;
+  min-width: 0;
 }
 
 .direction-metric {
   border: 1px solid var(--line);
   border-radius: 7px;
   background: var(--surface);
-  padding: 8px 10px;
+  padding: 7px 9px;
   text-align: left;
 }
 
 .direction-metric strong {
   display: block;
   color: var(--text);
-  font-size: 27px;
+  font-size: 24px;
   font-weight: 800;
   line-height: 1;
 }
@@ -295,7 +314,7 @@ main {
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .compact-list li {
@@ -318,13 +337,61 @@ main {
   text-decoration: none;
 }
 
+#venueList,
+#failureModesList,
+#evaluationSignalsList,
+#ideaHooksList,
+#codeList {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+#venueList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+#codeList {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
 .signal-card,
 .hook-card,
 .resource-card {
   border: 1px solid var(--line);
   border-radius: 7px;
   background: var(--surface-3);
-  padding: 10px;
+  padding: 10px 11px;
+}
+
+.compact-list .signal-card,
+.compact-list .hook-card,
+.compact-list .resource-card,
+.compact-list .venue-row {
+  border: 1px solid var(--line);
+  padding-bottom: 10px;
+}
+
+.venue-row {
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-start;
+  background: var(--surface-3);
+  border-radius: 7px;
+  padding: 9px 10px !important;
+  width: fit-content;
+  min-width: 0;
+}
+
+.compact-list .venue-row {
+  gap: 8px;
+}
+
+.venue-row > span:last-child {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .signal-card strong {
@@ -332,13 +399,27 @@ main {
   font-size: 13px;
 }
 
+.signal-card {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: 10px;
+}
+
+.signal-card strong,
 .signal-card p {
-  color: var(--muted);
+  grid-column: 1;
+}
+
+.signal-card p {
+  color: var(--text-secondary);
   font-size: 13px;
-  line-height: 1.55;
+  line-height: 1.5;
 }
 
 .signal-card > span {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: start;
   width: fit-content;
   border-radius: 999px;
   background: var(--surface-2);
@@ -353,14 +434,67 @@ main {
   font-weight: 600;
 }
 
-.hook-card > span,
+.hook-card,
+.resource-card {
+  align-content: start;
+}
+
+.compact-list .hook-card {
+  gap: 10px;
+}
+
+.hook-summary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+}
+
+.hook-summary .priority {
+  margin-top: 1px;
+}
+
+.hook-text,
 .resource-card span {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.45;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.hook-text,
+.hook-card a,
+.resource-card a:first-child {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+}
+
+.hook-text,
+.resource-card a:first-child {
+  -webkit-line-clamp: 2;
+}
+
+.hook-card a {
+  -webkit-line-clamp: 1;
+}
+
+.resource-card {
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 10px;
+}
+
+.resource-card a:first-child {
+  grid-column: 1 / -1;
+}
+
+.resource-card span {
+  grid-column: 1;
 }
 
 .repo-link {
+  grid-column: 2;
+  grid-row: 2;
+  align-self: center;
   width: fit-content;
   border-radius: 6px;
   background: var(--surface-2);
@@ -460,7 +594,7 @@ main {
 }
 
 .paper-title-zh {
-  color: var(--muted);
+  color: var(--text-secondary);
   font-size: 14px;
   line-height: 1.55;
   margin-top: 6px;
@@ -552,7 +686,7 @@ main {
 }
 
 .card-abstract {
-  color: #33413b;
+  color: #25332e;
   background: var(--surface-3);
   border: 1px solid var(--line);
   border-radius: 6px;
@@ -719,7 +853,7 @@ main {
 }
 
 .modal-title p {
-  color: var(--muted);
+  color: var(--text-secondary);
   line-height: 1.5;
   margin-top: 8px;
 }
@@ -778,6 +912,12 @@ main {
   padding-top: 14px;
 }
 
+@media (max-width: 1600px) {
+  .dashboard-columns {
+    grid-template-columns: minmax(0, 3fr) minmax(380px, 2fr);
+  }
+}
+
 @media (max-width: 900px) {
   .topbar,
   .paper-tools {
@@ -796,8 +936,14 @@ main {
   .overview,
   .direction-cards,
   .dashboard-grid,
+  .dashboard-columns,
   .detail-grid {
     grid-template-columns: 1fr;
+  }
+
+  .dashboard-grid > .panel,
+  .dashboard-columns {
+    grid-column: 1 / -1;
   }
 
   .overview {
@@ -809,6 +955,10 @@ main {
   }
 
   .direction-head {
+    grid-template-columns: 1fr;
+  }
+
+  .direction-cards {
     grid-template-columns: 1fr;
   }
 
@@ -852,5 +1002,13 @@ main {
 
   .modal-card {
     padding: 16px;
+  }
+
+  #venueList,
+  #failureModesList,
+  #evaluationSignalsList,
+  #ideaHooksList,
+  #codeList {
+    grid-template-columns: 1fr;
   }
 }

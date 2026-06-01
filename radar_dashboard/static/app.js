@@ -7,6 +7,7 @@ const state = {
   paperLimit: 20,
   allPapers: [],
   visiblePapers: [],
+  methodFamilies: [],
 };
 
 const colors = ["#2f7d62", "#3867a6", "#a64f3c", "#9a6b20", "#6f5aa8"];
@@ -58,17 +59,14 @@ function readStaticData(url) {
     return Promise.resolve({ papers: filterStaticPapers(parsed.searchParams) });
   }
   if (parsed.pathname.endsWith("/api/themes")) {
-    return Promise.resolve({ themes: staticData.summary.method_families || [] });
+    return Promise.resolve({ themes: countStaticMethodFamilies(parsed.searchParams) });
   }
   return Promise.reject(new Error(`Static data route not found: ${url}`));
 }
 
-function filterStaticPapers(params) {
+function staticPapersForScope(params) {
   const week = params.get("week") || "";
   const direction = params.get("direction") || "";
-  const query = (params.get("q") || "").trim().toLowerCase();
-  const theme = (params.get("theme") || "").trim();
-  const limit = Number(params.get("limit") || 120);
 
   let result = staticData.papers || [];
   if (week && week !== "all") {
@@ -77,6 +75,25 @@ function filterStaticPapers(params) {
   if (direction && direction !== "all") {
     result = result.filter((paper) => paper.direction_id === direction);
   }
+  return result;
+}
+
+function countStaticMethodFamilies(params) {
+  const counts = new Map();
+  for (const paper of staticPapersForScope(params)) {
+    const family = paper.method_family || paper.theme || "未分类";
+    if (!family || family === "未分类") continue;
+    counts.set(family, (counts.get(family) || 0) + 1);
+  }
+  return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 40);
+}
+
+function filterStaticPapers(params) {
+  const query = (params.get("q") || "").trim().toLowerCase();
+  const theme = (params.get("theme") || "").trim();
+  const limit = Number(params.get("limit") || 120);
+
+  let result = staticPapersForScope(params);
   if (theme && theme !== "all") {
     result = result.filter((paper) => paper.theme === theme || paper.method_family === theme);
   }
@@ -182,7 +199,7 @@ function renderSummary() {
   $("subtitle").textContent = `knowledge editing / unlearning / reliability · ${summary.current_week || "no week"} · ${source}`;
   $("totalPapers").textContent = summary.unique_papers || summary.total_papers;
   $("totalCode").textContent = summary.total_code;
-  $("directionCount").textContent = summary.total_papers;
+  $("directionCount").textContent = (summary.directions || []).filter((direction) => direction.count > 0).length;
   $("currentWeek").textContent = summary.current_week || "-";
 
   const weekOptions = [
@@ -199,7 +216,6 @@ function renderSummary() {
 
   renderTrend(summary);
   renderDirections(summary);
-  renderMethodFamilies(summary);
   renderVenues(summary);
   renderFailureModes(summary);
   renderEvaluationSignals(summary);
@@ -253,8 +269,8 @@ function renderDirections(summary) {
   }).join("") || `<p class="empty">暂无方向配置</p>`;
 }
 
-function renderMethodFamilies(summary) {
-  const families = summary.method_families || [];
+function renderMethodFamilies() {
+  const families = state.methodFamilies.length ? state.methodFamilies : (state.summary?.method_families || []);
   const chips = families.map(([family, count]) => (
     `<button class="chip ${state.theme === family ? "active" : ""}" type="button" data-theme="${escapeHtml(family)}">${escapeHtml(family)} <strong>${count}</strong></button>`
   )).join("");
@@ -263,7 +279,7 @@ function renderMethodFamilies(summary) {
     button.addEventListener("click", () => {
       state.theme = button.dataset.theme;
       loadPapers();
-      renderMethodFamilies(state.summary);
+      renderMethodFamilies();
     });
   });
 }
@@ -271,27 +287,27 @@ function renderMethodFamilies(summary) {
 function renderVenues(summary) {
   const venues = summary.venues || [];
   $("venueList").innerHTML = venues.map(([venue, count]) => (
-    `<li><span class="venue venue-${venueClass(venue)}">${escapeHtml(venue)}</span><span>${count} 篇</span></li>`
+    `<li class="venue-row"><span class="venue venue-${venueClass(venue)}">${escapeHtml(venue)}</span><span>${count} 篇</span></li>`
   )).join("") || `<li>本周暂无已识别 A 会标签</li>`;
 }
 
 function renderFailureModes(summary) {
   const groups = summary.failure_mode_groups || [];
   $("failureModesList").innerHTML = groups.map((item) => (
-    `<li class="signal-card"><strong>${escapeHtml(item.label)}</strong><p>${escapeHtml(truncateText(item.example, 88))}</p><span>${item.count} 篇</span></li>`
+    `<li class="signal-card"><strong>${escapeHtml(item.label)}</strong><p>${escapeHtml(item.example)}</p><span>${item.count} 篇</span></li>`
   )).join("") || `<li>本周摘要未显式提到 failure mode</li>`;
 }
 
 function renderEvaluationSignals(summary) {
   const groups = summary.evaluation_signal_groups || [];
   $("evaluationSignalsList").innerHTML = groups.map((item) => (
-    `<li class="signal-card"><strong>${escapeHtml(item.label)}</strong><p>${escapeHtml(truncateText(item.example, 88))}</p><span>${item.count} 篇</span></li>`
+    `<li class="signal-card"><strong>${escapeHtml(item.label)}</strong><p>${escapeHtml(item.example)}</p><span>${item.count} 篇</span></li>`
   )).join("") || `<li>本周暂无明确评测信号</li>`;
 }
 
 function renderIdeaHooks(summary) {
   $("ideaHooksList").innerHTML = (summary.idea_hooks || []).slice(0, 5).map((item) => (
-    `<li class="hook-card"><span><span class="priority ${escapeHtml(item.read_priority)}">${escapeHtml(item.read_priority)}</span> ${escapeHtml(truncateText(item.idea_hook, 96))}</span><a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">${escapeHtml(truncateText(item.title, 80))}</a></li>`
+    `<li class="hook-card"><div class="hook-summary"><span class="priority ${escapeHtml(item.read_priority)}">${escapeHtml(item.read_priority)}</span><span class="hook-text">${escapeHtml(truncateText(item.idea_hook, 96))}</span></div><a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">${escapeHtml(truncateText(item.title, 80))}</a></li>`
   )).join("") || `<li>本周暂无可延展 idea hook</li>`;
 }
 
@@ -391,6 +407,16 @@ async function loadPapers() {
   renderPaperList();
 }
 
+async function loadMethodFamilies() {
+  const params = new URLSearchParams({
+    week: state.week || state.summary.current_week || "all",
+    direction: state.direction,
+  });
+  const data = await fetchJson(`/api/themes?${params.toString()}`);
+  state.methodFamilies = data.themes || [];
+  renderMethodFamilies();
+}
+
 function renderPaperList() {
   const papers = state.allPapers.slice(0, state.paperLimit);
   state.visiblePapers = papers;
@@ -473,6 +499,7 @@ async function loadAll() {
   state.summary = await fetchJson("/api/summary");
   if (!state.week) state.week = state.summary.current_week || "all";
   renderSummary();
+  await loadMethodFamilies();
   await loadPapers();
 }
 
@@ -487,12 +514,14 @@ function debounce(fn, delay) {
 $("weekSelect").addEventListener("change", (event) => {
   state.week = event.target.value;
   state.theme = "all";
+  loadMethodFamilies();
   loadPapers();
 });
 
 $("directionSelect").addEventListener("change", (event) => {
   state.direction = event.target.value;
   state.theme = "all";
+  loadMethodFamilies();
   loadPapers();
 });
 

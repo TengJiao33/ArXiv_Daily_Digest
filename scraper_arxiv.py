@@ -46,12 +46,3 @@ class ArxivScraper:
         print(f"[Scraper] 获取到 {len(papers)} 篇论文")
         return papers
 
-
-if __name__ == "__main__":
-    scraper = ArxivScraper()
-    results = scraper.fetch_papers(
-        "(abs:truthfulness OR abs:hallucination) AND (cat:cs.CL OR cat:cs.AI)",
-        max_results=5,
-    )
-    for p in results:
-        print(f"  [{p['category']}] {p['title'][:60]}...")

@@ -14,7 +14,10 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-from app import load_papers, summarize
+try:
+    from app import load_papers, summarize
+except ModuleNotFoundError:
+    from radar_dashboard.app import load_papers, summarize
 
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"

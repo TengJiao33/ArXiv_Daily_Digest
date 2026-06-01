@@ -100,9 +100,3 @@ def match_hf_upvotes(papers, target_date=None):
         print(f"[HF Daily] 📊 匹配到 {matched} 篇论文的 HF upvotes")
     return matched
 
-
-if __name__ == "__main__":
-    # 测试：获取今日 top-5
-    top = get_trending_top_n()
-    for i, p in enumerate(top, 1):
-        print(f"  {i}. [{p['hf_upvotes']}⬆] {p['title'][:60]}...")
