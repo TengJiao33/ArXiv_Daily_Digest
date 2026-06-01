@@ -441,7 +441,7 @@ function openPaperDetail(index) {
       ${detailRow("编辑对象", paper.edit_target)}
       ${detailRow("评测信号", paper.evaluation_signal)}
       ${detailRow("失败模式", paper.failure_mode)}
-      ${detailRow("Idea Hook", paper.idea_hook)}
+      ${detailRow("看点", paper.idea_hook)}
       ${detailRow("方向契合", paper.direction_fit)}
       ${detailRow("局限", paper.limitations)}
     </dl>
