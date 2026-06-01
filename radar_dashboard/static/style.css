@@ -12,6 +12,7 @@
   --gold: #9a6b20;
   --purple: #6f5aa8;
   --shadow: 0 10px 24px rgba(35, 45, 40, 0.07);
+  --font-serif: "Times New Roman", "Noto Serif SC", "Noto Serif CJK SC", "Noto Serif CJK", "Noto Serif", "Source Han Serif SC", "Songti SC", SimSun, serif;
 }
 
 * {
@@ -22,9 +23,12 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
-  font-size: 14px;
-  line-height: 1.4;
+  font-family: var(--font-serif);
+  font-size: 15px;
+  line-height: 1.55;
+  letter-spacing: 0;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 .topbar {
@@ -49,12 +53,12 @@ p {
 }
 
 h1 {
-  font-size: 24px;
+  font-size: 26px;
   line-height: 1.2;
 }
 
 h2 {
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.25;
 }
 
@@ -62,7 +66,7 @@ h2 {
 .paper-tools p {
   color: var(--muted);
   margin-top: 6px;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .toolbar {
@@ -119,7 +123,7 @@ main {
 .metric span {
   display: block;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .metric strong {
@@ -183,35 +187,71 @@ main {
 
 .direction-cards {
   display: grid;
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 12px;
 }
 
 .direction-card {
   border: 1px solid var(--line);
-  border-left: 4px solid var(--green);
+  border-left: 5px solid var(--green);
   border-radius: 8px;
-  padding: 12px 14px;
+  padding: 16px 18px;
   background: var(--surface-3);
 }
 
+.direction-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+}
+
 .direction-card h3 {
-  margin-bottom: 8px;
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.32;
+}
+
+.direction-desc {
+  color: var(--muted);
   font-size: 14px;
+  line-height: 1.65;
+  margin-top: 12px;
 }
 
-.direction-card p {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.55;
+.direction-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(58px, 1fr));
+  gap: 8px;
+  min-width: 246px;
 }
 
-.direction-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+.direction-metric {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.direction-metric strong {
+  display: block;
+  color: var(--text);
+  font-size: 27px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.direction-metric span {
+  display: block;
   color: var(--muted);
   font-size: 12px;
-  margin-top: 10px;
+  line-height: 1.2;
+  margin-top: 5px;
+}
+
+.direction-families {
+  margin-top: 12px;
 }
 
 .chip-cloud,
@@ -262,8 +302,8 @@ main {
   display: grid;
   gap: 5px;
   color: var(--muted);
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: 14px;
+  line-height: 1.6;
   border-bottom: 1px solid var(--line);
   padding-bottom: 10px;
 }
@@ -294,8 +334,8 @@ main {
 
 .signal-card p {
   color: var(--muted);
-  font-size: 12px;
-  line-height: 1.45;
+  font-size: 13px;
+  line-height: 1.55;
 }
 
 .signal-card > span {
@@ -410,8 +450,8 @@ main {
 
 .paper-card h3 {
   margin-top: 8px;
-  font-size: 17px;
-  line-height: 1.35;
+  font-size: 19px;
+  line-height: 1.32;
 }
 
 .paper-card h3 a {
@@ -421,8 +461,8 @@ main {
 
 .paper-title-zh {
   color: var(--muted);
-  font-size: 13px;
-  line-height: 1.45;
+  font-size: 14px;
+  line-height: 1.55;
   margin-top: 6px;
 }
 
@@ -435,7 +475,7 @@ main {
   background: var(--surface-2);
   color: var(--muted);
   padding: 4px 7px;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.2;
 }
 
@@ -451,7 +491,7 @@ main {
 .venue {
   border-radius: 5px;
   padding: 4px 7px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0;
   line-height: 1.2;
@@ -490,7 +530,7 @@ main {
 .priority {
   border-radius: 5px;
   padding: 4px 7px;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.2;
   font-weight: 700;
   text-transform: uppercase;
@@ -517,8 +557,8 @@ main {
   border: 1px solid var(--line);
   border-radius: 6px;
   padding: 10px 11px;
-  font-size: 13px;
-  line-height: 1.65;
+  font-size: 14px;
+  line-height: 1.75;
   margin-top: 12px;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -548,7 +588,7 @@ main {
 
 .read-why span {
   color: var(--green);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -556,8 +596,8 @@ main {
 .read-why p {
   margin-top: 5px;
   color: var(--text);
-  font-size: 14px;
-  line-height: 1.55;
+  font-size: 15px;
+  line-height: 1.6;
 }
 
 .insight {
@@ -574,14 +614,14 @@ main {
 
 .insight span {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
 }
 
 .insight p {
   color: var(--text);
-  font-size: 13px;
-  line-height: 1.55;
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 .paper-actions {
@@ -754,6 +794,7 @@ main {
   }
 
   .overview,
+  .direction-cards,
   .dashboard-grid,
   .detail-grid {
     grid-template-columns: 1fr;
@@ -765,6 +806,15 @@ main {
 
   .paper-card {
     grid-template-columns: 1fr;
+  }
+
+  .direction-head {
+    grid-template-columns: 1fr;
+  }
+
+  .direction-metrics {
+    min-width: 0;
+    width: 100%;
   }
 
   .insight-list {

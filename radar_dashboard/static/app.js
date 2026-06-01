@@ -232,17 +232,22 @@ function renderDirections(summary) {
       `<span class="tag">${escapeHtml(family)} ${count}</span>`
     )).join("");
     const high = (direction.priorities || []).find(([name]) => name === "high");
-    const highText = high ? `<span>${high[1]} high</span>` : "";
+    const highCount = high ? high[1] : 0;
+    const metrics = [
+      ["论文", direction.count || 0],
+      ["代码", direction.code_count || 0],
+      ["高优先", highCount],
+    ].map(([label, value]) => (
+      `<div class="direction-metric"><strong>${value}</strong><span>${label}</span></div>`
+    )).join("");
     return `
       <article class="direction-card" style="border-left-color:${colors[index % colors.length]}">
-        <h3>${escapeHtml(direction.name)}</h3>
-        <p>${escapeHtml(direction.description)}</p>
-        <div class="direction-stats">
-          <span>${direction.count} 篇</span>
-          <span>${direction.code_count} 代码</span>
-          ${highText}
+        <div class="direction-head">
+          <h3>${escapeHtml(direction.name)}</h3>
+          <div class="direction-metrics">${metrics}</div>
         </div>
-        <div class="paper-meta">${families}</div>
+        <p class="direction-desc">${escapeHtml(direction.description)}</p>
+        <div class="paper-meta direction-families">${families}</div>
       </article>
     `;
   }).join("") || `<p class="empty">暂无方向配置</p>`;
@@ -361,7 +366,7 @@ function paperCard(paper, index) {
       </div>
       <aside class="insight-list" aria-label="结构化信号">
         <div class="read-why">
-          <span>为什么值得看</span>
+          <span>看点</span>
           <p>${escapeHtml(truncateText(paper.idea_hook || paper.key_finding || paper.contribution, 150))}</p>
         </div>
         ${insight("评测锚点", paper.evaluation_signal, 96)}
