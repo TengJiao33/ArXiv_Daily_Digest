@@ -114,9 +114,17 @@ function filterStaticPapers(params) {
         "theme",
         "method_family",
         "edit_target",
+        "agent_setting",
+        "control_mechanism",
+        "evaluation_environment",
         "evaluation_signal",
         "failure_mode",
+        "reliability_risk",
+        "industrial_relevance",
+        "idea_feasibility",
+        "compute_cost",
         "idea_hook",
+        "mentor_question",
         "direction_fit",
         "category",
       ].map((key) => String(paper[key] || "")).join(" ").toLowerCase();
@@ -196,7 +204,7 @@ function setOptions(select, options, value) {
 function renderSummary() {
   const summary = state.summary;
   const source = staticData ? `静态快照 · ${staticData.generated_at || "local"}` : "实时 API";
-  $("subtitle").textContent = `knowledge editing / unlearning / reliability · ${summary.current_week || "no week"} · ${source}`;
+  $("subtitle").textContent = `agent harness / reliability / factuality · ${summary.current_week || "no week"} · ${source}`;
   $("totalPapers").textContent = summary.unique_papers || summary.total_papers;
   $("totalCode").textContent = summary.total_code;
   $("directionCount").textContent = (summary.directions || []).filter((direction) => direction.count > 0).length;
@@ -385,8 +393,8 @@ function paperCard(paper, index) {
           <span>看点</span>
           <p>${escapeHtml(truncateText(paper.idea_hook || paper.key_finding || paper.contribution, 150))}</p>
         </div>
-        ${insight("评测锚点", paper.evaluation_signal, 96)}
-        ${insight("主要风险", paper.failure_mode, 84)}
+        ${insight("控制机制", paper.control_mechanism || paper.evaluation_signal, 96)}
+        ${insight("可靠性风险", paper.reliability_risk || paper.failure_mode, 84)}
       </aside>
     </article>
   `;
@@ -465,9 +473,17 @@ function openPaperDetail(index) {
       ${detailRow("关键发现", paper.key_finding)}
       ${detailRow("方法族", paper.method_family)}
       ${detailRow("编辑对象", paper.edit_target)}
+      ${detailRow("Agent 场景", paper.agent_setting)}
+      ${detailRow("控制机制", paper.control_mechanism)}
+      ${detailRow("评测环境", paper.evaluation_environment)}
       ${detailRow("评测信号", paper.evaluation_signal)}
       ${detailRow("失败模式", paper.failure_mode)}
+      ${detailRow("可靠性风险", paper.reliability_risk)}
+      ${detailRow("工业相关性", paper.industrial_relevance)}
+      ${detailRow("Idea 可行性", paper.idea_feasibility)}
+      ${detailRow("计算成本", paper.compute_cost)}
       ${detailRow("看点", paper.idea_hook)}
+      ${detailRow("想问导师", paper.mentor_question)}
       ${detailRow("方向契合", paper.direction_fit)}
       ${detailRow("局限", paper.limitations)}
     </dl>

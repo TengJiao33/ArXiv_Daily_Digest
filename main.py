@@ -1,7 +1,7 @@
 """
 ArXiv_Daily_Digest.
 
-Daily pipeline for the Knowledge Editing Radar dashboard: load direction config,
+Daily pipeline for the Agent Reliability Radar dashboard: load direction config,
 collect papers, enrich metadata, extract research signals, persist JSONL records,
 and generate weekly artifacts.
 """
@@ -82,6 +82,21 @@ def paper_identity(paper):
     return normalize_paper_id(paper).lower()
 
 
+def enrichment_cache_key(paper):
+    """Cache expensive extraction per paper and direction because prompts are direction-aware."""
+    direction_id = str(paper.get("direction_id", "") or "").strip().lower()
+    identity = paper_identity(paper)
+    return f"{direction_id}:{identity}" if direction_id else identity
+
+
+def annotate_direction_context(papers, direction_id, direction_conf):
+    """Attach direction metadata used by the structure extraction prompt."""
+    for paper in papers:
+        paper["direction_id"] = direction_id
+        paper["direction_name"] = direction_conf.get("name", direction_id)
+        paper["direction_description"] = direction_conf.get("description", "")
+
+
 def apply_cached_enrichment(paper, cached_paper):
     """Copy model/API-derived metadata while preserving this direction's source record."""
     for field in ENRICHMENT_CACHE_FIELDS:
@@ -97,7 +112,7 @@ def split_cached_papers(papers, enrichment_cache):
     uncached = []
     cached_count = 0
     for paper in papers:
-        key = paper_identity(paper)
+        key = enrichment_cache_key(paper)
         cached_paper = enrichment_cache.get(key)
         if cached_paper:
             apply_cached_enrichment(paper, cached_paper)
@@ -109,7 +124,7 @@ def split_cached_papers(papers, enrichment_cache):
 
 def remember_enriched_papers(papers, enrichment_cache):
     for paper in papers:
-        key = paper_identity(paper)
+        key = enrichment_cache_key(paper)
         if key and paper.get("extracted"):
             enrichment_cache[key] = copy.deepcopy(paper)
 
@@ -206,6 +221,7 @@ def run():
             daily_stats[direction_id] = 0
             continue
 
+        annotate_direction_context(new_papers, direction_id, direction_conf)
         uncached_papers, cached_count = split_cached_papers(new_papers, enrichment_cache)
         if cached_count:
             print(f"  → 复用本次运行已处理论文 {cached_count} 篇，避免重复调外部 API")
@@ -248,7 +264,7 @@ def run():
     try:
         notifier = HubNotifier()
         daily_lines = build_daily_push_lines(directions, daily_stats)
-        notifier.send_all("\n".join(daily_lines), f"📡 KE Radar {date.today():%m/%d}")
+        notifier.send_all("\n".join(daily_lines), f"📡 Agent Radar {date.today():%m/%d}")
     except Exception as e:
         print(f"[Push] 每日推送失败（不影响主流程）: {e}")
 

@@ -75,9 +75,14 @@ def generate_landscape(direction_id, direction_name, target_date=None):
             "key_finding": key_finding,
             "method": ext.get("method", ""),
             "theme": theme,
+            "agent_setting": ext.get("agent_setting", ""),
+            "control_mechanism": ext.get("control_mechanism", ""),
+            "evaluation_environment": ext.get("evaluation_environment", ""),
             "evaluation_signal": ext.get("evaluation_signal", ""),
             "failure_mode": ext.get("failure_mode", ""),
+            "reliability_risk": ext.get("reliability_risk", ""),
             "idea_hook": ext.get("idea_hook", ""),
+            "mentor_question": ext.get("mentor_question", ""),
             "read_priority": ext.get("read_priority", "low"),
             "venue": p.get("venue", ""),
             "venue_year": p.get("venue_year", ""),
@@ -146,13 +151,25 @@ def generate_landscape(direction_id, direction_name, target_date=None):
             signal = e.get("evaluation_signal", "")
             if signal and signal not in ("提取失败", "摘要未提及"):
                 lines.append(f"  - 评测信号：{signal}")
+            mechanism = e.get("control_mechanism", "")
+            if mechanism and mechanism not in ("提取失败", "摘要未提及"):
+                lines.append(f"  - 控制机制：{mechanism}")
+            environment = e.get("evaluation_environment", "")
+            if environment and environment not in ("提取失败", "摘要未提及"):
+                lines.append(f"  - 评测环境：{environment}")
             failure = e.get("failure_mode", "")
             if failure and failure not in ("提取失败", "摘要未提及"):
                 lines.append(f"  - 失败模式：{failure}")
+            risk = e.get("reliability_risk", "")
+            if risk and risk not in ("提取失败", "摘要未提及"):
+                lines.append(f"  - 可靠性风险：{risk}")
             hook = e.get("idea_hook", "")
             if hook and hook not in ("提取失败", "暂不明显"):
                 lines.append(f"  - Idea hook：{hook}")
-            if signal or failure or hook:
+            question = e.get("mentor_question", "")
+            if question and question not in ("提取失败", "摘要未提及"):
+                lines.append(f"  - 可问导师：{question}")
+            if signal or mechanism or environment or failure or risk or hook or question:
                 lines.append("")
 
         lines.append("")

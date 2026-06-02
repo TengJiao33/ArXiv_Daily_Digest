@@ -3,12 +3,11 @@
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 ![Dashboard](https://img.shields.io/badge/Dashboard-Static%20HTML%20%2B%20Local%20API-2f7d62)
 ![Automation](https://img.shields.io/badge/Automation-GitHub%20Actions-2088FF?logo=githubactions&logoColor=white)
-![Scope](https://img.shields.io/badge/Scope-Knowledge%20Editing%20Radar-3867a6)
-![Data](https://img.shields.io/badge/Data-JSONL%20Research%20Signals-7a5bb3)
+![Scope](https://img.shields.io/badge/Scope-Agent%20Reliability%20Radar-3867a6)
 
 [中文](README.zh-CN.md)
 
-ArXiv_Daily_Digest is a research digest and dashboard project. Its current core surface is the Knowledge Editing Radar dashboard, focused on knowledge editing, model unlearning, and editing reliability. It collects recent papers, enriches them with reproducibility and venue signals, extracts structured research fields, and exposes the result through a first-class local dashboard.
+ArXiv_Daily_Digest is a research radar and dashboard project. Its current core surface is the **Agent Reliability Radar**, focused on LLM agents, harnesses, reliability, factuality, model control, and safety intervention. It collects recent papers, enriches them with reproducibility and venue signals, extracts structured research fields, and exposes the result through a local dashboard and mentor-alignment brief.
 
 ## Core Features
 
@@ -16,21 +15,19 @@ ArXiv_Daily_Digest is a research digest and dashboard project. Its current core 
 | --- | --- |
 | Static dashboard | Primary reading surface. Open `index.html` from the repository root, no server required. |
 | Daily collection | Scheduled GitHub Actions workflow for ArXiv search, citation expansion, relevance filtering, and storage. |
-| Structured extraction | Converts abstracts into method family, edit target, evaluation signal, failure mode, idea hook, and priority fields. |
-| Evidence signals | Tracks code repositories, GitHub stars, Hugging Face Daily Paper upvotes, Semantic Scholar citations, and venue labels. |
-| Weekly artifacts | Generates `weekly_digest.md` and `landscape.md` for each active research direction. |
+| Direction radar | Active scope is defined in `config/directions.yaml`. The current setup keeps 2 legacy reliability lines and adds 4 agent/factuality lines. |
+| Structured extraction | Converts abstracts into problem, method, key finding, method family, control mechanism, evaluation environment, reliability risk, feasibility, and mentor questions. |
+| Mentor brief | `mentor_brief.py` turns local JSONL data into a compact discussion brief for periodic advisor alignment. |
 
 ## Dashboard
 
-The Knowledge Editing Radar dashboard is a core product surface, not a side utility.
-
-Open the repository-root entry:
+Open:
 
 ```text
 index.html
 ```
 
-That file redirects to:
+The root entry redirects to:
 
 ```text
 radar_dashboard/static/index.html
@@ -54,31 +51,38 @@ Default URL:
 http://127.0.0.1:7860
 ```
 
-## Research Scope
+## Active Research Scope
 
-Active directions are defined in `config/directions.yaml`.
+The active directions are:
 
-| Direction | Focus |
+| Direction ID | Role |
 | --- | --- |
-| Knowledge editing core methods | ROME, MEMIT, MEND, SERAC, Knowledge Neurons, locate-then-edit methods, and mass editing. |
-| Model unlearning | LLM unlearning, selective forgetting, privacy/safety knowledge removal, and retain-forget tradeoffs. |
-| Editing reliability and evaluation | Locality, generality, specificity, portability, robustness, side effects, and long-term stability. |
-| Editing frameworks, tooling, and benchmarks | EasyEdit, EasyEdit2, benchmarks, toolkits, integration layers, and reproducibility infrastructure. |
+| `editing-reliability-evaluation` | Legacy continuity line for editing reliability, steering side effects, model control, and mechanistic intervention. |
+| `model-unlearning` | Legacy continuity line expanded to unlearning, backdoor defense, jailbreak defense, and safety intervention. |
+| `agent-skills-harness` | Agent skills, executable skill libraries, harnesses, tool-use control, workflow constraints, and execution-based evaluation. |
+| `multi-agent-consistency` | Multi-agent collaboration, disagreement, consensus, debate, judge/verifier mechanisms, and behavioral consistency. |
+| `agent-policy-optimization` | Policy optimization, online distillation, teacher-student learning, reward learning, RLVR, and test-time scaling. |
+| `factuality-rule-guided-apps` | Factuality, rule-guided reasoning, hallucination detection, benchmark contamination, and application benchmarks. |
 
-## Pipeline
+## Mentor Brief
 
-```mermaid
-flowchart LR
-  A["directions.yaml"] --> B["ArXiv search"]
-  A --> C["Semantic Scholar citation expansion"]
-  B --> D["Relevance filter"]
-  C --> D
-  D --> E["Deduplication"]
-  E --> F["Code, HF, venue enrichment"]
-  F --> G["Doubao structured extraction"]
-  G --> H["data/{direction}/{ISO-week}/papers.jsonl"]
-  H --> I["Static dashboard data.js"]
-  H --> J["Weekly digest and landscape"]
+Generate a local discussion brief without calling external APIs:
+
+```bash
+python mentor_brief.py
+```
+
+By default it writes:
+
+```text
+output/mentor_briefs/{ISO-week}.md
+```
+
+Useful variants:
+
+```bash
+python mentor_brief.py --week 2026-W23 --top 3
+python mentor_brief.py --stdout
 ```
 
 ## Quick Start
@@ -91,19 +95,13 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-Open the dashboard:
-
-```text
-index.html
-```
-
-Run a collection cycle:
+Run a collection cycle only when you intend to call external APIs:
 
 ```bash
 python main.py
 ```
 
-`python main.py` calls external APIs and may consume Doubao quota. Opening the static dashboard only reads local files.
+`python main.py` calls ArXiv, Semantic Scholar, GitHub, Hugging Face, venue lookup, and Doubao/Ark. It may consume API quota. Opening the dashboard and generating a mentor brief only read local files.
 
 ## Configuration
 
@@ -120,22 +118,6 @@ WXPUSHER_UIDS=optional_wxpusher_uids
 
 GitHub Actions uses the same secret names. The scheduled workflow runs daily at 03:00 UTC, which is 11:00 in Asia/Shanghai.
 
-## Data Layout
-
-```text
-data/
-  knowledge-editing-core/
-    2026-W23/
-      papers.jsonl
-      weekly_digest.md
-      landscape.md
-  model-unlearning/
-  editing-reliability-evaluation/
-  editing-frameworks-tooling/
-```
-
-Historical exploration directories such as `data/llm-truthfulness/`, `data/representation-engineering/`, and `data/mechanistic-interpretability/` are preserved as archive data. The dashboard defaults to active directions from `config/directions.yaml`.
-
 ## Repository Layout
 
 ```text
@@ -146,6 +128,7 @@ ArXiv_Daily_Digest/
   radar_dashboard/              # Static dashboard and optional local API server
   main.py                       # Daily collection pipeline
   processor.py                  # Structured extraction
+  mentor_brief.py               # Local mentor-alignment brief generator
   storage.py                    # JSONL persistence and direction-level deduplication
   digest_builder.py             # Weekly digest generation
   landscape_builder.py          # Weekly landscape generation

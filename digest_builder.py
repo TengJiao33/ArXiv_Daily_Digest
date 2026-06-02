@@ -79,7 +79,10 @@ def generate_weekly_digest(direction_id, direction_name, target_date=None):
     venues = Counter()
     failure_modes = []
     evaluation_signals = []
+    control_mechanisms = []
+    reliability_risks = []
     idea_hooks = []
+    mentor_questions = []
     baselines = []
     datasets = []
 
@@ -98,9 +101,21 @@ def generate_weekly_digest(direction_id, direction_name, target_date=None):
         if signal and signal not in {"提取失败", "摘要未提及"}:
             evaluation_signals.append(signal)
 
+        mechanism = str(ext.get("control_mechanism", "") or "").strip()
+        if mechanism and mechanism not in {"提取失败", "摘要未提及"}:
+            control_mechanisms.append(mechanism)
+
+        risk = str(ext.get("reliability_risk", "") or "").strip()
+        if risk and risk not in {"提取失败", "摘要未提及"}:
+            reliability_risks.append(risk)
+
         hook = str(ext.get("idea_hook", "") or "").strip()
         if hook and hook not in {"提取失败", "暂不明显"}:
             idea_hooks.append(hook)
+
+        mentor_question = str(ext.get("mentor_question", "") or "").strip()
+        if mentor_question and mentor_question not in {"提取失败", "摘要未提及"}:
+            mentor_questions.append(mentor_question)
 
         baselines.extend(ext.get("baselines", []) or [])
         datasets.extend(ext.get("datasets", []) or [])
@@ -127,16 +142,18 @@ def generate_weekly_digest(direction_id, direction_name, target_date=None):
         lines.append("> ⚠️ 本周论文数较多，搜索关键词可能过宽，可考虑收紧 arxiv_query。\n")
 
     lines.append("## 优先阅读\n")
-    lines.append("| # | 优先级 | Venue | 论文 | 方法族 | 评测信号 | Idea Hook | 代码 |")
-    lines.append("|:-:|:------:|:-----:|------|--------|----------|-----------|:----:|")
+    lines.append("| # | 优先级 | Venue | 论文 | 方法族 | 控制/评测 | 风险 | Idea Hook | 代码 |")
+    lines.append("|:-:|:------:|:-----:|------|--------|----------|------|-----------|:----:|")
     for i, p in enumerate(priority_ranked[:12], 1):
         ext = p.get("extracted", {}) or {}
         title = _short(p.get("title", ""), 64)
         title_link = f"[{title}]({p.get('url', '')})" if p.get("url") else title
         code = "✅" if p.get("has_code") else "—"
+        control_or_eval = ext.get("control_mechanism") or ext.get("evaluation_signal")
+        risk = ext.get("reliability_risk") or ext.get("failure_mode")
         lines.append(
             f"| {i} | {_priority(ext)} | {_venue_label(p)} | {title_link} | {_short(_method_family(ext), 24)} | "
-            f"{_short(ext.get('evaluation_signal'), 42)} | {_short(ext.get('idea_hook'), 46)} | {code} |"
+            f"{_short(control_or_eval, 40)} | {_short(risk, 32)} | {_short(ext.get('idea_hook'), 46)} | {code} |"
         )
     lines.append("")
 
@@ -166,10 +183,30 @@ def generate_weekly_digest(direction_id, direction_name, target_date=None):
             lines.append(f"- {signal}{suffix}")
         lines.append("")
 
+    if control_mechanisms:
+        lines.append("## 控制机制 / Harness 信号\n")
+        for mechanism, count in Counter(control_mechanisms).most_common(10):
+            suffix = f"（{count}）" if count > 1 else ""
+            lines.append(f"- {mechanism}{suffix}")
+        lines.append("")
+
+    if reliability_risks:
+        lines.append("## 可靠性 / 落地风险\n")
+        for risk, count in Counter(reliability_risks).most_common(10):
+            suffix = f"（{count}）" if count > 1 else ""
+            lines.append(f"- {risk}{suffix}")
+        lines.append("")
+
     if idea_hooks:
         lines.append("## 可延展 Idea Hook\n")
         for hook in idea_hooks[:12]:
             lines.append(f"- {hook}")
+        lines.append("")
+
+    if mentor_questions:
+        lines.append("## 下次可问导师的问题\n")
+        for question in mentor_questions[:12]:
+            lines.append(f"- {question}")
         lines.append("")
 
     code_papers = [p for p in papers if p.get("has_code")]

@@ -1,65 +1,68 @@
-# ArXiv_Daily_Digest — Knowledge Editing Radar 研究方向配置
-# 2026-05-31 起，系统从泛化探索转为围绕 knowledge editing / unlearning / reliability 的定向雷达。
-# 每个方向定义：ArXiv 搜索查询、关键词、相关性过滤词、种子论文。
+# ArXiv_Daily_Digest — Agent Reliability Radar 研究方向配置
+# 2026-06-02 起，方向从狭义 knowledge editing 收缩为 2 条历史连续线，
+# 并新增 4 条对齐吴小宝老师交流与公开研究口径的 agent / reliability 方向。
+#
+# 配置口径：
+# - 保留旧目录 ID 的方向会继续读取历史 JSONL 数据；
+# - 新方向会在后续采集时自动创建 data/{direction}/{ISO-week}/papers.jsonl；
+# - 每个方向定义 ArXiv 查询、关键词、相关性过滤词和可选种子论文。
 
 directions:
-  knowledge-editing-core:
-    name: "知识编辑核心方法"
-    description: "ROME、MEMIT、MEND、SERAC、KN 等参数/记忆层面的知识编辑方法与后续改进。"
-    arxiv_query: '((abs:"knowledge editing" OR abs:"model editing" OR abs:"factual editing" OR abs:"editing large language models" OR abs:"rank-one model editing" OR abs:ROME OR abs:MEMIT OR abs:MEND OR abs:SERAC OR abs:"knowledge neurons") AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG))'
+  editing-reliability-evaluation:
+    name: "编辑可靠性与行为控制"
+    description: "保留 knowledge editing 的连续性，但重点从改参数本体转向副作用、可靠评测、steering、机制解释与低风险行为控制。"
+    arxiv_query: '(((abs:"knowledge editing" OR abs:"model editing" OR abs:"model steering" OR abs:"activation steering" OR abs:"representation steering" OR abs:"mechanistic interpretability" OR abs:"model control" OR abs:"intervention") AND (abs:reliability OR abs:robustness OR abs:locality OR abs:generality OR abs:specificity OR abs:"side effect" OR abs:"failure mode" OR abs:benchmark OR abs:evaluation)) AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG))'
     keywords:
-      - knowledge editing
-      - model editing
-      - factual editing
-      - ROME
-      - MEMIT
-      - MEND
-      - SERAC
-      - knowledge neurons
-      - locate-then-edit
-      - LocFT
-      - AlphaEdit
-      - SUIT
-      - ACE
-      - EAMET
-      - factual association
-      - counterfact
+      - knowledge editing reliability
+      - model editing reliability
+      - model steering
+      - activation steering
+      - representation steering
+      - side effect
+      - locality
+      - generality
+      - specificity
+      - robustness
+      - mechanistic interpretability
+      - model control
+      - intervention
+      - evaluation
+      - benchmark
     relevance:
       must_any:
         - language model
         - large language model
         - llm
+        - foundation model
         - transformer
-        - pretrained model
       topic_any:
         - knowledge editing
         - model editing
-        - factual editing
-        - rank-one model editing
-        - mass-editing
-        - memory editing
-        - knowledge neuron
-        - factual association
-        - counterfact
+        - steering
+        - intervention
+        - model control
+        - mechanistic interpretability
+        - reliability
+        - robustness
+        - locality
+        - specificity
+        - side effect
+        - failure mode
+        - benchmark
+        - evaluation
     max_papers: 30
     seed_papers:
-      - "2104.08696"   # Knowledge Neurons
-      - "2110.11309"   # MEND
-      - "2202.05262"   # ROME
-      - "2206.06520"   # SERAC
-      - "2210.07229"   # MEMIT
-      - "2305.13172"   # Editing LLMs: Problems, Methods, and Opportunities
-      - "2401.01286"   # A Comprehensive Study of Knowledge Editing for LLMs
-      - "2410.02355"   # AlphaEdit
-      - "2509.22072"   # LocFT-BF / Fine-tuning Done Right in Model Editing
-      - "2510.07896"   # ACE: multi-hop factual recall editing
-      - "2505.11876"   # EAMET: robust massive editing
-      - "2509.24502"   # SUIT: subspace-aware KV mapping
+      - "2402.18909"   # AKEW: Assessing Knowledge Editing in the Wild
+      - "2401.17585"   # ReCoE / reasoning-based assessment
+      - "2305.14795"   # MQUAKE
+      - "2301.04213"   # Does Localization Inform Editing?
+      - "2505.11876"   # EAMET / robust massive editing
+      - "2602.10134"   # Reverse-Engineering Model Editing
 
   model-unlearning:
-    name: "模型遗忘与反知识编辑"
-    description: "LLM unlearning、选择性遗忘、隐私/安全知识移除、保留-遗忘权衡与可验证评测。"
-    arxiv_query: '((abs:"machine unlearning" OR abs:"model unlearning" OR abs:"LLM unlearning" OR abs:"large language model unlearning" OR abs:"forget set" OR abs:"selective forgetting" OR abs:"right to be forgotten" OR abs:"hazardous knowledge" OR abs:"knowledge removal") AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG OR cat:cs.CR))'
+    name: "模型遗忘与安全干预"
+    description: "覆盖 LLM unlearning、backdoor 防御、jailbreak/有害知识缓解、隐私记忆移除，以及遗忘-保留权衡。"
+    arxiv_query: '(((abs:"machine unlearning" OR abs:"model unlearning" OR abs:"LLM unlearning" OR abs:"large language model unlearning" OR abs:"selective forgetting" OR abs:"knowledge removal" OR abs:"backdoor defense" OR abs:"jailbreak defense" OR abs:"harmful knowledge" OR abs:"safety intervention" OR abs:"memorization mitigation") AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG OR cat:cs.CR)))'
     keywords:
       - machine unlearning
       - model unlearning
@@ -67,19 +70,20 @@ directions:
       - selective forgetting
       - forget set
       - retain set
-      - privacy
       - hazardous knowledge
+      - harmful knowledge
       - knowledge removal
-      - TOFU
-      - WMDP
-      - RMU
-      - PURGE
-      - relearning attack
+      - backdoor defense
+      - jailbreak defense
+      - memorization mitigation
+      - weak-to-strong distillation
+      - safety intervention
     relevance:
       must_any:
         - language model
         - large language model
         - llm
+        - foundation model
         - generative model
         - transformer
       topic_any:
@@ -89,101 +93,202 @@ directions:
         - retain set
         - knowledge removal
         - hazardous knowledge
-        - right to be forgotten
+        - harmful knowledge
+        - backdoor
+        - jailbreak
         - privacy
+        - memorization
+        - safety
     max_papers: 25
     seed_papers:
       - "2401.06121"   # TOFU
       - "2403.03218"   # WMDP
-      - "2603.09980"   # Explainable LLM Unlearning
-      - "2601.20568"   # PURGE / reinforcement unlearning
-      - "2510.17620"   # Forget to Know, Remember to Use
+      - "2410.14425"   # Unlearning Backdoor Attacks for LLMs
       - "2505.16831"   # Unlearning Isn't Deletion
+      - "2601.20568"   # PURGE / reinforcement unlearning
+      - "2603.09980"   # Explainable LLM Unlearning
 
-  editing-reliability-evaluation:
-    name: "编辑可靠性与评测"
-    description: "知识编辑后的 locality、generality、specificity、portability、robustness、side effect 与长期稳定性。"
-    arxiv_query: '((abs:"knowledge editing" OR abs:"model editing" OR abs:"editing large language models" OR abs:"factual editing") AND (abs:reliability OR abs:robustness OR abs:locality OR abs:generality OR abs:specificity OR abs:portability OR abs:"side effect" OR abs:"sequential editing" OR abs:"lifelong editing" OR abs:benchmark) AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG))'
+  agent-skills-harness:
+    name: "Agent Skills 与 Harness"
+    description: "关注可执行 skill、agent harness、tool-use control、任务约束、资源条件和外部控制框架，强调低算力、可复现、可做 demo 的工业友好路线。"
+    arxiv_query: '(((abs:"LLM agent" OR abs:"language model agent" OR abs:"AI agent" OR abs:"agentic") AND (abs:skill OR abs:skills OR abs:harness OR abs:"tool use" OR abs:tool-use OR abs:"skill library" OR abs:"executable skill" OR abs:"workflow" OR abs:"guardrail" OR abs:"task constraint")) AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG OR cat:cs.SE))'
     keywords:
-      - reliability
-      - robustness
-      - locality
-      - generality
-      - specificity
-      - portability
-      - side effect
-      - interference
-      - edit decay
-      - sequential editing
-      - lifelong normalization
-      - lifelong editing
-      - benchmark
-      - evaluation
-      - failure mode
+      - LLM agent
+      - agent skills
+      - skill library
+      - executable skill
+      - harness
+      - tool use
+      - tool-use
+      - workflow
+      - guardrail
+      - task constraint
+      - external control
+      - program function
+      - repository grounded
+      - execution-based evaluation
     relevance:
       must_any:
-        - knowledge editing
-        - model editing
-        - factual editing
-        - edit
+        - agent
+        - agents
+        - language model
+        - large language model
+        - llm
       topic_any:
-        - reliability
-        - robust
-        - robustness
-        - locality
-        - generality
-        - specificity
-        - portability
-        - side effect
-        - sequential
-        - lifelong
+        - skill
+        - skills
+        - harness
+        - tool use
+        - tool-use
+        - tool calling
+        - workflow
+        - guardrail
+        - executable
+        - program
+        - task constraint
+        - environment
         - benchmark
-        - evaluation
     max_papers: 30
     seed_papers:
-      - "2305.13172"   # Editing LLMs: Problems, Methods, and Opportunities
-      - "2401.01286"   # A Comprehensive Study of Knowledge Editing for LLMs
-      - "2410.02355"   # AlphaEdit
-      - "2509.22072"   # LocFT-BF / lifelong editing
-      - "2505.11876"   # EAMET / robust massive editing
-      - "2510.02392"   # KnowledgeSmith
-      - "2510.01172"   # SPHERE
-      - "2605.11836"   # More Edits, More Stable
-      - "2602.10134"   # Reverse-Engineering Model Editing
+      - "2605.17734"   # HASP: Harnessing LLM Agents with Skill Programs
+      - "2605.18693"   # SkillGenBench
+      - "2405.16334"   # Devil's Advocate / anticipatory reflection
+      - "2404.07972"   # OSWorld
+      - "2311.09721"   # Reasoning and Action in LLM Agents
 
-  editing-frameworks-tooling:
-    name: "编辑框架、工具与基准"
-    description: "EasyEdit、EasyEdit2、知识编辑框架、benchmark、代码工具链与方法集成。"
-    arxiv_query: '((abs:EasyEdit OR abs:"knowledge editing framework" OR abs:"model editing framework" OR abs:"editing framework" OR abs:"knowledge editing benchmark" OR abs:"model editing benchmark" OR abs:"editing toolkit" OR abs:"steering framework") AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG))'
+  multi-agent-consistency:
+    name: "多 Agent 交互与一致性"
+    description: "关注多智能体协作、辩论、共识、同题多次运行不一致、早期失败检测、verifier 与仲裁机制。"
+    arxiv_query: '(((abs:"multi-agent" OR abs:"multiple agents" OR abs:"LLM agents" OR abs:"language model agents" OR abs:"agent debate" OR abs:"multi-agent debate") AND (abs:consistency OR abs:disagreement OR abs:consensus OR abs:collaboration OR abs:coordination OR abs:judge OR abs:verification OR abs:stability)) AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG OR cat:cs.MA))'
     keywords:
-      - EasyEdit
-      - EasyEdit2
-      - MoEEdit
-      - AAEditor
-      - framework
-      - toolkit
-      - benchmark
-      - editing framework
-      - steering framework
-      - evaluation framework
-      - method integration
-      - reproducibility
+      - multi-agent
+      - LLM agents
+      - agent debate
+      - collaboration
+      - coordination
+      - consistency
+      - disagreement
+      - consensus
+      - verifier
+      - judge
+      - arbitration
+      - stability
+      - self-consistency
+      - behavioral consistency
     relevance:
+      must_any:
+        - agent
+        - agents
+        - language model
+        - large language model
+        - llm
       topic_any:
-        - EasyEdit
-        - framework
-        - toolkit
-        - benchmark
-        - evaluation
-        - knowledge editing
-        - model editing
-        - steering framework
-        - method integration
-        - reproducibility
-    max_papers: 20
+        - multi-agent
+        - debate
+        - collaboration
+        - coordination
+        - consistency
+        - disagreement
+        - consensus
+        - judge
+        - verifier
+        - arbitration
+        - stability
+    max_papers: 25
     seed_papers:
-      - "2308.07269"   # EasyEdit
-      - "2504.15133"   # EasyEdit2
-      - "2410.02355"   # AlphaEdit
-      - "2602.10965"   # MoEEdit
-      - "2505.19855"   # AAEditor / agentic editing workflow
+      - "2602.11619"   # When Agents Disagree With Themselves
+      - "2511.07784"   # Can LLM Agents Really Debate?
+      - "2510.12697"   # Multi-Agent Debate for LLM Judges
+      - "2407.04622"   # Scalable oversight with weak LLMs judging strong LLMs
+      - "2505.24671"   # Multi-Agent Debate for Cultural Alignment
+
+  agent-policy-optimization:
+    name: "Agent 策略优化与在线蒸馏"
+    description: "关注 teacher-student、online policy distillation、RLVR、reward learning、test-time scaling 与 agent 后训练；作为高影响但较重的观察线。"
+    arxiv_query: '(((abs:"LLM agent" OR abs:"language model agent" OR abs:"large language model" OR abs:LLM) AND (abs:"policy optimization" OR abs:"online distillation" OR abs:"policy distillation" OR abs:"teacher model" OR abs:"student model" OR abs:RLVR OR abs:"reward learning" OR abs:"reinforcement learning" OR abs:"test-time scaling")) AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG))'
+    keywords:
+      - policy optimization
+      - online distillation
+      - policy distillation
+      - teacher model
+      - student model
+      - RLVR
+      - reward learning
+      - reinforcement learning
+      - test-time scaling
+      - post-training
+      - DPO
+      - GRPO
+      - step-wise reward
+      - agent training
+    relevance:
+      must_any:
+        - language model
+        - large language model
+        - llm
+        - agent
+        - reasoning model
+      topic_any:
+        - policy optimization
+        - distillation
+        - teacher
+        - student
+        - reward
+        - reinforcement learning
+        - RLVR
+        - DPO
+        - GRPO
+        - post-training
+        - test-time scaling
+    max_papers: 25
+    seed_papers:
+      - "2505.02686"   # Survey on Learning from Rewards
+      - "2605.13230"   # Teacher-Guided Policy Optimization
+      - "2502.14356"   # Full-Step-DPO
+      - "2505.14419"   # SCOPE
+      - "2605.11836"   # More Edits, More Stable / stability signal
+
+  factuality-rule-guided-apps:
+    name: "事实性、规则推理与应用场景"
+    description: "把吴老师提到的应用方向落到 factuality、rule-guided reasoning、benchmark contamination、hallucination detection、review/sentiment 等可评测场景。"
+    arxiv_query: '(((abs:"large language model" OR abs:LLM OR abs:"language model") AND (abs:factuality OR abs:"fact checking" OR abs:"hallucination detection" OR abs:"rule-guided reasoning" OR abs:"rule following" OR abs:"benchmark contamination" OR abs:"updated real-world knowledge" OR abs:"online review" OR abs:"sentiment analysis" OR abs:"helpfulness prediction")) AND (cat:cs.CL OR cat:cs.AI OR cat:cs.LG OR cat:cs.IR))'
+    keywords:
+      - factuality
+      - fact checking
+      - hallucination detection
+      - rule-guided reasoning
+      - rule following
+      - benchmark contamination
+      - updated real-world knowledge
+      - time-sensitive QA
+      - online review
+      - sentiment analysis
+      - helpfulness prediction
+      - fallacy classification
+      - application benchmark
+    relevance:
+      must_any:
+        - language model
+        - large language model
+        - llm
+        - generative model
+        - agent
+      topic_any:
+        - factuality
+        - fact checking
+        - hallucination
+        - rule-guided
+        - rule following
+        - benchmark contamination
+        - updated real-world knowledge
+        - time-sensitive
+        - online review
+        - sentiment
+        - helpfulness
+        - fallacy
+    max_papers: 25
+    seed_papers:
+      - "2412.13670"   # AntiLeakBench
+      - "2412.08972"   # RuleArena
+      - "2509.10004"   # Unsupervised Hallucination Detection
+      - "2412.15540"   # MRAG
