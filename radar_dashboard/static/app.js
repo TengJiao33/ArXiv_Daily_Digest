@@ -91,7 +91,7 @@ function countStaticMethodFamilies(params) {
 function filterStaticPapers(params) {
   const query = (params.get("q") || "").trim().toLowerCase();
   const theme = (params.get("theme") || "").trim();
-  const limit = Number(params.get("limit") || 120);
+  const limit = Number(params.get("limit") || 1000);
 
   let result = staticPapersForScope(params);
   if (theme && theme !== "all") {
@@ -406,7 +406,7 @@ async function loadPapers() {
     direction: state.direction,
     q: state.query,
     theme: state.theme,
-    limit: "180",
+    limit: "1000",
   });
   const data = await fetchJson(`/api/papers?${params.toString()}`);
   const papers = sortReadingQueue(state.direction === "all" ? mergeDuplicatePapers(data.papers) : data.papers);
@@ -425,12 +425,23 @@ async function loadMethodFamilies() {
   renderMethodFamilies();
 }
 
+function activeFilterText() {
+  const filters = [];
+  if (state.theme && state.theme !== "all") {
+    filters.push(`方法族：${state.theme}`);
+  }
+  if (state.query) {
+    filters.push(`搜索：${state.query}`);
+  }
+  return filters.length ? ` · ${filters.join(" · ")}` : "";
+}
+
 function renderPaperList() {
   const papers = state.allPapers.slice(0, state.paperLimit);
   state.visiblePapers = papers;
   $("paperCount").textContent = state.direction === "all"
-    ? `${state.allPapers.length} 篇去重论文 · high / code / venue 优先`
-    : `${state.allPapers.length} 篇论文 · high / code / venue 优先`;
+    ? `${state.allPapers.length} 篇去重论文 · high / code / venue 优先${activeFilterText()}`
+    : `${state.allPapers.length} 篇论文 · high / code / venue 优先${activeFilterText()}`;
   $("papers").innerHTML = papers.map((paper, index) => paperCard(paper, index)).join("") || `<p class="empty">没有匹配论文</p>`;
   const hasMore = state.paperLimit < state.allPapers.length;
   $("showMoreBtn").classList.toggle("hidden", !hasMore);
