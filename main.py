@@ -30,7 +30,7 @@ from notifier import HubNotifier
 from relevance_filter import filter_relevant_papers
 from hf_daily import get_trending_top_n, match_hf_upvotes
 from venue_resolver import annotate_venues
-from manual_papers import load_manual_papers
+from manual_papers import load_manual_papers, manual_entry_to_paper
 
 
 if hasattr(sys.stdout, "reconfigure"):
@@ -114,7 +114,11 @@ def merge_unique_papers(*paper_groups):
 
 def mark_manual_papers(papers, manual_entries):
     """Attach manual injection metadata to fetched arXiv seed papers."""
-    entry_by_id = {entry["arxiv_id"].lower(): entry for entry in manual_entries}
+    entry_by_id = {
+        entry["arxiv_id"].lower(): entry
+        for entry in manual_entries
+        if entry.get("arxiv_id")
+    }
     for paper in papers:
         entry = entry_by_id.get(paper_identity(paper))
         if not entry:
@@ -206,10 +210,20 @@ def run():
         # 1b. 手动论文注入：只拉取论文本体，不触发 citation expansion
         manual_entries = manual_papers_by_direction.get(direction_id, [])
         if manual_entries:
-            manual_ids = [entry["arxiv_id"] for entry in manual_entries]
-            print(f"\n[1b/4] 手动论文注入 ({len(manual_ids)} 篇)...")
-            manual_source_papers = scraper.fetch_papers_by_ids(manual_ids)
-            manual_source_papers = mark_manual_papers(manual_source_papers, manual_entries)
+            manual_ids = [entry["arxiv_id"] for entry in manual_entries if entry.get("arxiv_id")]
+            inline_manual_papers = [
+                paper
+                for paper in (manual_entry_to_paper(entry) for entry in manual_entries)
+                if paper
+            ]
+            print(f"\n[1b/4] 手动论文注入 ({len(manual_entries)} 篇)...")
+            manual_source_papers = inline_manual_papers
+            if manual_ids:
+                fetched_manual_papers = scraper.fetch_papers_by_ids(manual_ids)
+                manual_source_papers = merge_unique_papers(
+                    manual_source_papers,
+                    mark_manual_papers(fetched_manual_papers, manual_entries),
+                )
             if manual_source_papers:
                 papers = merge_unique_papers(manual_source_papers, papers)
                 print(f"  → 手动论文优先合并后共 {len(papers)} 篇")

@@ -3,12 +3,50 @@
 # and Doubao extraction flow, but it may not be caught by the standing ArXiv
 # queries. These papers do not trigger citation expansion.
 #
-# Example:
+# Examples:
 # manual_papers:
 #   agent-skills-harness:
 #     - arxiv_id: "2404.07972"
 #       reason: "OSWorld is a strong agent harness benchmark anchor."
+#     - title: "Agent Harness Engineering: A Survey"
+#       url: "https://picrew.github.io/LLM-Harness/"
+#       pdf_url: "https://openreview.net/pdf?id=eONq7FdiHa"
+#       summary: "..."
 #   factuality-rule-guided-apps:
 #     - "2412.08972"
 
-manual_papers: {}
+manual_papers:
+  agent-skills-harness:
+    - title: "Agent Harness Engineering: A Survey"
+      authors:
+        - "Junjie Li"
+        - "Xi Xiao"
+        - "Yunbei Zhang"
+        - "Chen Liu"
+        - "Lin Zhao"
+        - "Xiaoying Liao"
+        - "Yingrui Ji"
+        - "Janet Wang"
+        - "Jianyang Gu"
+        - "Yingqiang Ge"
+        - "Weijie Xu"
+        - "Xi Fang"
+        - "Xiang Xu"
+        - "Tianchen Zhao"
+        - "Youngeun Kim"
+        - "Tianyang Wang"
+        - "Jihun Hamm"
+        - "Smita Krishnaswamy"
+        - "Jun Huan"
+        - "Chandan K Reddy"
+      url: "https://picrew.github.io/LLM-Harness/"
+      pdf_url: "https://openreview.net/pdf?id=eONq7FdiHa"
+      category: "manual"
+      published: "2026"
+      reason: "用户手动注入：Agent Harness Engineering survey，直接贴合 agent-skills-harness 方向，需要让豆包按本方向过一遍结构化流程。"
+      tags:
+        - "agent harness"
+        - "survey"
+        - "ETCLOVG"
+        - "engineering"
+      summary: "This survey presents agent harness engineering as an independent system layer for LLM-based agents. It proposes the ETCLOVG taxonomy covering Execution, Tooling, Context, Lifecycle, Observability, Verification, and Governance, and maps a broad corpus of open-source agent-harness projects onto this taxonomy to expose ecosystem patterns, coverage gaps, and emerging design principles. The paper argues that real-world agent reliability is shaped by the infrastructure layer around the model, including execution controls, feedback loops, governance, evaluation, and operational design."
