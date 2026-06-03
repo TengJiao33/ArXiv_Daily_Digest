@@ -32,6 +32,7 @@ jobs:
           WXPUSHER_APP_TOKEN: ${{ secrets.WXPUSHER_APP_TOKEN }}
           WXPUSHER_UIDS: ${{ secrets.WXPUSHER_UIDS }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SEMANTIC_SCHOLAR_API_KEY: ${{ secrets.SEMANTIC_SCHOLAR_API_KEY }}
         run: python main.py
 
       - name: 生成静态 Dashboard 快照
