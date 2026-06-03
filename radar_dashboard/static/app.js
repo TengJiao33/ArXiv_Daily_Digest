@@ -128,6 +128,7 @@ function filterStaticPapers(params) {
         "abstract",
         "abstract_zh",
         "venue",
+        "manual_reason",
         "problem",
         "method",
         "contribution",
@@ -180,6 +181,7 @@ function mergeDuplicatePapers(papers) {
     const directions = new Set([...(current.direction_names || []), paper.direction_name].filter(Boolean));
     const better =
       priorityScore(paper.read_priority) > priorityScore(current.read_priority) ||
+      (paper.ingest_source === "manual" && current.ingest_source !== "manual") ||
       (isAuthorityVenue(paper) && !isAuthorityVenue(current)) ||
       (Boolean(paper.venue) && !current.venue) ||
       (Boolean(paper.has_code) && !current.has_code);
@@ -194,6 +196,9 @@ function mergeDuplicatePapers(papers) {
       venue_type: current.venue_type || paper.venue_type || "",
       venue_url: current.venue_url || paper.venue_url || "",
       is_authority_venue: Boolean(isAuthorityVenue(current) || isAuthorityVenue(paper)),
+      ingest_source: current.ingest_source || paper.ingest_source || "",
+      manual_reason: current.manual_reason || paper.manual_reason || "",
+      manual_tags: current.manual_tags || paper.manual_tags || [],
       direction_names: [...directions],
       direction_name: [...directions].join(" / "),
     });
@@ -204,6 +209,7 @@ function mergeDuplicatePapers(papers) {
 function readingScore(paper) {
   return (
     priorityScore(paper.read_priority) * 100 +
+    (paper.ingest_source === "manual" ? 28 : 0) +
     (isAuthorityVenue(paper) ? 30 : paper.venue ? 8 : 0) +
     (paper.has_code ? 12 : 0) +
     Math.min(Number(paper.repo_stars || 0), 50) / 10
@@ -439,6 +445,7 @@ function paperCard(paper, index) {
         <div class="paper-meta">
           ${venueBadge(paper)}
           ${authority ? `<span class="tag authority">A会重点</span>` : ""}
+          ${paper.ingest_source === "manual" ? `<span class="tag manual">手动</span>` : ""}
           ${directionBadges(paper)}
           <span class="tag">${escapeHtml(paper.method_family || paper.theme || "未分类")}</span>
           <span class="priority ${escapeHtml(priority)}">${escapeHtml(priority)}</span>
@@ -536,6 +543,7 @@ function openPaperDetail(index) {
       <span class="tag">${escapeHtml(paper.week)}</span>
       <span class="tag">${escapeHtml(paper.method_family || paper.theme || "未分类")}</span>
       ${isAuthorityVenue(paper) ? `<span class="tag authority">A会重点</span>` : ""}
+      ${paper.ingest_source === "manual" ? `<span class="tag manual">手动</span>` : ""}
       ${paper.has_code ? `<span class="tag code">代码</span>` : ""}
       ${paper.hf_upvotes ? `<span class="tag">HF ${escapeHtml(paper.hf_upvotes)}</span>` : ""}
     </div>
@@ -562,6 +570,7 @@ function openPaperDetail(index) {
       ${detailRow("计算成本", paper.compute_cost)}
       ${detailRow("看点", paper.idea_hook)}
       ${detailRow("想问导师", paper.mentor_question)}
+      ${detailRow("手动注入原因", paper.manual_reason)}
       ${detailRow("方向契合", paper.direction_fit)}
       ${detailRow("局限", paper.limitations)}
     </dl>

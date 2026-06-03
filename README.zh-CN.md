@@ -17,6 +17,7 @@ ArXiv_Daily_Digest 是研究论文雷达和 dashboard 项目。当前核心界�
 | 每日采集 | GitHub Actions 定时执行 ArXiv 搜索、引用扩展、相关性过滤、补全和 JSONL 存储。 |
 | 方向雷达 | 当前 active 方向定义在 `config/directions.yaml`，保留 2 条旧线并新增 4 条吴小宝老师相关 agent / factuality 方向。 |
 | 权威锚点 | `config/authority_anchors.yaml` 手工维护各方向已经发表的 A 会骨架论文，和每日阅读队列分开展示。 |
+| 手动注入 | `config/manual_papers.yaml` 用来临时把某几篇 arXiv 论文送进主流程，适合“灵机一动”的一次性处理。 |
 | 结构化抽取 | 从摘要中提取问题、方法、关键发现、方法族、控制机制、评测环境、可靠性风险、可行性和导师讨论问题。 |
 | 导师 Brief | `mentor_brief.py` 把本地 JSONL 数据压缩成周期性导师对齐材料。 |
 
@@ -76,6 +77,27 @@ config/authority_anchors.yaml
 当前队列里已经识别出 A 会标签的论文也会在阅读排序里被抬高，并标记为 `A会重点`。
 
 主采集流程里，`config/directions.yaml` 的 `seed_papers` 现在有两层作用：种子论文本体会先从 arXiv 拉进候选池并优先进入结构化提取；同一批 ID 也会继续用于 Semantic Scholar 引用扩展。
+
+## 手动注入论文
+
+如果临时看到一篇论文，想让它按某个方向过完整主流程，但它不一定会被 standing query 抓到，就把 arXiv ID 放进：
+
+```text
+config/manual_papers.yaml
+```
+
+示例：
+
+```yaml
+manual_papers:
+  agent-skills-harness:
+    - arxiv_id: "2404.07972"
+      reason: "OSWorld 是很强的 agent harness benchmark，需要单独过一遍。"
+  factuality-rule-guided-apps:
+    - "2412.08972"
+```
+
+手动注入只拉取论文本体，不做 Semantic Scholar 引用扩展；它会绕过关键词相关性过滤，但仍然走代码检查、豆包结构化抽取、HF 热度匹配、venue 标注和 JSONL 存储。历史去重会防止它之后反复消耗豆包。
 
 ## 导师 Brief
 

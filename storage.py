@@ -108,6 +108,9 @@ def append_papers(direction_id, papers):
                 "venue_url": paper.get("venue_url", ""),
                 "venue_confidence": paper.get("venue_confidence", ""),
                 "venue_source": paper.get("venue_source", ""),
+                "ingest_source": paper.get("ingest_source", ""),
+                "manual_reason": paper.get("manual_reason", ""),
+                "manual_tags": paper.get("manual_tags", []),
                 "extracted": paper.get("extracted", {}),
                 "extraction_depth": paper.get("extraction_depth", "none"),
             }

@@ -713,6 +713,12 @@ main {
   font-weight: 700;
 }
 
+.tag.manual {
+  background: #e7f0ff;
+  color: var(--blue);
+  font-weight: 700;
+}
+
 .priority {
   border-radius: 5px;
   padding: 4px 7px;

@@ -1,0 +1,14 @@
+# One-off manual paper injections for main.py.
+# Use this when you see a paper that should go through the normal enrichment
+# and Doubao extraction flow, but it may not be caught by the standing ArXiv
+# queries. These papers do not trigger citation expansion.
+#
+# Example:
+# manual_papers:
+#   agent-skills-harness:
+#     - arxiv_id: "2404.07972"
+#       reason: "OSWorld is a strong agent harness benchmark anchor."
+#   factuality-rule-guided-apps:
+#     - "2412.08972"
+
+manual_papers: {}

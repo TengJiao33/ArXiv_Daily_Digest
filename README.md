@@ -17,6 +17,7 @@ ArXiv_Daily_Digest is a research radar and dashboard project. Its current core s
 | Daily collection | Scheduled GitHub Actions workflow for ArXiv search, citation expansion, relevance filtering, and storage. |
 | Direction radar | Active scope is defined in `config/directions.yaml`. The current setup keeps 2 legacy reliability lines and adds 4 agent/factuality lines. |
 | Authority anchors | `config/authority_anchors.yaml` keeps manually curated A-conference backbone papers for each direction. These papers are highlighted separately from the daily queue. |
+| Manual injection | `config/manual_papers.yaml` lets you send one-off arXiv papers through the main enrichment flow when a paper is worth processing but may not match standing queries. |
 | Structured extraction | Converts abstracts into problem, method, key finding, method family, control mechanism, evaluation environment, reliability risk, feasibility, and mentor questions. |
 | Mentor brief | `mentor_brief.py` turns local JSONL data into a compact discussion brief for periodic advisor alignment. |
 
@@ -78,6 +79,27 @@ config/authority_anchors.yaml
 Current queue papers with recognized A-conference labels are also boosted in the reading order and marked as `A会重点`.
 
 For the main collection pipeline, `seed_papers` in `config/directions.yaml` now has two roles: the seed papers themselves are fetched from arXiv and prioritized for extraction, and the same IDs are used for Semantic Scholar citation expansion.
+
+## Manual Paper Injection
+
+Use this when you notice a paper that should go through the full main enrichment flow for a direction, but it may not be caught by the standing query:
+
+```text
+config/manual_papers.yaml
+```
+
+Example:
+
+```yaml
+manual_papers:
+  agent-skills-harness:
+    - arxiv_id: "2404.07972"
+      reason: "OSWorld is a strong agent harness benchmark anchor."
+  factuality-rule-guided-apps:
+    - "2412.08972"
+```
+
+Manual papers fetch only the paper body and do not trigger Semantic Scholar citation expansion. They bypass keyword relevance filtering, then still go through code checks, Doubao extraction, HF matching, venue annotation, and JSONL storage. Historical de-duplication prevents repeated Doubao usage.
 
 ## Mentor Brief
 

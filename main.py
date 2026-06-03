@@ -30,6 +30,7 @@ from notifier import HubNotifier
 from relevance_filter import filter_relevant_papers
 from hf_daily import get_trending_top_n, match_hf_upvotes
 from venue_resolver import annotate_venues
+from manual_papers import load_manual_papers
 
 
 if hasattr(sys.stdout, "reconfigure"):
@@ -111,6 +112,20 @@ def merge_unique_papers(*paper_groups):
     return merged
 
 
+def mark_manual_papers(papers, manual_entries):
+    """Attach manual injection metadata to fetched arXiv seed papers."""
+    entry_by_id = {entry["arxiv_id"].lower(): entry for entry in manual_entries}
+    for paper in papers:
+        entry = entry_by_id.get(paper_identity(paper))
+        if not entry:
+            continue
+        paper["ingest_source"] = "manual"
+        paper["manual_inject"] = True
+        paper["manual_reason"] = entry.get("reason", "")
+        paper["manual_tags"] = entry.get("tags", [])
+    return papers
+
+
 def apply_cached_enrichment(paper, cached_paper):
     """Copy model/API-derived metadata while preserving this direction's source record."""
     for field in ENRICHMENT_CACHE_FIELDS:
@@ -152,9 +167,13 @@ def run():
     # 1. 加载配置
     config = load_config()
     directions = config.get("directions", {})
+    manual_papers_by_direction = load_manual_papers(directions=directions)
     print(f"\n📡 已配置 {len(directions)} 个研究方向:")
     for did, dconf in directions.items():
         print(f"   • {dconf['name']} ({did})")
+    total_manual = sum(len(entries) for entries in manual_papers_by_direction.values())
+    if total_manual:
+        print(f"   • 手动注入论文 {total_manual} 篇（不触发引用扩展）")
 
     # 2. 初始化组件
     scraper = ArxivScraper()
@@ -184,6 +203,17 @@ def run():
         print(f"\n[1/4] ArXiv 定向搜索...")
         papers = scraper.fetch_papers(query, max_results=max_papers)
 
+        # 1b. 手动论文注入：只拉取论文本体，不触发 citation expansion
+        manual_entries = manual_papers_by_direction.get(direction_id, [])
+        if manual_entries:
+            manual_ids = [entry["arxiv_id"] for entry in manual_entries]
+            print(f"\n[1b/4] 手动论文注入 ({len(manual_ids)} 篇)...")
+            manual_source_papers = scraper.fetch_papers_by_ids(manual_ids)
+            manual_source_papers = mark_manual_papers(manual_source_papers, manual_entries)
+            if manual_source_papers:
+                papers = merge_unique_papers(manual_source_papers, papers)
+                print(f"  → 手动论文优先合并后共 {len(papers)} 篇")
+
         # 3b. 种子论文本体回填 + Semantic Scholar 引用追踪
         seed_papers = direction_conf.get("seed_papers", [])
         if seed_papers:
@@ -206,9 +236,15 @@ def run():
             daily_stats[direction_id] = 0
             continue
 
-        # 按方向做二次过滤，拦截 ArXiv 查询和引用追踪带来的泛领域噪音
-        before_filter = len(papers)
-        papers, dropped_papers = filter_relevant_papers(papers, direction_conf)
+        # 按方向做二次过滤，拦截 ArXiv 查询和引用追踪带来的泛领域噪音。
+        # 手动注入论文来自人工判断，保留并绕过关键词过滤。
+        manual_candidates = [p for p in papers if p.get("manual_inject")]
+        auto_candidates = [p for p in papers if not p.get("manual_inject")]
+        before_filter = len(auto_candidates)
+        filtered_auto, dropped_papers = filter_relevant_papers(auto_candidates, direction_conf)
+        papers = merge_unique_papers(manual_candidates, filtered_auto)
+        if manual_candidates:
+            print(f"  → 手动注入论文保留 {len(manual_candidates)} 篇（跳过相关性过滤）")
         if dropped_papers:
             print(f"  → 方向相关性过滤：保留 {len(papers)} 篇，过滤 {len(dropped_papers)} 篇")
             for p in dropped_papers[:5]:
@@ -229,8 +265,11 @@ def run():
         print(f"  → 去重后 {len(new_papers)} 篇需要处理（已存在 {len(papers) - len(new_papers)} 篇）")
 
         if len(new_papers) > max_papers:
-            print(f"  → 本次处理上限 {max_papers} 篇，避免首次 citation expansion 过量调用豆包")
-            new_papers = new_papers[:max_papers]
+            manual_new_papers = [p for p in new_papers if p.get("manual_inject")]
+            auto_new_papers = [p for p in new_papers if not p.get("manual_inject")]
+            auto_limit = max(0, max_papers - len(manual_new_papers))
+            print(f"  → 本次自动论文处理上限 {max_papers} 篇，手动注入论文优先且不被截断")
+            new_papers = manual_new_papers + auto_new_papers[:auto_limit]
 
         if not new_papers:
             print(f"[{direction_id}] ℹ️ 全部已存在，跳过")
