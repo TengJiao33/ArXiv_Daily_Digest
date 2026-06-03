@@ -113,7 +113,7 @@ main {
 
 .overview {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 18px;
 }
@@ -176,7 +176,16 @@ main {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   margin-bottom: 14px;
+}
+
+.panel-meta {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.2;
+  text-align: right;
+  white-space: nowrap;
 }
 
 .trend-chart {
@@ -208,6 +217,7 @@ main {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
+  align-items: start;
 }
 
 .direction-card {
@@ -240,7 +250,7 @@ main {
 
 .direction-metrics {
   display: grid;
-  grid-template-columns: repeat(3, minmax(58px, 1fr));
+  grid-template-columns: repeat(4, minmax(52px, 1fr));
   gap: 8px;
   min-width: 0;
 }
@@ -338,6 +348,7 @@ main {
 }
 
 #venueList,
+#authorityAnchorList,
 #failureModesList,
 #evaluationSignalsList,
 #ideaHooksList,
@@ -357,6 +368,7 @@ main {
 
 .signal-card,
 .hook-card,
+.anchor-card,
 .resource-card {
   border: 1px solid var(--line);
   border-radius: 7px;
@@ -366,10 +378,39 @@ main {
 
 .compact-list .signal-card,
 .compact-list .hook-card,
+.compact-list .anchor-card,
 .compact-list .resource-card,
 .compact-list .venue-row {
   border: 1px solid var(--line);
   padding-bottom: 10px;
+}
+
+.authority-anchor-list {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.anchor-card {
+  align-content: start;
+  gap: 9px;
+}
+
+.anchor-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.anchor-title {
+  color: var(--text);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.anchor-note {
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.55;
 }
 
 .venue-row {
@@ -578,6 +619,11 @@ main {
   border-left-color: var(--blue);
 }
 
+.paper-authority {
+  border-left-color: var(--red);
+  box-shadow: inset 0 0 0 1px rgba(166, 79, 60, 0.12);
+}
+
 .paper-main {
   min-width: 0;
 }
@@ -659,6 +705,12 @@ main {
 .venue-neurips,
 .venue-colm {
   background: var(--gold);
+}
+
+.tag.authority {
+  background: #ffe8e1;
+  color: var(--red);
+  font-weight: 700;
 }
 
 .priority {
@@ -1005,6 +1057,7 @@ main {
   }
 
   #venueList,
+  #authorityAnchorList,
   #failureModesList,
   #evaluationSignalsList,
   #ideaHooksList,

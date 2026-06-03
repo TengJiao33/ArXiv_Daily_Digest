@@ -150,10 +150,15 @@ directions:
         - benchmark
     max_papers: 30
     seed_papers:
+      - "2307.13854"   # WebArena / ICLR 2024
+      - "2310.06770"   # SWE-bench / ICLR 2024
+      - "2307.16789"   # ToolLLM / ICLR 2024
+      - "2308.03688"   # AgentBench / ICLR 2024
+      - "2311.12983"   # GAIA / ICLR 2024
+      - "2404.07972"   # OSWorld / NeurIPS 2024
       - "2605.17734"   # HASP: Harnessing LLM Agents with Skill Programs
       - "2605.18693"   # SkillGenBench
       - "2405.16334"   # Devil's Advocate / anticipatory reflection
-      - "2404.07972"   # OSWorld
       - "2311.09721"   # Reasoning and Action in LLM Agents
 
   multi-agent-consistency:
@@ -196,6 +201,10 @@ directions:
         - stability
     max_papers: 25
     seed_papers:
+      - "2308.07201"   # ChatEval / ICLR 2024
+      - "2310.06272"   # Let Models Speak Ciphers / ICLR 2024
+      - "2406.11776"   # Sparse communication topology / EMNLP Findings 2024
+      - "2305.14325"   # Multi-agent debate / ICML 2024
       - "2602.11619"   # When Agents Disagree With Themselves
       - "2511.07784"   # Can LLM Agents Really Debate?
       - "2510.12697"   # Multi-Agent Debate for LLM Judges
@@ -242,6 +251,10 @@ directions:
         - test-time scaling
     max_papers: 25
     seed_papers:
+      - "2411.02337"   # WebRL / ICLR 2025
+      - "2505.16421"   # WebAgent-R1 / ICML 2025
+      - "2404.09248"   # KALM / NeurIPS 2024
+      - "2411.04679"   # CaPo / ICLR 2025
       - "2505.02686"   # Survey on Learning from Rewards
       - "2605.13230"   # Teacher-Guided Policy Optimization
       - "2502.14356"   # Full-Step-DPO
@@ -288,7 +301,7 @@ directions:
         - fallacy
     max_papers: 25
     seed_papers:
-      - "2412.13670"   # AntiLeakBench
-      - "2412.08972"   # RuleArena
-      - "2509.10004"   # Unsupervised Hallucination Detection
-      - "2412.15540"   # MRAG
+      - "2412.13670"   # AntiLeakBench / ACL 2025
+      - "2412.08972"   # RuleArena / ACL 2025
+      - "2509.10004"   # Unsupervised Hallucination Detection / EMNLP 2025
+      - "2412.15540"   # MRAG / EMNLP Findings 2025

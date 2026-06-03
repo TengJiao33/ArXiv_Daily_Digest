@@ -11,6 +11,23 @@ const state = {
 };
 
 const colors = ["#2f7d62", "#3867a6", "#a64f3c", "#9a6b20", "#6f5aa8"];
+const authorityVenues = new Set([
+  "AAAI",
+  "ACL",
+  "COLM",
+  "CVPR",
+  "EACL",
+  "EMNLP",
+  "ICLR",
+  "ICML",
+  "IJCAI",
+  "KDD",
+  "NAACL",
+  "NEURIPS",
+  "SIGIR",
+  "TACL",
+  "WWW",
+]);
 const staticData = window.RADAR_STATIC_DATA || null;
 
 const $ = (id) => document.getElementById(id);
@@ -25,6 +42,11 @@ function escapeHtml(value) {
 
 function venueClass(venue) {
   return String(venue || "").toLowerCase().replace(/[^a-z0-9-]/g, "");
+}
+
+function isAuthorityVenue(paper) {
+  if (paper?.is_authority_venue) return true;
+  return authorityVenues.has(String(paper?.venue || "").trim().toUpperCase());
 }
 
 function compactText(value, fallback = "未提及") {
@@ -158,6 +180,7 @@ function mergeDuplicatePapers(papers) {
     const directions = new Set([...(current.direction_names || []), paper.direction_name].filter(Boolean));
     const better =
       priorityScore(paper.read_priority) > priorityScore(current.read_priority) ||
+      (isAuthorityVenue(paper) && !isAuthorityVenue(current)) ||
       (Boolean(paper.venue) && !current.venue) ||
       (Boolean(paper.has_code) && !current.has_code);
     const base = better ? { ...current, ...paper } : current;
@@ -170,6 +193,7 @@ function mergeDuplicatePapers(papers) {
       venue_year: current.venue_year || paper.venue_year || "",
       venue_type: current.venue_type || paper.venue_type || "",
       venue_url: current.venue_url || paper.venue_url || "",
+      is_authority_venue: Boolean(isAuthorityVenue(current) || isAuthorityVenue(paper)),
       direction_names: [...directions],
       direction_name: [...directions].join(" / "),
     });
@@ -177,18 +201,19 @@ function mergeDuplicatePapers(papers) {
   return [...merged.values()];
 }
 
+function readingScore(paper) {
+  return (
+    priorityScore(paper.read_priority) * 100 +
+    (isAuthorityVenue(paper) ? 30 : paper.venue ? 8 : 0) +
+    (paper.has_code ? 12 : 0) +
+    Math.min(Number(paper.repo_stars || 0), 50) / 10
+  );
+}
+
 function sortReadingQueue(papers) {
   return papers.slice().sort((a, b) => {
-    const scoreA =
-      priorityScore(a.read_priority) * 100 +
-      (a.has_code ? 12 : 0) +
-      (a.venue ? 8 : 0) +
-      Math.min(Number(a.repo_stars || 0), 50) / 10;
-    const scoreB =
-      priorityScore(b.read_priority) * 100 +
-      (b.has_code ? 12 : 0) +
-      (b.venue ? 8 : 0) +
-      Math.min(Number(b.repo_stars || 0), 50) / 10;
+    const scoreA = readingScore(a);
+    const scoreB = readingScore(b);
     if (scoreA !== scoreB) return scoreB - scoreA;
     return String(a.title || "").localeCompare(String(b.title || ""));
   });
@@ -207,6 +232,7 @@ function renderSummary() {
   $("subtitle").textContent = `agent harness / reliability / factuality · ${summary.current_week || "no week"} · ${source}`;
   $("totalPapers").textContent = summary.unique_papers || summary.total_papers;
   $("totalCode").textContent = summary.total_code;
+  $("authorityCount").textContent = summary.authority_anchor_count || 0;
   $("directionCount").textContent = (summary.directions || []).filter((direction) => direction.count > 0).length;
   $("currentWeek").textContent = summary.current_week || "-";
 
@@ -224,6 +250,7 @@ function renderSummary() {
 
   renderTrend(summary);
   renderDirections(summary);
+  renderAuthorityAnchors(summary);
   renderVenues(summary);
   renderFailureModes(summary);
   renderEvaluationSignals(summary);
@@ -259,11 +286,13 @@ function renderDirections(summary) {
     const highCount = high ? high[1] : 0;
     const metrics = [
       ["论文", direction.count || 0],
+      ["A会", direction.authority_count || 0],
       ["代码", direction.code_count || 0],
       ["高优先", highCount],
     ].map(([label, value]) => (
       `<div class="direction-metric"><strong>${value}</strong><span>${label}</span></div>`
     )).join("");
+    const anchorTag = direction.anchor_count ? `<span class="tag authority">锚点 ${direction.anchor_count}</span>` : "";
     return `
       <article class="direction-card" style="border-left-color:${colors[index % colors.length]}">
         <div class="direction-head">
@@ -271,10 +300,45 @@ function renderDirections(summary) {
           <div class="direction-metrics">${metrics}</div>
         </div>
         <p class="direction-desc">${escapeHtml(direction.description)}</p>
-        <div class="paper-meta direction-families">${families}</div>
+        <div class="paper-meta direction-families">${anchorTag}${families}</div>
       </article>
     `;
   }).join("") || `<p class="empty">暂无方向配置</p>`;
+}
+
+function renderAuthorityAnchors(summary) {
+  const anchors = summary.authority_anchors || [];
+  const scoped = state.direction && state.direction !== "all"
+    ? anchors.filter((anchor) => anchor.direction_id === state.direction)
+    : anchors;
+  const shown = scoped.slice(0, 12);
+  const hidden = scoped.length - shown.length;
+  $("authorityMeta").textContent = state.direction === "all"
+    ? `${anchors.length} 篇`
+    : `${scoped.length} 篇 · 当前方向`;
+  $("authorityAnchorList").innerHTML = shown.map((anchor) => {
+    const tags = (anchor.tags || []).slice(0, 3).map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("");
+    const badge = venueBadge({
+      venue: anchor.venue,
+      venue_year: anchor.year,
+      venue_type: anchor.type,
+      venue_url: anchor.url,
+    });
+    return `
+      <li class="anchor-card">
+        <div class="anchor-top">
+          ${badge}
+          <span class="tag">${escapeHtml(anchor.direction_name || anchor.direction_id)}</span>
+          ${tags}
+        </div>
+        <a class="anchor-title" href="${escapeHtml(anchor.url)}" target="_blank" rel="noreferrer">${escapeHtml(anchor.title)}</a>
+        ${anchor.note ? `<p class="anchor-note">${escapeHtml(truncateText(anchor.note, 130))}</p>` : ""}
+      </li>
+    `;
+  }).join("") || `<li>暂无手工权威锚点</li>`;
+  if (hidden > 0) {
+    $("authorityAnchorList").innerHTML += `<li class="anchor-card"><strong>还有 ${hidden} 篇</strong><p class="anchor-note">切到具体方向可查看对应锚点，导师讨论时优先对齐这些已发表工作。</p></li>`;
+  }
 }
 
 function renderMethodFamilies() {
@@ -293,7 +357,7 @@ function renderMethodFamilies() {
 }
 
 function renderVenues(summary) {
-  const venues = summary.venues || [];
+  const venues = summary.authority_venues || summary.venues || [];
   $("venueList").innerHTML = venues.map(([venue, count]) => (
     `<li class="venue-row"><span class="venue venue-${venueClass(venue)}">${escapeHtml(venue)}</span><span>${count} 篇</span></li>`
   )).join("") || `<li>本周暂无已识别 A 会标签</li>`;
@@ -368,11 +432,13 @@ function paperCard(paper, index) {
   const titleZh = compactText(paper.title_zh, "");
   const abstractZh = compactText(paper.abstract_zh, "");
   const priority = paper.read_priority || "low";
+  const authority = isAuthorityVenue(paper);
   return `
-    <article class="paper-card paper-priority-${escapeHtml(priority)}">
+    <article class="paper-card paper-priority-${escapeHtml(priority)} ${authority ? "paper-authority" : ""}">
       <div class="paper-main">
         <div class="paper-meta">
           ${venueBadge(paper)}
+          ${authority ? `<span class="tag authority">A会重点</span>` : ""}
           ${directionBadges(paper)}
           <span class="tag">${escapeHtml(paper.method_family || paper.theme || "未分类")}</span>
           <span class="priority ${escapeHtml(priority)}">${escapeHtml(priority)}</span>
@@ -440,8 +506,8 @@ function renderPaperList() {
   const papers = state.allPapers.slice(0, state.paperLimit);
   state.visiblePapers = papers;
   $("paperCount").textContent = state.direction === "all"
-    ? `${state.allPapers.length} 篇去重论文 · high / code / venue 优先${activeFilterText()}`
-    : `${state.allPapers.length} 篇论文 · high / code / venue 优先${activeFilterText()}`;
+    ? `${state.allPapers.length} 篇去重论文 · high / A会 / code 优先${activeFilterText()}`
+    : `${state.allPapers.length} 篇论文 · high / A会 / code 优先${activeFilterText()}`;
   $("papers").innerHTML = papers.map((paper, index) => paperCard(paper, index)).join("") || `<p class="empty">没有匹配论文</p>`;
   const hasMore = state.paperLimit < state.allPapers.length;
   $("showMoreBtn").classList.toggle("hidden", !hasMore);
@@ -469,6 +535,7 @@ function openPaperDetail(index) {
       ${directionBadges(paper)}
       <span class="tag">${escapeHtml(paper.week)}</span>
       <span class="tag">${escapeHtml(paper.method_family || paper.theme || "未分类")}</span>
+      ${isAuthorityVenue(paper) ? `<span class="tag authority">A会重点</span>` : ""}
       ${paper.has_code ? `<span class="tag code">代码</span>` : ""}
       ${paper.hf_upvotes ? `<span class="tag">HF ${escapeHtml(paper.hf_upvotes)}</span>` : ""}
     </div>
@@ -548,6 +615,7 @@ $("weekSelect").addEventListener("change", (event) => {
 $("directionSelect").addEventListener("change", (event) => {
   state.direction = event.target.value;
   state.theme = "all";
+  renderAuthorityAnchors(state.summary);
   loadMethodFamilies();
   loadPapers();
 });

@@ -10,11 +10,13 @@ from __future__ import annotations
 
 import argparse
 import json
-from collections import Counter
+from collections import Counter, defaultdict
 from datetime import date
 from pathlib import Path
 
 import yaml
+
+from authority_anchors import is_authority_venue, load_authority_anchors
 
 
 ROOT = Path(__file__).resolve().parent
@@ -93,7 +95,9 @@ def paper_score(paper: dict) -> int:
     score += COST_PENALTY[normalized_level(ext.get("compute_cost"), default="medium")]
     if paper.get("has_code"):
         score += 5
-    if paper.get("venue"):
+    if is_authority_venue(paper.get("venue")):
+        score += 15
+    elif paper.get("venue"):
         score += 3
     return score
 
@@ -104,12 +108,61 @@ def paper_link(paper: dict, limit=76) -> str:
     return f"[{title}]({url})" if url else title
 
 
-def summarize_direction(direction_id: str, direction: dict, papers: list[dict], top_n: int) -> list[str]:
+def anchor_link(anchor: dict, limit=86) -> str:
+    title = short(anchor.get("title"), limit=limit)
+    url = anchor.get("url", "")
+    return f"[{title}]({url})" if url else title
+
+
+def summarize_authority_anchors(
+    directions: dict,
+    anchors_by_direction: dict[str, list[dict]],
+    limit_per_direction: int = 4,
+) -> list[str]:
+    lines = []
+    lines.append("## A 会权威锚点")
+    lines.append("")
+    lines.append("这些不是本周新增队列，而是用来判断方向是否站得住的已发表顶会骨架；导师讨论时优先用它们校准问题定义和 baseline。")
+    lines.append("")
+
+    for direction_id, direction in directions.items():
+        anchors = anchors_by_direction.get(direction_id, [])
+        if not anchors:
+            continue
+        lines.append(f"### {direction.get('name', direction_id)}")
+        lines.append("")
+        for anchor in anchors[:limit_per_direction]:
+            venue = f"{anchor.get('venue', '')} {anchor.get('year', '')}".strip()
+            tags = "、".join(anchor.get("tags") or [])
+            suffix = f"；{tags}" if tags else ""
+            lines.append(f"- {anchor_link(anchor)}")
+            lines.append(f"  - {venue}{suffix}")
+            if anchor.get("note"):
+                lines.append(f"  - {anchor['note']}")
+        hidden = len(anchors) - limit_per_direction
+        if hidden > 0:
+            lines.append(f"- 另外 {hidden} 篇见 dashboard 权威锚点面板。")
+        lines.append("")
+
+    return lines
+
+
+def summarize_direction(
+    direction_id: str,
+    direction: dict,
+    papers: list[dict],
+    top_n: int,
+    anchors_by_direction: dict[str, list[dict]],
+) -> list[str]:
     lines = []
     lines.append(f"## {direction.get('name', direction_id)}")
     lines.append("")
     lines.append(direction.get("description", ""))
     lines.append("")
+    anchor_count = len(anchors_by_direction.get(direction_id, []))
+    if anchor_count:
+        lines.append(f"- A 会权威锚点：{anchor_count} 篇，作为本方向 baseline 与问题定义参照。")
+        lines.append("")
 
     if not papers:
         lines.append("> 本周暂无本方向数据。GitHub Actions 采集后会自动补齐。")
@@ -139,6 +192,9 @@ def summarize_direction(direction_id: str, direction: dict, papers: list[dict], 
         ]
         if paper.get("has_code"):
             tags.append("code")
+        if is_authority_venue(paper.get("venue")):
+            venue = " ".join(str(part) for part in [paper.get("venue"), paper.get("venue_year")] if part)
+            tags.append(f"A会={venue}")
         lines.append(f"{index}. {paper_link(paper)}")
         lines.append(f"   - 标签：{', '.join(tags)}")
         lines.append(f"   - 核心发现：{short(ext.get('key_finding'), 120)}")
@@ -167,15 +223,21 @@ def summarize_direction(direction_id: str, direction: dict, papers: list[dict], 
 
 def build_brief(week: str, top_n: int) -> str:
     directions = load_directions()
+    anchors = load_authority_anchors(directions=directions)
+    anchors_by_direction = defaultdict(list)
+    for anchor in anchors:
+        anchors_by_direction[anchor["direction_id"]].append(anchor)
+
     lines = []
     lines.append(f"# Mentor Alignment Brief — {week}")
     lines.append("")
     lines.append("目标：把雷达结果压缩成 2-3 个可和导师讨论的候选方向，优先看意义、差异性、可行性和工业相关性。")
     lines.append("")
+    lines.extend(summarize_authority_anchors(directions, anchors_by_direction))
 
     for direction_id, direction in directions.items():
         papers = load_week_papers(direction_id, week)
-        lines.extend(summarize_direction(direction_id, direction, papers, top_n))
+        lines.extend(summarize_direction(direction_id, direction, papers, top_n, anchors_by_direction))
 
     lines.append("---")
     lines.append(f"*Generated from local ArXiv_Daily_Digest data on {date.today():%Y-%m-%d}. No external API was called.*")

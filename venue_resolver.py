@@ -10,17 +10,25 @@ when the title match is very close.
 from __future__ import annotations
 
 import difflib
+import json
 import re
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-import requests
 import yaml
+
+from semantic_scholar_client import (
+    SemanticScholarRateLimitError,
+    make_s2_session,
+    semantic_scholar_get,
+)
 
 
 ROOT = Path(__file__).resolve().parent
 OVERRIDE_PATH = ROOT / "config" / "venue_overrides.yaml"
+CACHE_PATH = ROOT / "data" / "_cache" / "semantic_scholar_venue_cache.json"
 S2_SEARCH_URL = "https://api.semanticscholar.org/graph/v1/paper/search"
 
 A_VENUES = {
@@ -100,6 +108,26 @@ def load_overrides(path: Path = OVERRIDE_PATH) -> dict[str, Any]:
     }
 
 
+def load_s2_cache(path: Path = CACHE_PATH) -> dict[str, Any]:
+    if not path.exists():
+        return {}
+    try:
+        with path.open("r", encoding="utf-8") as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def save_s2_cache(cache: dict[str, Any], path: Path = CACHE_PATH) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as f:
+        json.dump(cache, f, ensure_ascii=False, indent=2, sort_keys=True)
+
+
+def _cache_key(title: str) -> str:
+    return normalize_title(title)
+
+
 def _format_label(source: dict[str, Any]) -> dict[str, Any]:
     venue = normalize_venue(str(source.get("venue", "")))
     if not venue:
@@ -129,7 +157,8 @@ def _lookup_override(paper: dict[str, Any], overrides: dict[str, Any]) -> dict[s
 
 def _lookup_semantic_scholar(
     paper: dict[str, Any],
-    session: requests.Session,
+    session,
+    cache: dict[str, Any] | None = None,
     title_threshold: float = 0.92,
 ) -> dict[str, Any]:
     title = paper.get("title", "")
@@ -141,13 +170,32 @@ def _lookup_semantic_scholar(
         "limit": 3,
         "fields": "title,venue,year,publicationVenue,url,externalIds",
     }
-    try:
-        response = session.get(S2_SEARCH_URL, params=params, timeout=15)
-        response.raise_for_status()
-        candidates = response.json().get("data", [])
-    except Exception as exc:
-        print(f"[Venue] Semantic Scholar lookup failed: {title[:60]}... {exc}")
-        return {}
+    key = _cache_key(title)
+    cached = cache.get(key) if cache is not None else None
+    if cached is not None:
+        candidates = cached.get("data", [])
+    else:
+        try:
+            response = semantic_scholar_get(
+                session,
+                S2_SEARCH_URL,
+                params=params,
+                timeout=15,
+                context=f"venue search: {title[:48]}",
+            )
+            response.raise_for_status()
+            candidates = response.json().get("data", [])
+            if cache is not None:
+                cache[key] = {
+                    "cached_at": datetime.now(timezone.utc).isoformat(),
+                    "query": title,
+                    "data": candidates,
+                }
+        except SemanticScholarRateLimitError:
+            raise
+        except Exception as exc:
+            print(f"[Venue] Semantic Scholar lookup failed: {title[:60]}... {exc}")
+            return {}
 
     wanted = normalize_title(title)
     for candidate in candidates:
@@ -179,7 +227,8 @@ def _lookup_semantic_scholar(
 def resolve_venue(
     paper: dict[str, Any],
     overrides: dict[str, Any] | None = None,
-    session: requests.Session | None = None,
+    session=None,
+    cache: dict[str, Any] | None = None,
     use_semantic_scholar: bool = True,
 ) -> dict[str, Any]:
     overrides = overrides or load_overrides()
@@ -190,8 +239,8 @@ def resolve_venue(
     if not use_semantic_scholar:
         return {}
 
-    session = session or requests.Session()
-    return _lookup_semantic_scholar(paper, session)
+    session = session or make_s2_session()
+    return _lookup_semantic_scholar(paper, session, cache=cache)
 
 
 def annotate_venues(
@@ -203,16 +252,25 @@ def annotate_venues(
         return papers
 
     overrides = load_overrides()
-    session = requests.Session()
+    session = make_s2_session()
+    cache = load_s2_cache() if use_semantic_scholar else {}
     labeled = 0
+    rate_limited = False
 
     for index, paper in enumerate(papers):
-        label = resolve_venue(
-            paper,
-            overrides=overrides,
-            session=session,
-            use_semantic_scholar=use_semantic_scholar,
-        )
+        try:
+            label = resolve_venue(
+                paper,
+                overrides=overrides,
+                session=session,
+                cache=cache,
+                use_semantic_scholar=use_semantic_scholar and not rate_limited,
+            )
+        except SemanticScholarRateLimitError as exc:
+            print(f"[Venue] Stopping Semantic Scholar venue lookup for this batch: {exc}")
+            rate_limited = True
+            label = {}
+
         if label:
             paper.update(label)
             labeled += 1
@@ -224,9 +282,13 @@ def annotate_venues(
             paper.setdefault("venue_confidence", "")
             paper.setdefault("venue_source", "")
 
-        if use_semantic_scholar and index < len(papers) - 1:
+        if use_semantic_scholar and not rate_limited and delay > 0 and index < len(papers) - 1:
             time.sleep(delay)
 
-    print(f"[Venue] Labeled {labeled}/{len(papers)} papers with venue metadata")
+    if use_semantic_scholar:
+        save_s2_cache(cache)
+
+    suffix = " (S2 rate-limited)" if rate_limited else ""
+    print(f"[Venue] Labeled {labeled}/{len(papers)} papers with venue metadata{suffix}")
     return papers
 

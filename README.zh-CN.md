@@ -16,6 +16,7 @@ ArXiv_Daily_Digest 是研究论文雷达和 dashboard 项目。当前核心界�
 | 静态 Dashboard | 第一阅读入口。直接打开根目录 `index.html`，无需启动服务。 |
 | 每日采集 | GitHub Actions 定时执行 ArXiv 搜索、引用扩展、相关性过滤、补全和 JSONL 存储。 |
 | 方向雷达 | 当前 active 方向定义在 `config/directions.yaml`，保留 2 条旧线并新增 4 条吴小宝老师相关 agent / factuality 方向。 |
+| 权威锚点 | `config/authority_anchors.yaml` 手工维护各方向已经发表的 A 会骨架论文，和每日阅读队列分开展示。 |
 | 结构化抽取 | 从摘要中提取问题、方法、关键发现、方法族、控制机制、评测环境、可靠性风险、可行性和导师讨论问题。 |
 | 导师 Brief | `mentor_brief.py` 把本地 JSONL 数据压缩成周期性导师对齐材料。 |
 
@@ -61,6 +62,20 @@ http://127.0.0.1:7860
 | `multi-agent-consistency` | 多 Agent 协作、不一致、共识、辩论、judge/verifier 机制和行为一致性。 |
 | `agent-policy-optimization` | 策略优化、在线蒸馏、teacher-student、reward learning、RLVR 和 test-time scaling。 |
 | `factuality-rule-guided-apps` | 事实性、规则推理、幻觉检测、benchmark contamination 和应用场景评测。 |
+
+## 权威锚点
+
+已经发表的 A 会论文会被当作方向锚点，而不是普通本周新抓取论文。Dashboard 会在“权威锚点”面板单独展示，导师 brief 也会在阅读队列前先列这些顶会骨架。
+
+手工维护入口：
+
+```text
+config/authority_anchors.yaml
+```
+
+当前队列里已经识别出 A 会标签的论文也会在阅读排序里被抬高，并标记为 `A会重点`。
+
+主采集流程里，`config/directions.yaml` 的 `seed_papers` 现在有两层作用：种子论文本体会先从 arXiv 拉进候选池并优先进入结构化提取；同一批 ID 也会继续用于 Semantic Scholar 引用扩展。
 
 ## 导师 Brief
 
@@ -109,6 +124,7 @@ python main.py
 DOUBAO_API_KEY=your_ark_api_key
 DOUBAO_ENDPOINT_ID=your_endpoint_id
 GITHUB_TOKEN=ghp_your_token
+SEMANTIC_SCHOLAR_API_KEY=optional_s2_api_key
 SERVERCHAN_SENDKEY=optional_serverchan_key
 WXPUSHER_APP_TOKEN=optional_wxpusher_app_token
 WXPUSHER_UIDS=optional_wxpusher_uids
@@ -116,15 +132,32 @@ WXPUSHER_UIDS=optional_wxpusher_uids
 
 GitHub Actions 使用同名 Secrets。定时任务每天 UTC 03:00 运行，对应北京时间 11:00。
 
+## Venue 回填
+
+Semantic Scholar venue 查询容易触发限流。当前 resolver 支持 `SEMANTIC_SCHOLAR_API_KEY` 或 `S2_API_KEY`，会把查询结果缓存在 `data/_cache/`，并在 429 时自动退避重试。
+
+不运行主采集流程，只给已有 JSONL 回填 venue：
+
+```bash
+python venue_backfill.py --week 2026-W23 --write
+```
+
+默认是 dry run，不会改文件：
+
+```bash
+python venue_backfill.py --week 2026-W23
+```
+
 ## 项目结构
 
 ```text
 ArXiv_Daily_Digest/
   index.html                    # 点开即看的 dashboard 入口
-  config/                       # active 方向与 venue override
+  config/                       # active 方向、权威锚点与 venue override
   data/                         # JSONL 数据与生成的研究产物
   radar_dashboard/              # 静态 dashboard 和可选本地 API server
   main.py                       # 每日采集主流程
+  authority_anchors.py          # 手工 A 会权威锚点加载器
   processor.py                  # 结构化抽取
   mentor_brief.py               # 本地导师对齐 brief 生成器
   storage.py                    # JSONL 存储和方向级去重

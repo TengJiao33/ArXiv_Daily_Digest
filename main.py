@@ -97,6 +97,20 @@ def annotate_direction_context(papers, direction_id, direction_conf):
         paper["direction_description"] = direction_conf.get("description", "")
 
 
+def merge_unique_papers(*paper_groups):
+    """Merge paper groups in order, keeping the first copy of each paper."""
+    merged = []
+    seen = set()
+    for papers in paper_groups:
+        for paper in papers or []:
+            key = paper_identity(paper)
+            if not key or key in seen:
+                continue
+            merged.append(paper)
+            seen.add(key)
+    return merged
+
+
 def apply_cached_enrichment(paper, cached_paper):
     """Copy model/API-derived metadata while preserving this direction's source record."""
     for field in ENRICHMENT_CACHE_FIELDS:
@@ -170,17 +184,19 @@ def run():
         print(f"\n[1/4] ArXiv 定向搜索...")
         papers = scraper.fetch_papers(query, max_results=max_papers)
 
-        # 3b. Semantic Scholar 引用追踪
+        # 3b. 种子论文本体回填 + Semantic Scholar 引用追踪
         seed_papers = direction_conf.get("seed_papers", [])
         if seed_papers:
-            print(f"\n[2/4] Semantic Scholar 引用追踪 ({len(seed_papers)} 篇种子)...")
+            print(f"\n[2a/4] ArXiv 种子论文本体回填 ({len(seed_papers)} 篇种子)...")
+            seed_source_papers = scraper.fetch_papers_by_ids(seed_papers)
+            if seed_source_papers:
+                papers = merge_unique_papers(seed_source_papers, papers)
+                print(f"  → 种子优先合并后共 {len(papers)} 篇")
+
+            print(f"\n[2b/4] Semantic Scholar 引用追踪 ({len(seed_papers)} 篇种子)...")
             cited_papers = track_all_seeds(seed_papers, delay=1.0)
             # 合并：用 ArXiv ID 去重
-            existing_titles = {p["title"] for p in papers}
-            for cp in cited_papers:
-                if cp["title"] not in existing_titles and cp.get("summary"):
-                    papers.append(cp)
-                    existing_titles.add(cp["title"])
+            papers = merge_unique_papers(papers, [cp for cp in cited_papers if cp.get("summary")])
             print(f"  → 合并后共 {len(papers)} 篇")
         else:
             print(f"\n[2/4] 无种子论文，跳过引用追踪")

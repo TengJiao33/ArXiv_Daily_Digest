@@ -1,0 +1,202 @@
+# Manually curated A-conference anchor papers.
+# These are not daily queue items. They define the authoritative paper backbone
+# for judging whether a direction has credible published work.
+
+authority_anchors:
+  - direction_id: "editing-reliability-evaluation"
+    title: "Mass-Editing Memory in a Transformer"
+    venue: "ICLR"
+    year: 2023
+    type: "conference"
+    url: "https://memit.baulab.info/"
+    note: "Large-scale knowledge editing baseline; useful for side-effect and locality comparisons."
+    tags: ["knowledge editing", "locality", "benchmark"]
+  - direction_id: "editing-reliability-evaluation"
+    title: "Rank-One Editing of Encoder-Decoder Models"
+    venue: "ACL"
+    year: 2022
+    type: "long"
+    url: "https://aclanthology.org/2022.acl-long.581/"
+    note: "Classic editing method line; anchors the parameter-editing baseline family."
+    tags: ["knowledge editing", "method"]
+  - direction_id: "editing-reliability-evaluation"
+    title: "WILKE: A Chinese Benchmark for Robust and Generalizable Knowledge Editing"
+    venue: "EMNLP"
+    year: 2025
+    type: "demo"
+    url: "https://aclanthology.org/2025.emnlp-demos.38/"
+    note: "Recent benchmark-style editing reliability signal, closer to evaluation than pure method tweaking."
+    tags: ["benchmark", "reliability"]
+
+  - direction_id: "model-unlearning"
+    title: "WMDP: Measuring and Reducing Malicious Use With Unlearning"
+    venue: "ICML"
+    year: 2024
+    type: "conference"
+    url: "https://icml.cc/virtual/2024/poster/32695"
+    note: "Safety-oriented unlearning benchmark and evaluation anchor."
+    tags: ["unlearning", "safety", "benchmark"]
+  - direction_id: "model-unlearning"
+    title: "TOFU: A Task of Fictitious Unlearning for LLMs"
+    venue: "ICLR"
+    year: 2025
+    type: "poster"
+    url: "https://openreview.net/forum?id=B1hBaq2XwT"
+    note: "Widely used LLM unlearning benchmark for forget-retain trade-off analysis."
+    tags: ["unlearning", "benchmark"]
+  - direction_id: "model-unlearning"
+    title: "Machine Unlearning in Generative AI: A Survey"
+    venue: "IJCAI"
+    year: 2025
+    type: "survey"
+    url: "https://www.ijcai.org/proceedings/2025/0983.pdf"
+    note: "Survey anchor for positioning unlearning against privacy, safety, and copyright requirements."
+    tags: ["survey", "unlearning"]
+
+  - direction_id: "agent-skills-harness"
+    title: "WebArena: A Realistic Web Environment for Building Autonomous Agents"
+    venue: "ICLR"
+    year: 2024
+    type: "conference"
+    url: "https://proceedings.iclr.cc/paper_files/paper/2024/hash/4410c0711e9154a7a2d26f9b3816d1ef-Abstract-Conference.html"
+    note: "Strong benchmark anchor for web-based agent harness and execution reliability."
+    tags: ["agent harness", "benchmark", "web"]
+  - direction_id: "agent-skills-harness"
+    title: "SWE-bench: Can Language Models Resolve Real-World GitHub Issues?"
+    venue: "ICLR"
+    year: 2024
+    type: "conference"
+    url: "https://proceedings.iclr.cc/paper_files/paper/2024/hash/edac78c3e300629acfe6cbe9ca88fb84-Abstract-Conference.html"
+    note: "Industrial-style software-agent benchmark; good proxy for executable skill quality."
+    tags: ["software agent", "benchmark", "execution"]
+  - direction_id: "agent-skills-harness"
+    title: "ToolLLM: Facilitating Large Language Models to Master 16000+ Real-world APIs"
+    venue: "ICLR"
+    year: 2024
+    type: "conference"
+    url: "https://proceedings.iclr.cc/paper_files/paper/2024/hash/28e50ee5b72e90b50e7196fde8ea260e-Abstract-Conference.html"
+    note: "Tool-use benchmark and training anchor; directly relevant to API/tool control."
+    tags: ["tool use", "benchmark", "API"]
+  - direction_id: "agent-skills-harness"
+    title: "AgentBench: Evaluating LLMs as Agents"
+    venue: "ICLR"
+    year: 2024
+    type: "conference"
+    url: "https://proceedings.iclr.cc/paper_files/paper/2024/hash/e9df36b21ff4ee211a8b71ee8b7e9f57-Abstract-Conference.html"
+    note: "General agent evaluation anchor across multiple environments."
+    tags: ["agent evaluation", "benchmark"]
+  - direction_id: "agent-skills-harness"
+    title: "GAIA: A Benchmark for General AI Assistants"
+    venue: "ICLR"
+    year: 2024
+    type: "conference"
+    url: "https://proceedings.iclr.cc/paper_files/paper/2024/hash/25ae35b5b1738d80f1f03a8713e405ec-Abstract-Conference.html"
+    note: "Assistant-level benchmark anchor for tool use, reasoning, and real-world task completion."
+    tags: ["assistant", "benchmark", "tool use"]
+  - direction_id: "agent-skills-harness"
+    title: "OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments"
+    venue: "NeurIPS"
+    year: 2024
+    type: "datasets-and-benchmarks"
+    url: "https://papers.nips.cc/paper_files/paper/2024/hash/5d413e48f84dc61244b6be550f1cd8f5-Abstract-Datasets_and_Benchmarks_Track.html"
+    note: "Computer-control benchmark anchor; useful for harness realism and reproducibility."
+    tags: ["computer control", "benchmark", "multimodal"]
+
+  - direction_id: "multi-agent-consistency"
+    title: "ChatEval: Towards Better LLM-based Evaluators through Multi-Agent Debate"
+    venue: "ICLR"
+    year: 2024
+    type: "conference"
+    url: "https://proceedings.iclr.cc/paper_files/paper/2024/hash/25cc3adf8c85f7c70989cb8a97a691a7-Abstract-Conference.html"
+    note: "Multi-agent debate anchor for evaluator reliability and arbitration mechanisms."
+    tags: ["multi-agent debate", "evaluation", "judge"]
+  - direction_id: "multi-agent-consistency"
+    title: "Let Models Speak Ciphers: Multiagent Debate through Embeddings"
+    venue: "ICLR"
+    year: 2024
+    type: "conference"
+    url: "https://proceedings.iclr.cc/paper_files/paper/2024/hash/e444859b2a22df6b56af9381ad1e9480-Abstract-Conference.html"
+    note: "A-conference anchor showing multi-agent debate can have non-obvious communication failure modes."
+    tags: ["multi-agent", "communication", "failure mode"]
+  - direction_id: "multi-agent-consistency"
+    title: "Multi-LLM Debate: A Proposal and Evaluation of its Effectiveness"
+    venue: "NeurIPS"
+    year: 2024
+    type: "conference"
+    url: "https://proceedings.neurips.cc/paper_files/paper/2024/hash/32e07a110c6c6acf1afbf2bf82b614ad-Abstract-Conference.html"
+    note: "Debate effectiveness anchor; useful for judging when multi-agent setups are actually helpful."
+    tags: ["multi-agent debate", "evaluation"]
+  - direction_id: "multi-agent-consistency"
+    title: "Improving Multi-Agent Debate with Sparse Communication Topology"
+    venue: "EMNLP"
+    year: 2024
+    type: "findings"
+    url: "https://aclanthology.org/2024.findings-emnlp.427/"
+    note: "Communication topology anchor for cost-aware multi-agent debate."
+    tags: ["topology", "debate", "cost"]
+
+  - direction_id: "agent-policy-optimization"
+    title: "WebRL: Training LLM Web Agents via Self-Evolving Online Curriculum Reinforcement Learning"
+    venue: "ICLR"
+    year: 2025
+    type: "conference"
+    url: "https://proceedings.iclr.cc/paper_files/paper/2025/hash/c66e1fcc9691aae706250638f36f681b-Abstract-Conference.html"
+    note: "Agent RL anchor with web tasks; relevant but heavier compute-wise."
+    tags: ["agent RL", "web", "curriculum"]
+  - direction_id: "agent-policy-optimization"
+    title: "WebAgent-R1: Training Web Agents via End-to-End Multi-Turn Reinforcement Learning"
+    venue: "ICML"
+    year: 2025
+    type: "poster"
+    url: "https://icml.cc/virtual/2025/49792"
+    note: "Recent end-to-end web-agent RL anchor for policy optimization."
+    tags: ["agent RL", "web", "post-training"]
+  - direction_id: "agent-policy-optimization"
+    title: "KALM: Knowledgeable Agents by Offline Reinforcement Learning from Large Language Model Rollouts"
+    venue: "NeurIPS"
+    year: 2024
+    type: "conference"
+    url: "https://proceedings.neurips.cc/paper_files/paper/2024/hash/e4cdb4090e04816422afcbb08d4badcf-Abstract-Conference.html"
+    note: "Offline RL anchor for agent policy learning from LLM rollouts."
+    tags: ["offline RL", "agent policy", "LLM rollouts"]
+  - direction_id: "agent-policy-optimization"
+    title: "CaPo: Cooperative Plan Optimization for Efficient Embodied Multi-Agent Cooperation"
+    venue: "ICLR"
+    year: 2025
+    type: "conference"
+    url: "https://proceedings.iclr.cc/paper_files/paper/2025/hash/b07091c16719ad3990e3d1ccee6641f1-Abstract-Conference.html"
+    note: "Policy optimization anchor for planning-heavy agent cooperation."
+    tags: ["planning", "policy optimization", "multi-agent"]
+
+  - direction_id: "factuality-rule-guided-apps"
+    title: "AntiLeak-Bench: Preventing Data Contamination by Automatically Constructing Benchmarks with Updated Real-World Knowledge"
+    venue: "ACL"
+    year: 2025
+    type: "long"
+    url: "https://aclanthology.org/2025.acl-long.901/"
+    note: "Strong anchor for contamination and updated-knowledge evaluation."
+    tags: ["contamination", "updated knowledge", "benchmark"]
+  - direction_id: "factuality-rule-guided-apps"
+    title: "RuleArena: A Benchmark for Rule-Guided Reasoning in Large Language Models"
+    venue: "ACL"
+    year: 2025
+    type: "long"
+    url: "https://aclanthology.org/2025.acl-long.27.pdf"
+    note: "Direct anchor for rule-guided reasoning as an evaluable application direction."
+    tags: ["rule following", "benchmark", "reasoning"]
+  - direction_id: "factuality-rule-guided-apps"
+    title: "MRAG: Verifying Legal Claims with Multi-hop Retrieval-Augmented Generation"
+    venue: "EMNLP"
+    year: 2025
+    type: "findings"
+    url: "https://aclanthology.org/2025.findings-emnlp.167/"
+    note: "Application anchor for factual verification in a concrete high-stakes domain."
+    tags: ["factuality", "RAG", "legal"]
+  - direction_id: "factuality-rule-guided-apps"
+    title: "Unsupervised Hallucination Detection in Language Models with Parser-Based Scoring"
+    venue: "EMNLP"
+    year: 2025
+    type: "main"
+    url: "https://aclanthology.org/2025.emnlp-main.1124.pdf"
+    note: "Hallucination detection anchor with an evaluation-facing method."
+    tags: ["hallucination detection", "factuality"]

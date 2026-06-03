@@ -4,6 +4,7 @@ __pycache__/
 .venv/
 .vscode/
 data/_legacy/
+data/_cache/
 output/
 .codex-*.png
 experiments/

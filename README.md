@@ -16,6 +16,7 @@ ArXiv_Daily_Digest is a research radar and dashboard project. Its current core s
 | Static dashboard | Primary reading surface. Open `index.html` from the repository root, no server required. |
 | Daily collection | Scheduled GitHub Actions workflow for ArXiv search, citation expansion, relevance filtering, and storage. |
 | Direction radar | Active scope is defined in `config/directions.yaml`. The current setup keeps 2 legacy reliability lines and adds 4 agent/factuality lines. |
+| Authority anchors | `config/authority_anchors.yaml` keeps manually curated A-conference backbone papers for each direction. These papers are highlighted separately from the daily queue. |
 | Structured extraction | Converts abstracts into problem, method, key finding, method family, control mechanism, evaluation environment, reliability risk, feasibility, and mentor questions. |
 | Mentor brief | `mentor_brief.py` turns local JSONL data into a compact discussion brief for periodic advisor alignment. |
 
@@ -64,6 +65,20 @@ The active directions are:
 | `agent-policy-optimization` | Policy optimization, online distillation, teacher-student learning, reward learning, RLVR, and test-time scaling. |
 | `factuality-rule-guided-apps` | Factuality, rule-guided reasoning, hallucination detection, benchmark contamination, and application benchmarks. |
 
+## Authority Anchors
+
+Published A-conference papers are treated as direction anchors rather than ordinary daily queue items. The dashboard shows them in the Authority Anchors panel, and the mentor brief lists them before the weekly reading queue.
+
+Update the manual backbone here:
+
+```text
+config/authority_anchors.yaml
+```
+
+Current queue papers with recognized A-conference labels are also boosted in the reading order and marked as `A会重点`.
+
+For the main collection pipeline, `seed_papers` in `config/directions.yaml` now has two roles: the seed papers themselves are fetched from arXiv and prioritized for extraction, and the same IDs are used for Semantic Scholar citation expansion.
+
 ## Mentor Brief
 
 Generate a local discussion brief without calling external APIs:
@@ -111,6 +126,7 @@ Create `.env` in the repository root:
 DOUBAO_API_KEY=your_ark_api_key
 DOUBAO_ENDPOINT_ID=your_endpoint_id
 GITHUB_TOKEN=ghp_your_token
+SEMANTIC_SCHOLAR_API_KEY=optional_s2_api_key
 SERVERCHAN_SENDKEY=optional_serverchan_key
 WXPUSHER_APP_TOKEN=optional_wxpusher_app_token
 WXPUSHER_UIDS=optional_wxpusher_uids
@@ -118,15 +134,32 @@ WXPUSHER_UIDS=optional_wxpusher_uids
 
 GitHub Actions uses the same secret names. The scheduled workflow runs daily at 03:00 UTC, which is 11:00 in Asia/Shanghai.
 
+## Venue Backfill
+
+Semantic Scholar venue lookup is rate-limited. The resolver supports `SEMANTIC_SCHOLAR_API_KEY` or `S2_API_KEY`, local response caching under `data/_cache/`, and 429 backoff.
+
+Backfill venue labels without running the main collection pipeline:
+
+```bash
+python venue_backfill.py --week 2026-W23 --write
+```
+
+Dry run is the default:
+
+```bash
+python venue_backfill.py --week 2026-W23
+```
+
 ## Repository Layout
 
 ```text
 ArXiv_Daily_Digest/
   index.html                    # Click-to-open dashboard entry
-  config/                       # Active directions and venue overrides
+  config/                       # Active directions, authority anchors, and venue overrides
   data/                         # JSONL records and generated research artifacts
   radar_dashboard/              # Static dashboard and optional local API server
   main.py                       # Daily collection pipeline
+  authority_anchors.py          # Manual A-conference anchor loader
   processor.py                  # Structured extraction
   mentor_brief.py               # Local mentor-alignment brief generator
   storage.py                    # JSONL persistence and direction-level deduplication

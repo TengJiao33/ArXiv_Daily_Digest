@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import sys
 from collections import Counter, defaultdict
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -17,8 +18,12 @@ from urllib.parse import parse_qs, urlparse
 
 import yaml
 
-
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from authority_anchors import is_authority_venue, load_authority_anchors
+
 DATA_DIR = ROOT / "data"
 CONFIG_PATH = ROOT / "config" / "directions.yaml"
 STATIC_DIR = Path(__file__).resolve().parent / "static"
@@ -89,6 +94,7 @@ def load_papers():
                         "venue_url": paper.get("venue_url", ""),
                         "venue_confidence": paper.get("venue_confidence", ""),
                         "venue_source": paper.get("venue_source", ""),
+                        "is_authority_venue": is_authority_venue(paper.get("venue", "")),
                         "problem": extracted.get("problem", ""),
                         "method": extracted.get("method", ""),
                         "contribution": extracted.get("contribution", ""),
@@ -187,6 +193,15 @@ def summarize(papers):
         (p.get("id") or p.get("url") or p.get("title", "").lower())
         for p in current
     }
+    current_authority = [
+        p for p in current if p.get("is_authority_venue") or is_authority_venue(p.get("venue", ""))
+    ]
+    unique_current_authority = {
+        (p.get("id") or p.get("url") or p.get("title", "").lower())
+        for p in current_authority
+    }
+    authority_anchors = load_authority_anchors(directions=directions)
+    anchor_counts = Counter(anchor["direction_id"] for anchor in authority_anchors)
 
     by_direction = []
     for direction_id, conf in directions.items():
@@ -198,6 +213,8 @@ def summarize(papers):
                 "description": conf.get("description", ""),
                 "count": len(subset),
                 "code_count": sum(1 for p in subset if p["has_code"]),
+                "authority_count": sum(1 for p in subset if p.get("is_authority_venue")),
+                "anchor_count": anchor_counts.get(direction_id, 0),
                 "themes": Counter(p["theme"] for p in subset).most_common(8),
                 "method_families": Counter(p["method_family"] for p in subset).most_common(8),
                 "priorities": Counter(p["read_priority"] for p in subset).most_common(),
@@ -219,6 +236,7 @@ def summarize(papers):
     )
     priority_counts = Counter(p["read_priority"] for p in current)
     venue_counts = Counter(p["venue"] for p in current if p.get("venue"))
+    authority_venue_counts = Counter(p["venue"] for p in current_authority if p.get("venue"))
     category_counts = Counter(p["category"] or "unknown" for p in current)
     limitation_counts = Counter()
     failure_mode_counts = Counter()
@@ -264,12 +282,16 @@ def summarize(papers):
         "total_papers": len(current),
         "unique_papers": len(unique_current),
         "total_code": sum(1 for p in current if p["has_code"]),
+        "total_authority": len(unique_current_authority),
+        "authority_anchor_count": len(authority_anchors),
+        "authority_anchors": authority_anchors,
         "directions": by_direction,
         "trend": trend,
         "themes": theme_counts.most_common(16),
         "method_families": method_family_counts.most_common(16),
         "priorities": priority_counts.most_common(),
         "venues": venue_counts.most_common(12),
+        "authority_venues": authority_venue_counts.most_common(12),
         "categories": category_counts.most_common(10),
         "limitations": limitation_counts.most_common(10),
         "failure_modes": failure_mode_counts.most_common(10),

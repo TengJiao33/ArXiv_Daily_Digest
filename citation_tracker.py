@@ -1,17 +1,17 @@
 """
 ArXiv_Daily_Digest — Semantic Scholar 引用追踪模块
 通过种子论文的被引列表发现新论文，弥补关键词搜索的盲区。
-Semantic Scholar API 免费、无需 key。
+支持可选 SEMANTIC_SCHOLAR_API_KEY / S2_API_KEY，并在 429 时自动退避。
 """
 
-import requests
 import time
 
+from semantic_scholar_client import make_s2_session, semantic_scholar_get
 
 API_BASE = "https://api.semanticscholar.org/graph/v1"
 
 
-def get_citing_papers(arxiv_id, limit=50):
+def get_citing_papers(arxiv_id, limit=50, session=None):
     """
     查询引用了某篇种子论文的所有后续论文。
     :param arxiv_id: ArXiv ID（如 "2310.06824"）
@@ -25,7 +25,14 @@ def get_citing_papers(arxiv_id, limit=50):
     }
 
     try:
-        resp = requests.get(url, params=params, timeout=15)
+        session = session or make_s2_session()
+        resp = semantic_scholar_get(
+            session,
+            url,
+            params=params,
+            timeout=15,
+            context=f"citations ArXiv:{arxiv_id}",
+        )
         if resp.status_code == 404:
             print(f"[CitTracker] ⚠️ 论文 {arxiv_id} 在 Semantic Scholar 中未找到")
             return []
@@ -74,10 +81,11 @@ def track_all_seeds(seed_papers, delay=1.0):
 
     all_papers = []
     seen_ids = set()
+    session = make_s2_session()
 
     for i, seed_id in enumerate(seed_papers):
         print(f"[CitTracker] ({i+1}/{len(seed_papers)}) 追踪种子论文: ArXiv:{seed_id}")
-        citing = get_citing_papers(seed_id)
+        citing = get_citing_papers(seed_id, session=session)
 
         for p in citing:
             pid = p.get("arxiv_id", "") or p.get("title", "")
