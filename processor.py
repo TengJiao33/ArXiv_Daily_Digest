@@ -36,6 +36,7 @@ EXTRACTION_PROMPT = """从以下论文摘要中提取结构化信息。
   "key_finding": "这篇论文最具体、最独特的发现是什么？写出机制、数值、现象或失败模式，不要空泛。（一句话，30-70字中文）",
   "theme": "这篇论文属于什么研究主题？用3-10个中文字概括，例如'可执行技能'、'多Agent一致性'、'奖励学习'、'事实性评测'",
   "method_family": "方法族/论文类型：从 agent harness、skill generation、tool-use control、multi-agent coordination、consistency detection、policy optimization、online distillation、reward learning、factuality benchmark、unlearning/safety、model steering、evaluation/benchmark、survey、other 中选一个或写更贴切短语",
+  "cross_direction": "交叉方向标签：从 multi-agent reliability harness、MCP tool reliability、skill safety、benchmark-only、single-agent harness、not-crossing 中选一个；优先标出 agent harness 与多Agent/工具/MCP/skill安全的交叉点",
   "edit_target": "被控制、编辑、遗忘或约束的对象：agent action / tool use / workflow / factual knowledge / safety knowledge / private data / reasoning behavior / reward policy / representation / parameter / unknown 等，中文短语",
   "agent_setting": "如果涉及 agent，说明环境和任务形态，如 web/OS/coding/search/KBQA/multi-agent/tool-use；若不涉及写'非Agent论文'",
   "control_mechanism": "论文如何控制或改进模型/agent 行为，如 harness、skill program、verifier、debate、reward、distillation、steering、unlearning、benchmark feedback；30-60字中文",
@@ -58,6 +59,7 @@ EXTRACTION_PROMPT = """从以下论文摘要中提取结构化信息。
 - title_zh 和 abstract_zh 要忠实翻译原文，不要添加摘要中没有的信息。
 - key_finding 要具体到机制、数值、现象或失败模式层面，拒绝空泛描述。
 - method_family 和 theme 要尽量稳定，便于后续聚合。
+- cross_direction 只输出枚举值本身。若论文只是普通单Agent benchmark 且没有工具、MCP、skill安全或多Agent可靠性交叉，写 benchmark-only 或 not-crossing。
 - mentor_question 要像真实导师讨论问题，不要写成泛泛的"是否有意义"。
 - 如果摘要信息不足，如实写"摘要未提及"，不要编造。"""
 
@@ -78,6 +80,7 @@ def _empty_extracted():
         "key_finding": "提取失败",
         "theme": "未分类",
         "method_family": "未分类",
+        "cross_direction": "not-crossing",
         "edit_target": "未知",
         "agent_setting": "提取失败",
         "control_mechanism": "提取失败",

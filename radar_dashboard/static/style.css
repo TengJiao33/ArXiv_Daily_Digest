@@ -349,6 +349,7 @@ main {
 
 #venueList,
 #authorityAnchorList,
+#crossDirectionList,
 #failureModesList,
 #evaluationSignalsList,
 #ideaHooksList,
@@ -719,6 +720,28 @@ main {
   font-weight: 700;
 }
 
+.tag.cross {
+  background: #edf4ef;
+  color: var(--green);
+  font-weight: 700;
+}
+
+.cross-row {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--surface-3);
+  border-radius: 7px;
+  padding: 9px 10px !important;
+}
+
+.cross-row > span:last-child {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
 .priority {
   border-radius: 5px;
   padding: 4px 7px;
@@ -1064,6 +1087,7 @@ main {
 
   #venueList,
   #authorityAnchorList,
+#crossDirectionList,
   #failureModesList,
   #evaluationSignalsList,
   #ideaHooksList,

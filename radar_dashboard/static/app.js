@@ -136,6 +136,7 @@ function filterStaticPapers(params) {
         "key_finding",
         "theme",
         "method_family",
+        "cross_direction",
         "edit_target",
         "agent_setting",
         "control_mechanism",
@@ -199,6 +200,7 @@ function mergeDuplicatePapers(papers) {
       ingest_source: current.ingest_source || paper.ingest_source || "",
       manual_reason: current.manual_reason || paper.manual_reason || "",
       manual_tags: current.manual_tags || paper.manual_tags || [],
+      cross_direction: current.cross_direction || paper.cross_direction || "",
       direction_names: [...directions],
       direction_name: [...directions].join(" / "),
     });
@@ -257,11 +259,19 @@ function renderSummary() {
   renderTrend(summary);
   renderDirections(summary);
   renderAuthorityAnchors(summary);
+  renderCrossDirections(summary);
   renderVenues(summary);
   renderFailureModes(summary);
   renderEvaluationSignals(summary);
   renderIdeaHooks(summary);
   renderCodePapers(summary);
+}
+
+function renderCrossDirections(summary) {
+  const rows = summary.cross_directions || [];
+  $("crossDirectionList").innerHTML = rows.map(([label, count]) => (
+    `<li class="cross-row"><span class="tag cross">${escapeHtml(label)}</span><span>${count} 篇</span></li>`
+  )).join("") || `<li>本周暂无明显交叉标签</li>`;
 }
 
 function renderTrend(summary) {
@@ -439,6 +449,10 @@ function paperCard(paper, index) {
   const abstractZh = compactText(paper.abstract_zh, "");
   const priority = paper.read_priority || "low";
   const authority = isAuthorityVenue(paper);
+  const crossTag = compactText(paper.cross_direction, "");
+  const crossBadge = crossTag && !["not-crossing", "benchmark-only"].includes(crossTag)
+    ? `<span class="tag cross">${escapeHtml(crossTag)}</span>`
+    : "";
   return `
     <article class="paper-card paper-priority-${escapeHtml(priority)} ${authority ? "paper-authority" : ""}">
       <div class="paper-main">
@@ -448,6 +462,7 @@ function paperCard(paper, index) {
           ${paper.ingest_source === "manual" ? `<span class="tag manual">手动</span>` : ""}
           ${directionBadges(paper)}
           <span class="tag">${escapeHtml(paper.method_family || paper.theme || "未分类")}</span>
+          ${crossBadge}
           <span class="priority ${escapeHtml(priority)}">${escapeHtml(priority)}</span>
           ${paper.has_code ? `<span class="tag code">代码</span>` : ""}
         </div>
@@ -558,6 +573,7 @@ function openPaperDetail(index) {
       ${detailRow("贡献", paper.contribution)}
       ${detailRow("关键发现", paper.key_finding)}
       ${detailRow("方法族", paper.method_family)}
+      ${detailRow("交叉标签", paper.cross_direction)}
       ${detailRow("编辑对象", paper.edit_target)}
       ${detailRow("Agent 场景", paper.agent_setting)}
       ${detailRow("控制机制", paper.control_mechanism)}

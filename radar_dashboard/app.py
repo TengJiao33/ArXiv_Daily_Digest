@@ -46,6 +46,52 @@ def iter_week_dirs():
                 yield direction_id, week_dir.name, week_dir
 
 
+def infer_cross_direction(direction_id, paper, extracted):
+    """Backfill a stable cross-direction tag for older extracted records."""
+    explicit = str(extracted.get("cross_direction", "") or "").strip()
+    if explicit and explicit not in {"提取失败", "摘要未提及", "未提及"}:
+        return explicit
+
+    text = " ".join(
+        str(value or "")
+        for value in [
+            direction_id,
+            paper.get("title", ""),
+            paper.get("summary", ""),
+            paper.get("abstract", ""),
+            extracted.get("theme", ""),
+            extracted.get("method_family", ""),
+            extracted.get("agent_setting", ""),
+            extracted.get("control_mechanism", ""),
+            extracted.get("evaluation_environment", ""),
+            extracted.get("failure_mode", ""),
+            extracted.get("reliability_risk", ""),
+            extracted.get("idea_hook", ""),
+        ]
+    ).lower()
+
+    has_agent = any(term in text for term in ["agent", "智能体", "tool-use", "tool use", "mcp"])
+    has_multi_agent = any(term in text for term in ["multi-agent", "multi agent", "多agent", "多 agent", "多智能体"])
+    has_harness = any(term in text for term in ["harness", "workflow", "verifier", "judge", "仲裁", "诊断", "控制", "约束", "评测"])
+    has_mcp = "mcp" in text
+    has_tool = any(term in text for term in ["tool-use", "tool use", "工具调用", "调用工具", "api"])
+    has_skill = any(term in text for term in ["skill", "技能", "program function", "skill library"])
+    has_safety = any(term in text for term in ["safety", "privacy", "安全", "隐私", "attack", "jailbreak", "poison", "权限"])
+    has_benchmark = any(term in text for term in ["benchmark", "bench", "基准", "evaluation", "评测"])
+
+    if has_multi_agent and has_harness:
+        return "multi-agent reliability harness"
+    if has_mcp or (has_agent and has_tool):
+        return "MCP tool reliability"
+    if has_agent and has_skill and has_safety:
+        return "skill safety"
+    if has_agent and has_skill:
+        return "single-agent harness"
+    if has_agent and has_benchmark:
+        return "benchmark-only"
+    return "not-crossing"
+
+
 def load_papers():
     papers = []
     directions = load_directions()
@@ -64,6 +110,7 @@ def load_papers():
                     continue
                 extracted = paper.get("extracted") or {}
                 method_family = extracted.get("method_family") or extracted.get("theme", "未分类") or "未分类"
+                cross_direction = infer_cross_direction(direction_id, paper, extracted)
                 read_priority = str(extracted.get("read_priority", "low") or "low").lower()
                 if read_priority not in {"high", "medium", "low"}:
                     read_priority = "low"
@@ -105,6 +152,7 @@ def load_papers():
                         "key_finding": extracted.get("key_finding", ""),
                         "theme": extracted.get("theme", "未分类") or "未分类",
                         "method_family": method_family,
+                        "cross_direction": cross_direction,
                         "edit_target": extracted.get("edit_target", ""),
                         "agent_setting": extracted.get("agent_setting", ""),
                         "control_mechanism": extracted.get("control_mechanism", ""),
@@ -237,6 +285,11 @@ def summarize(papers):
     method_family_counts = Counter(
         p["method_family"] for p in current if p["method_family"] and p["method_family"] != "未分类"
     )
+    cross_direction_counts = Counter(
+        p["cross_direction"]
+        for p in current
+        if p.get("cross_direction") and p["cross_direction"] not in {"not-crossing", "benchmark-only"}
+    )
     priority_counts = Counter(p["read_priority"] for p in current)
     venue_counts = Counter(p["venue"] for p in current if p.get("venue"))
     authority_venue_counts = Counter(p["venue"] for p in current_authority if p.get("venue"))
@@ -292,6 +345,7 @@ def summarize(papers):
         "trend": trend,
         "themes": theme_counts.most_common(16),
         "method_families": method_family_counts.most_common(16),
+        "cross_directions": cross_direction_counts.most_common(12),
         "priorities": priority_counts.most_common(),
         "venues": venue_counts.most_common(12),
         "authority_venues": authority_venue_counts.most_common(12),
@@ -337,6 +391,7 @@ def search_papers(papers, params):
                     "key_finding",
                     "theme",
                     "method_family",
+                    "cross_direction",
                     "edit_target",
                     "agent_setting",
                     "control_mechanism",
