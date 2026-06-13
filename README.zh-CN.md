@@ -3,45 +3,70 @@
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 ![Dashboard](https://img.shields.io/badge/Dashboard-Static%20HTML%20%2B%20Local%20API-2f7d62)
 ![Automation](https://img.shields.io/badge/Automation-GitHub%20Actions-2088FF?logo=githubactions&logoColor=white)
-![Scope](https://img.shields.io/badge/Scope-Agent%20Reliability%20Radar-3867a6)
 
 [English](README.md)
 
-ArXiv_Daily_Digest 是研究论文雷达和 dashboard 项目。当前核心界面是 **Agent Reliability Radar**，聚焦 LLM Agent、harness、可靠性、事实性、模型控制与安全干预。系统负责采集近期论文，补全代码、会议、引用和社区热度信号，抽取结构化研究字段，并通过本地 dashboard 和导师对齐 brief 形成日常阅读、选题判断入口。
+ArXiv_Daily_Digest 是一个面向研究论文采集、补全、存储与审阅的可配置流水线。系统基于预定义研究方向执行 arXiv 检索、可选引用扩展、元数据补全、结构化抽取、Markdown 产物生成与静态 Dashboard 展示。
 
-## 核心功能
+当前仓库内置 Agent Reliability Radar 配置。项目实现以方向配置为核心组织单元，可按需要调整为其他研究范围。
 
-| 功能 | 定位 |
+## 功能
+
+| 模块 | 说明 |
 | --- | --- |
-| 静态 Dashboard | 第一阅读入口。直接打开根目录 `index.html`，无需启动服务。 |
-| 每日采集 | GitHub Actions 定时执行 ArXiv 搜索、引用扩展、相关性过滤、补全和 JSONL 存储。 |
-| 方向雷达 | 当前 active 方向定义在 `config/directions.yaml`，保留 2 条旧线并新增 4 条吴小宝老师相关 agent / factuality 方向。 |
-| 权威锚点 | `config/authority_anchors.yaml` 手工维护各方向已经发表的 A 会骨架论文，和每日阅读队列分开展示。 |
-| 手动注入 | `config/manual_papers.yaml` 用来临时把某几篇 arXiv 论文送进主流程，适合“灵机一动”的一次性处理。 |
-| 结构化抽取 | 从摘要中提取问题、方法、关键发现、方法族、控制机制、评测环境、可靠性风险、可行性和导师讨论问题。 |
-| 导师 Brief | `mentor_brief.py` 把本地 JSONL 数据压缩成周期性导师对齐材料。 |
+| 论文采集 | 按方向级查询条件从 arXiv 获取候选论文。 |
+| 引用扩展 | 基于种子论文通过 Semantic Scholar 扩展候选集合。 |
+| 相关性过滤 | 按可配置关键词与主题条件筛选候选论文。 |
+| 元数据补全 | 补全代码仓库、Hugging Face 热度、引用数与 venue 信息。 |
+| 结构化抽取 | 抽取研究问题、方法、贡献、局限、评测信号、风险与后续问题。 |
+| 本地存储 | 按研究方向与 ISO 周写入 `data/` 下的 JSONL 记录。 |
+| 静态 Dashboard | 基于本地数据生成可直接打开的静态审阅界面。 |
+| Markdown 产物 | 生成周报、研究版图与审阅简报。 |
+| 定时执行 | 支持通过 GitHub Actions 每日运行并提交数据更新。 |
 
-## Dashboard
+## 快速开始
 
-直接打开根目录入口：
+```bash
+git clone https://github.com/TengJiao33/ArXiv_Daily_Digest.git
+cd ArXiv_Daily_Digest
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+打开静态 Dashboard：
 
 ```text
 index.html
 ```
 
-该入口会跳转到：
+根目录入口会跳转到：
 
 ```text
 radar_dashboard/static/index.html
 ```
 
-静态 dashboard 读取 `radar_dashboard/static/data.js`，可以直接从文件系统打开。采集数据更新后，重新生成静态快照：
+Dashboard 读取 `radar_dashboard/static/data.js`，可直接从本地文件系统打开。
+
+## 采集流水线
+
+运行完整采集流程：
+
+```bash
+python main.py
+```
+
+该命令可能访问 arXiv、Semantic Scholar、GitHub、Hugging Face、venue 查询接口以及豆包/火山 Ark。实际运行可能消耗 API 配额，取决于已配置的凭据和候选论文数量。
+
+数据更新后，重新生成静态 Dashboard 快照：
 
 ```bash
 python radar_dashboard/build_static.py
 ```
 
-如果需要本地 API 模式：
+## 本地 Dashboard 服务
+
+如需使用本地 API 模式：
 
 ```bash
 python radar_dashboard/app.py
@@ -53,34 +78,57 @@ python radar_dashboard/app.py
 http://127.0.0.1:7860
 ```
 
-## 当前研究范围
+## 配置
 
-| 方向 ID | 定位 |
+需要外部集成时，在仓库根目录创建 `.env`：
+
+```ini
+DOUBAO_API_KEY=your_ark_api_key
+DOUBAO_ENDPOINT_ID=your_endpoint_id
+GITHUB_TOKEN=ghp_your_token
+SEMANTIC_SCHOLAR_API_KEY=optional_s2_api_key
+SERVERCHAN_SENDKEY=optional_serverchan_key
+WXPUSHER_APP_TOKEN=optional_wxpusher_app_token
+WXPUSHER_UIDS=optional_wxpusher_uids
+```
+
+GitHub Actions 使用同名 Secrets。定时工作流每日 UTC 03:00 运行。
+
+## 研究方向
+
+研究范围定义在：
+
+```text
+config/directions.yaml
+```
+
+每个方向可配置：
+
+| 字段 | 用途 |
 | --- | --- |
-| `editing-reliability-evaluation` | 旧线保留：编辑可靠性、steering 副作用、模型控制和机制干预。 |
-| `model-unlearning` | 旧线保留并扩展：模型遗忘、后门防御、越狱防御和安全干预。 |
-| `agent-skills-harness` | Agent skills、可执行 skill library、harness、tool-use control、workflow 约束和执行式评测。 |
-| `multi-agent-consistency` | 多 Agent 协作、不一致、共识、辩论、judge/verifier 机制和行为一致性。 |
-| `agent-policy-optimization` | 策略优化、在线蒸馏、teacher-student、reward learning、RLVR 和 test-time scaling。 |
-| `factuality-rule-guided-apps` | 事实性、规则推理、幻觉检测、benchmark contamination 和应用场景评测。 |
+| `name` | Dashboard 与生成产物使用的显示名称。 |
+| `description` | 提供给结构化抽取的方向描述。 |
+| `arxiv_query` | arXiv 检索表达式。 |
+| `keywords` | 用于补全和过滤逻辑的关键词。 |
+| `relevance` | 相关性过滤所需的必备词与主题词。 |
+| `max_papers` | 单方向候选数量上限。 |
+| `seed_papers` | 用于直接纳入和引用扩展的 arXiv ID。 |
+
+当前配置包含编辑可靠性、模型遗忘、Agent Harness、多 Agent 一致性、Agent 策略优化和事实性应用等方向。
 
 ## 权威锚点
 
-已经发表的 A 会论文会被当作方向锚点，而不是普通本周新抓取论文。Dashboard 会在“权威锚点”面板单独展示，导师 brief 也会在阅读队列前先列这些顶会骨架。
-
-手工维护入口：
+已发表或经人工确认的高优先级论文可与每日候选队列分开维护：
 
 ```text
 config/authority_anchors.yaml
 ```
 
-当前队列里已经识别出 A 会标签的论文也会在阅读排序里被抬高，并标记为 `A会重点`。
-
-主采集流程里，`config/directions.yaml` 的 `seed_papers` 现在有两层作用：种子论文本体会先从 arXiv 拉进候选池并优先进入结构化提取；同一批 ID 也会继续用于 Semantic Scholar 引用扩展。
+这些记录会在 Dashboard 中展示，并在生成的简报中先于普通阅读队列列出。当前队列中识别到明确 venue 标签的论文也会在排序中获得更高优先级。
 
 ## 手动注入论文
 
-如果临时看到一篇论文，想让它按某个方向过完整主流程，但它不一定会被 standing query 抓到，就把 arXiv ID 放进：
+当某篇论文需要进入完整补全流程，但不一定会被常规查询覆盖时，可使用手动注入：
 
 ```text
 config/manual_papers.yaml
@@ -92,16 +140,16 @@ config/manual_papers.yaml
 manual_papers:
   agent-skills-harness:
     - arxiv_id: "2404.07972"
-      reason: "OSWorld 是很强的 agent harness benchmark，需要单独过一遍。"
+      reason: "Agent harness benchmark reference."
   factuality-rule-guided-apps:
     - "2412.08972"
 ```
 
-手动注入只拉取论文本体，不做 Semantic Scholar 引用扩展；它会绕过关键词相关性过滤，但仍然走代码检查、豆包结构化抽取、HF 热度匹配、venue 标注和 JSONL 存储。历史去重会防止它之后反复消耗豆包。
+手动注入会直接获取 arXiv 记录并跳过关键词相关性过滤。论文仍会经过代码检查、结构化抽取、Hugging Face 匹配、venue 标注和 JSONL 存储。历史去重会避免对已处理论文重复执行抽取。
 
-## 导师 Brief
+## 审阅简报
 
-生成本地会前讨论材料，不访问外部 API：
+基于本地记录生成 Markdown 简报：
 
 ```bash
 python mentor_brief.py
@@ -120,51 +168,17 @@ python mentor_brief.py --week 2026-W23 --top 3
 python mentor_brief.py --stdout
 ```
 
-## 快速开始
-
-```bash
-git clone https://github.com/TengJiao33/ArXiv_Daily_Digest.git
-cd ArXiv_Daily_Digest
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-只有明确要调用外部 API 时才运行采集：
-
-```bash
-python main.py
-```
-
-`python main.py` 会访问 ArXiv、Semantic Scholar、GitHub、Hugging Face、venue 查询和豆包/火山 Ark，可能消耗 API 额度。打开 dashboard 和生成导师 brief 只读取本地文件。
-
-## 配置
-
-在仓库根目录创建 `.env`：
-
-```ini
-DOUBAO_API_KEY=your_ark_api_key
-DOUBAO_ENDPOINT_ID=your_endpoint_id
-GITHUB_TOKEN=ghp_your_token
-SEMANTIC_SCHOLAR_API_KEY=optional_s2_api_key
-SERVERCHAN_SENDKEY=optional_serverchan_key
-WXPUSHER_APP_TOKEN=optional_wxpusher_app_token
-WXPUSHER_UIDS=optional_wxpusher_uids
-```
-
-GitHub Actions 使用同名 Secrets。定时任务每天 UTC 03:00 运行，对应北京时间 11:00。
-
 ## Venue 回填
 
-Semantic Scholar venue 查询容易触发限流。当前 resolver 支持 `SEMANTIC_SCHOLAR_API_KEY` 或 `S2_API_KEY`，会把查询结果缓存在 `data/_cache/`，并在 429 时自动退避重试。
+Semantic Scholar venue 查询存在限流。当前 resolver 支持 `SEMANTIC_SCHOLAR_API_KEY` 或 `S2_API_KEY`，会将响应缓存在 `data/_cache/`，并在 429 时退避重试。
 
-不运行主采集流程，只给已有 JSONL 回填 venue：
+为已有记录回填 venue 标签：
 
 ```bash
 python venue_backfill.py --week 2026-W23 --write
 ```
 
-默认是 dry run，不会改文件：
+默认模式为 dry run，不写入文件：
 
 ```bash
 python venue_backfill.py --week 2026-W23
@@ -174,18 +188,34 @@ python venue_backfill.py --week 2026-W23
 
 ```text
 ArXiv_Daily_Digest/
-  index.html                    # 点开即看的 dashboard 入口
-  config/                       # active 方向、权威锚点与 venue override
-  data/                         # JSONL 数据与生成的研究产物
-  radar_dashboard/              # 静态 dashboard 和可选本地 API server
-  main.py                       # 每日采集主流程
-  authority_anchors.py          # 手工 A 会权威锚点加载器
+  index.html                    # 静态 Dashboard 入口
+  config/                       # 研究方向、锚点与覆盖配置
+  data/                         # JSONL 记录与生成的研究产物
+  radar_dashboard/              # 静态 Dashboard 与可选本地 API 服务
+  main.py                       # 采集流水线入口
+  scraper_arxiv.py              # arXiv 采集
+  relevance_filter.py           # 候选过滤
+  citation_tracker.py           # Semantic Scholar 引用扩展
+  code_hunter.py                # 代码仓库发现
   processor.py                  # 结构化抽取
-  mentor_brief.py               # 本地导师对齐 brief 生成器
-  storage.py                    # JSONL 存储和方向级去重
+  venue_resolver.py             # Venue 元数据解析
   digest_builder.py             # 周报生成
   landscape_builder.py          # 研究版图生成
+  mentor_brief.py               # 本地审阅简报生成
+  storage.py                    # JSONL 持久化与去重
   .github/workflows/daily.yml   # 定时采集工作流
+```
+
+## 数据产物
+
+常见生成文件包括：
+
+```text
+data/{direction}/{ISO-week}/papers.jsonl
+data/{direction}/{ISO-week}/weekly_digest.md
+data/{direction}/{ISO-week}/landscape.md
+radar_dashboard/static/data.js
+output/mentor_briefs/{ISO-week}.md
 ```
 
 ## License
