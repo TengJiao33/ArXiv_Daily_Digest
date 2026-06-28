@@ -4,6 +4,11 @@ const state = {
   direction: "all",
   query: "",
   theme: "all",
+  method: "all",
+  priority: "all",
+  codeFilter: "all",
+  authorityFilter: "all",
+  view: "queue",
   paperLimit: 20,
   sourcePapers: [],
   allPapers: [],
@@ -265,6 +270,74 @@ function scopedPapers({ applyWeek = true, applyDirection = true } = {}) {
   return papers;
 }
 
+function paperSearchText(paper) {
+  return [
+    "title",
+    "title_zh",
+    "abstract",
+    "abstract_zh",
+    "venue",
+    "manual_reason",
+    "problem",
+    "method",
+    "contribution",
+    "limitations",
+    "key_finding",
+    "theme",
+    "method_family",
+    "cross_direction",
+    "edit_target",
+    "agent_setting",
+    "control_mechanism",
+    "evaluation_environment",
+    "evaluation_signal",
+    "failure_mode",
+    "reliability_risk",
+    "industrial_relevance",
+    "idea_feasibility",
+    "compute_cost",
+    "idea_hook",
+    "mentor_question",
+    "direction_fit",
+    "category",
+  ].map((key) => String(paper[key] || "")).join(" ").toLowerCase();
+}
+
+function matchesQuery(paper) {
+  const query = String(state.query || "").trim().toLowerCase();
+  if (!query) return true;
+  const terms = query.split(/\s+/).filter(Boolean);
+  const haystack = paperSearchText(paper);
+  return terms.every((term) => haystack.includes(term));
+}
+
+function paperMatchesFilters(paper) {
+  const method = state.method || state.theme || "all";
+  if (method !== "all" && paper.theme !== method && paper.method_family !== method) {
+    return false;
+  }
+  if (state.priority !== "all" && String(paper.read_priority || "").toLowerCase() !== state.priority) {
+    return false;
+  }
+  if (state.codeFilter === "with-code" && !paper.has_code) {
+    return false;
+  }
+  if (state.codeFilter === "without-code" && paper.has_code) {
+    return false;
+  }
+  if (state.authorityFilter === "authority" && !isAuthorityVenue(paper)) {
+    return false;
+  }
+  if (state.authorityFilter === "non-authority" && isAuthorityVenue(paper)) {
+    return false;
+  }
+  return matchesQuery(paper);
+}
+
+function pageSize() {
+  return state.view === "overview" ? 60 : 20;
+}
+
 function buildScopedSummary() {
   const base = state.summary || {};
   const allPapers = state.sourcePapers || [];
@@ -502,6 +575,8 @@ function renderMethodFamilies() {
   container.querySelectorAll("button").forEach((button) => {
     button.addEventListener("click", () => {
       state.theme = button.dataset.theme;
+      state.method = state.theme;
+      renderPaperFilterOptions();
       loadPapers();
       renderMethodFamilies();
     });
@@ -610,35 +685,85 @@ function paperCard(paper, index) {
   `;
 }
 
-async function loadPapers() {
-  const params = new URLSearchParams({
-    week: state.week || state.summary.current_week,
-    direction: state.direction,
-    q: state.query,
-    theme: state.theme,
-    limit: "1000",
-  });
-  const data = await fetchJson(`/api/papers?${params.toString()}`);
-  const papers = sortReadingQueue(state.direction === "all" ? mergeDuplicatePapers(data.papers) : data.papers);
+function paperTile(paper, index) {
+  const priority = paper.read_priority || "low";
+  const authority = isAuthorityVenue(paper);
+  const family = paper.method_family || paper.theme || "未分类";
+  const summary = truncateText(
+    paper.title_zh || paper.abstract_zh || paper.idea_hook || paper.key_finding || paper.contribution,
+    128
+  );
+  return `
+    <article class="paper-tile paper-priority-${escapeHtml(priority)} ${authority ? "paper-authority" : ""}" data-detail-index="${index}" role="button" tabindex="0">
+      <div class="tile-top">
+        <span class="priority ${escapeHtml(priority)}">${escapeHtml(priority)}</span>
+        ${authority ? `<span class="tag authority">A会</span>` : ""}
+        ${paper.has_code ? `<span class="tag code">代码</span>` : ""}
+      </div>
+      <h3>${escapeHtml(paper.title || "Untitled")}</h3>
+      ${summary ? `<p class="tile-summary">${escapeHtml(summary)}</p>` : ""}
+      <p class="tile-meta">${escapeHtml(paper.direction_name || "")} · ${escapeHtml(family)} · ${escapeHtml(paper.week || "")}</p>
+    </article>
+  `;
+}
+
+async function loadPapers({ resetLimit = true } = {}) {
+  const scoped = scopedPapers().filter(paperMatchesFilters);
+  const papers = sortReadingQueue(state.direction === "all" ? mergeDuplicatePapers(scoped) : scoped);
   state.allPapers = papers;
-  state.paperLimit = 20;
+  if (resetLimit) state.paperLimit = pageSize();
   renderPaperList();
 }
 
 async function loadMethodFamilies() {
-  const params = new URLSearchParams({
-    week: state.week || state.summary.current_week || "all",
-    direction: state.direction,
+  state.methodFamilies = countEntries(scopedPapers(), (paper) => paper.method_family || paper.theme, {
+    limit: 80,
+    skip: ["未分类"],
   });
-  const data = await fetchJson(`/api/themes?${params.toString()}`);
-  state.methodFamilies = data.themes || [];
+  renderPaperFilterOptions();
   renderMethodFamilies();
+}
+
+function renderPaperFilterOptions() {
+  const methodSelect = $("methodFilter");
+  if (methodSelect) {
+    const methodValues = new Set(state.methodFamilies.map(([family]) => family));
+    if (state.method !== "all" && !methodValues.has(state.method)) {
+      state.method = "all";
+      state.theme = "all";
+    }
+    const methodOptions = [
+      { value: "all", label: "全部方法族" },
+      ...state.methodFamilies.map(([family, count]) => ({
+        value: family,
+        label: `${family} ${count}`,
+      })),
+    ];
+    setOptions(methodSelect, methodOptions, state.method || "all");
+  }
+  if ($("priorityFilter")) $("priorityFilter").value = state.priority;
+  if ($("codeFilter")) $("codeFilter").value = state.codeFilter;
+  if ($("authorityFilter")) $("authorityFilter").value = state.authorityFilter;
 }
 
 function activeFilterText() {
   const filters = [];
-  if (state.theme && state.theme !== "all") {
-    filters.push(`方法族：${state.theme}`);
+  const method = state.method || state.theme;
+  if (method && method !== "all") {
+    filters.push(`方法族：${method}`);
+  }
+  if (state.priority !== "all") {
+    filters.push(`优先级：${state.priority}`);
+  }
+  if (state.codeFilter === "with-code") {
+    filters.push("有代码");
+  } else if (state.codeFilter === "without-code") {
+    filters.push("无代码");
+  }
+  if (state.authorityFilter === "authority") {
+    filters.push("A会论文");
+  } else if (state.authorityFilter === "non-authority") {
+    filters.push("非A会");
   }
   if (state.query) {
     filters.push(`搜索：${state.query}`);
@@ -649,10 +774,17 @@ function activeFilterText() {
 function renderPaperList() {
   const papers = state.allPapers.slice(0, state.paperLimit);
   state.visiblePapers = papers;
+  const isOverview = state.view === "overview";
+  $("paperSectionTitle").textContent = isOverview ? "总览" : "阅读队列";
+  document.querySelectorAll("[data-view]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.view === state.view);
+  });
+  $("papers").classList.toggle("paper-overview-grid", isOverview);
   $("paperCount").textContent = state.direction === "all"
-    ? `${state.allPapers.length} 篇去重论文 · high / A会 / code 优先${activeFilterText()}`
-    : `${state.allPapers.length} 篇论文 · high / A会 / code 优先${activeFilterText()}`;
-  $("papers").innerHTML = papers.map((paper, index) => paperCard(paper, index)).join("") || `<p class="empty">没有匹配论文</p>`;
+    ? `${state.allPapers.length} 篇去重论文 · ${isOverview ? "小卡总览" : "high / A会 / code 优先"}${activeFilterText()}`
+    : `${state.allPapers.length} 篇论文 · ${isOverview ? "小卡总览" : "high / A会 / code 优先"}${activeFilterText()}`;
+  const renderer = isOverview ? paperTile : paperCard;
+  $("papers").innerHTML = papers.map((paper, index) => renderer(paper, index)).join("") || `<p class="empty">没有匹配论文</p>`;
   const hasMore = state.paperLimit < state.allPapers.length;
   $("showMoreBtn").classList.toggle("hidden", !hasMore);
   $("showMoreBtn").textContent = hasMore
@@ -761,6 +893,7 @@ function debounce(fn, delay) {
 $("weekSelect").addEventListener("change", (event) => {
   state.week = event.target.value;
   state.theme = "all";
+  state.method = "all";
   renderSummary();
   loadMethodFamilies();
   loadPapers();
@@ -769,6 +902,7 @@ $("weekSelect").addEventListener("change", (event) => {
 $("directionSelect").addEventListener("change", (event) => {
   state.direction = event.target.value;
   state.theme = "all";
+  state.method = "all";
   renderSummary();
   loadMethodFamilies();
   loadPapers();
@@ -779,10 +913,39 @@ $("searchInput").addEventListener("input", debounce((event) => {
   loadPapers();
 }, 180));
 
+$("priorityFilter").addEventListener("change", (event) => {
+  state.priority = event.target.value;
+  loadPapers();
+});
+
+$("codeFilter").addEventListener("change", (event) => {
+  state.codeFilter = event.target.value;
+  loadPapers();
+});
+
+$("authorityFilter").addEventListener("change", (event) => {
+  state.authorityFilter = event.target.value;
+  loadPapers();
+});
+
+$("methodFilter").addEventListener("change", (event) => {
+  state.method = event.target.value;
+  state.theme = state.method;
+  loadPapers();
+});
+
+document.querySelectorAll("[data-view]").forEach((button) => {
+  button.addEventListener("click", () => {
+    state.view = button.dataset.view || "queue";
+    state.paperLimit = pageSize();
+    renderPaperList();
+  });
+});
+
 $("refreshBtn").addEventListener("click", () => loadAll());
 
 $("showMoreBtn").addEventListener("click", () => {
-  state.paperLimit += 20;
+  state.paperLimit += pageSize();
   renderPaperList();
 });
 
@@ -790,6 +953,15 @@ $("papers").addEventListener("click", (event) => {
   const target = event.target instanceof Element ? event.target : null;
   const button = target ? target.closest("[data-detail-index]") : null;
   if (button) openPaperDetail(button.dataset.detailIndex);
+});
+
+$("papers").addEventListener("keydown", (event) => {
+  if (event.key !== "Enter" && event.key !== " ") return;
+  const target = event.target instanceof Element ? event.target : null;
+  const button = target ? target.closest("[data-detail-index]") : null;
+  if (!button) return;
+  event.preventDefault();
+  openPaperDetail(button.dataset.detailIndex);
 });
 
 $("modalClose").addEventListener("click", closePaperDetail);
