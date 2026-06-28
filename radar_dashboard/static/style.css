@@ -160,7 +160,7 @@ main {
 
 .dashboard-columns {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(420px, 1fr);
+  grid-template-columns: minmax(0, 1.55fr) minmax(380px, 1fr);
   gap: 16px;
   align-items: start;
   grid-column: 1 / -1;
