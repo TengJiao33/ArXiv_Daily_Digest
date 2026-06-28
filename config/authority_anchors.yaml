@@ -28,31 +28,6 @@ authority_anchors:
     note: "Recent benchmark-style editing reliability signal, closer to evaluation than pure method tweaking."
     tags: ["benchmark", "reliability"]
 
-  - direction_id: "model-unlearning"
-    title: "WMDP: Measuring and Reducing Malicious Use With Unlearning"
-    venue: "ICML"
-    year: 2024
-    type: "conference"
-    url: "https://icml.cc/virtual/2024/poster/32695"
-    note: "Safety-oriented unlearning benchmark and evaluation anchor."
-    tags: ["unlearning", "safety", "benchmark"]
-  - direction_id: "model-unlearning"
-    title: "TOFU: A Task of Fictitious Unlearning for LLMs"
-    venue: "ICLR"
-    year: 2025
-    type: "poster"
-    url: "https://openreview.net/forum?id=B1hBaq2XwT"
-    note: "Widely used LLM unlearning benchmark for forget-retain trade-off analysis."
-    tags: ["unlearning", "benchmark"]
-  - direction_id: "model-unlearning"
-    title: "Machine Unlearning in Generative AI: A Survey"
-    venue: "IJCAI"
-    year: 2025
-    type: "survey"
-    url: "https://www.ijcai.org/proceedings/2025/0983.pdf"
-    note: "Survey anchor for positioning unlearning against privacy, safety, and copyright requirements."
-    tags: ["survey", "unlearning"]
-
   - direction_id: "agent-skills-harness"
     title: "WebArena: A Realistic Web Environment for Building Autonomous Agents"
     venue: "ICLR"
@@ -167,36 +142,3 @@ authority_anchors:
     url: "https://proceedings.iclr.cc/paper_files/paper/2025/hash/b07091c16719ad3990e3d1ccee6641f1-Abstract-Conference.html"
     note: "Policy optimization anchor for planning-heavy agent cooperation."
     tags: ["planning", "policy optimization", "multi-agent"]
-
-  - direction_id: "factuality-rule-guided-apps"
-    title: "AntiLeak-Bench: Preventing Data Contamination by Automatically Constructing Benchmarks with Updated Real-World Knowledge"
-    venue: "ACL"
-    year: 2025
-    type: "long"
-    url: "https://aclanthology.org/2025.acl-long.901/"
-    note: "Strong anchor for contamination and updated-knowledge evaluation."
-    tags: ["contamination", "updated knowledge", "benchmark"]
-  - direction_id: "factuality-rule-guided-apps"
-    title: "RuleArena: A Benchmark for Rule-Guided Reasoning in Large Language Models"
-    venue: "ACL"
-    year: 2025
-    type: "long"
-    url: "https://aclanthology.org/2025.acl-long.27.pdf"
-    note: "Direct anchor for rule-guided reasoning as an evaluable application direction."
-    tags: ["rule following", "benchmark", "reasoning"]
-  - direction_id: "factuality-rule-guided-apps"
-    title: "MRAG: Verifying Legal Claims with Multi-hop Retrieval-Augmented Generation"
-    venue: "EMNLP"
-    year: 2025
-    type: "findings"
-    url: "https://aclanthology.org/2025.findings-emnlp.167/"
-    note: "Application anchor for factual verification in a concrete high-stakes domain."
-    tags: ["factuality", "RAG", "legal"]
-  - direction_id: "factuality-rule-guided-apps"
-    title: "Unsupervised Hallucination Detection in Language Models with Parser-Based Scoring"
-    venue: "EMNLP"
-    year: 2025
-    type: "main"
-    url: "https://aclanthology.org/2025.emnlp-main.1124.pdf"
-    note: "Hallucination detection anchor with an evaluation-facing method."
-    tags: ["hallucination detection", "factuality"]

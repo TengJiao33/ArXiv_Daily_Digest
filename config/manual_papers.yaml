@@ -12,9 +12,6 @@
 #       url: "https://picrew.github.io/LLM-Harness/"
 #       pdf_url: "https://openreview.net/pdf?id=eONq7FdiHa"
 #       summary: "..."
-#   factuality-rule-guided-apps:
-#     - "2412.08972"
-
 manual_papers:
   agent-skills-harness:
     - title: "Agent Harness Engineering: A Survey"

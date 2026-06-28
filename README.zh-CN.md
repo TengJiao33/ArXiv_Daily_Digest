@@ -141,8 +141,8 @@ manual_papers:
   agent-skills-harness:
     - arxiv_id: "2404.07972"
       reason: "Agent harness benchmark reference."
-  factuality-rule-guided-apps:
-    - "2412.08972"
+  multi-agent-consistency:
+    - "2308.07201"
 ```
 
 手动注入会直接获取 arXiv 记录并跳过关键词相关性过滤。论文仍会经过代码检查、结构化抽取、Hugging Face 匹配、venue 标注和 JSONL 存储。历史去重会避免对已处理论文重复执行抽取。

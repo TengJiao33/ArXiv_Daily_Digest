@@ -141,8 +141,8 @@ manual_papers:
   agent-skills-harness:
     - arxiv_id: "2404.07972"
       reason: "Agent harness benchmark reference."
-  factuality-rule-guided-apps:
-    - "2412.08972"
+  multi-agent-consistency:
+    - "2308.07201"
 ```
 
 Manual papers fetch the arXiv record directly and bypass keyword relevance filtering. They still pass through code checks, structured extraction, Hugging Face matching, venue annotation, and JSONL storage. Historical de-duplication prevents repeated extraction for papers already processed.
