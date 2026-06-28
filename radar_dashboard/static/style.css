@@ -525,10 +525,9 @@ main {
   top: 75px;
   z-index: 8;
   display: grid;
-  grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1.6fr);
-  justify-content: space-between;
-  align-items: end;
-  gap: 14px;
+  grid-template-columns: 1fr;
+  align-items: stretch;
+  gap: 12px;
   padding: 14px 16px;
   border-bottom: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.96);
@@ -573,13 +572,15 @@ main {
 
 .paper-filters {
   display: grid;
-  grid-template-columns: minmax(260px, 1.45fr) minmax(112px, 0.55fr) minmax(126px, 0.6fr) minmax(136px, 0.65fr) minmax(136px, 0.65fr) minmax(170px, 0.9fr);
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
   gap: 9px;
   min-width: 0;
 }
 
 #searchInput {
   width: 100%;
+  min-width: 0;
+  grid-column: span 2;
 }
 
 .paper-filters select {
@@ -1091,7 +1092,7 @@ main {
   }
 
   .paper-filters {
-    grid-template-columns: minmax(240px, 1fr) repeat(5, minmax(112px, 0.55fr));
+    grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
   }
 }
 

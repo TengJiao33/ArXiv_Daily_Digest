@@ -9,8 +9,8 @@ const state = {
   priority: "all",
   codeFilter: "all",
   authorityFilter: "all",
-  view: "queue",
-  paperLimit: 20,
+  view: "overview",
+  paperLimit: 60,
   sourcePapers: [],
   allPapers: [],
   visiblePapers: [],
@@ -40,7 +40,7 @@ const staticData = window.RADAR_STATIC_DATA || null;
 const $ = (id) => document.getElementById(id);
 
 function removeRetiredDashboardPanels() {
-  document.querySelectorAll(".venues-panel, .hooks-panel").forEach((panel) => panel.remove());
+  document.querySelectorAll(".venues-panel, .hooks-panel, #methodFilter").forEach((panel) => panel.remove());
 }
 
 function escapeHtml(value) {
@@ -333,10 +333,6 @@ function matchesQuery(paper) {
 }
 
 function paperMatchesFilters(paper) {
-  const method = state.method || state.theme || "all";
-  if (method !== "all" && paper.theme !== method && paper.method_family !== method) {
-    return false;
-  }
   if (state.year !== "all" && paperYear(paper) !== state.year) {
     return false;
   }
@@ -748,10 +744,6 @@ function renderPaperFilterOptions() {
 
 function activeFilterText() {
   const filters = [];
-  const method = state.method || state.theme;
-  if (method && method !== "all") {
-    filters.push(`方法族：${method}`);
-  }
   if (state.year !== "all") {
     filters.push(`年份：${state.year}`);
   }
@@ -932,11 +924,13 @@ $("authorityFilter").addEventListener("change", (event) => {
   loadPapers();
 });
 
-$("methodFilter").addEventListener("change", (event) => {
-  state.method = event.target.value;
-  state.theme = state.method;
-  loadPapers();
-});
+if ($("methodFilter")) {
+  $("methodFilter").addEventListener("change", (event) => {
+    state.method = event.target.value;
+    state.theme = state.method;
+    loadPapers();
+  });
+}
 
 $("yearFilter").addEventListener("change", (event) => {
   state.year = event.target.value;
