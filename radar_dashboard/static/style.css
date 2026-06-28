@@ -113,7 +113,7 @@ main {
 
 .overview {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 18px;
 }
@@ -350,8 +350,6 @@ main {
 #venueList,
 #authorityAnchorList,
 #crossDirectionList,
-#failureModesList,
-#evaluationSignalsList,
 #ideaHooksList,
 #codeList {
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -1087,9 +1085,7 @@ main {
 
   #venueList,
   #authorityAnchorList,
-#crossDirectionList,
-  #failureModesList,
-  #evaluationSignalsList,
+  #crossDirectionList,
   #ideaHooksList,
   #codeList {
     grid-template-columns: 1fr;

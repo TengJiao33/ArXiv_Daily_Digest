@@ -5,6 +5,7 @@ const state = {
   query: "",
   theme: "all",
   paperLimit: 20,
+  sourcePapers: [],
   allPapers: [],
   visiblePapers: [],
   methodFamilies: [],
@@ -227,6 +228,139 @@ function sortReadingQueue(papers) {
   });
 }
 
+function paperIdentity(paper) {
+  return paper.id || paper.url || String(paper.title || "").trim().toLowerCase();
+}
+
+function uniquePaperCount(papers) {
+  return new Set(papers.map(paperIdentity).filter(Boolean)).size;
+}
+
+function activeWeek() {
+  return state.week || state.summary?.current_week || "all";
+}
+
+function countEntries(items, getValue, { limit = 16, skip = [] } = {}) {
+  const skipped = new Set(skip);
+  const counts = new Map();
+  for (const item of items) {
+    const value = String(getValue(item) || "").trim();
+    if (!value || skipped.has(value)) continue;
+    counts.set(value, (counts.get(value) || 0) + 1);
+  }
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, limit);
+}
+
+function scopedPapers({ applyWeek = true, applyDirection = true } = {}) {
+  const week = activeWeek();
+  let papers = state.sourcePapers || [];
+  if (applyWeek && week && week !== "all") {
+    papers = papers.filter((paper) => paper.week === week);
+  }
+  if (applyDirection && state.direction && state.direction !== "all") {
+    papers = papers.filter((paper) => paper.direction_id === state.direction);
+  }
+  return papers;
+}
+
+function buildScopedSummary() {
+  const base = state.summary || {};
+  const allPapers = state.sourcePapers || [];
+  const week = activeWeek();
+  const weekLabel = week === "all" ? "全部周" : week;
+  const directionsBase = base.directions || [];
+  const directionScope = state.direction && state.direction !== "all"
+    ? directionsBase.filter((direction) => direction.id === state.direction)
+    : directionsBase;
+  const papers = scopedPapers();
+  const authorityPapers = papers.filter((paper) => isAuthorityVenue(paper));
+  const authorityAnchors = base.authority_anchors || [];
+  const scopedAnchors = state.direction && state.direction !== "all"
+    ? authorityAnchors.filter((anchor) => anchor.direction_id === state.direction)
+    : authorityAnchors;
+  const anchorCounts = new Map(countEntries(authorityAnchors, (anchor) => anchor.direction_id, { limit: 1000 }));
+
+  const directions = directionScope.map((direction) => {
+    const subset = papers.filter((paper) => paper.direction_id === direction.id);
+    return {
+      ...direction,
+      count: subset.length,
+      code_count: subset.filter((paper) => paper.has_code).length,
+      authority_count: subset.filter((paper) => isAuthorityVenue(paper)).length,
+      anchor_count: anchorCounts.get(direction.id) || 0,
+      themes: countEntries(subset, (paper) => paper.theme, { limit: 8, skip: ["未分类"] }),
+      method_families: countEntries(subset, (paper) => paper.method_family || paper.theme, { limit: 8, skip: ["未分类"] }),
+      priorities: countEntries(subset, (paper) => paper.read_priority, { limit: 8 }),
+    };
+  });
+
+  const weeks = base.weeks || [...new Set(allPapers.map((paper) => paper.week).filter(Boolean))].sort();
+  const trend = weeks.map((trendWeek) => {
+    const row = { week: trendWeek, total: 0, directions: {} };
+    for (const direction of directionScope) {
+      const count = allPapers.filter((paper) => paper.week === trendWeek && paper.direction_id === direction.id).length;
+      row.directions[direction.id] = count;
+      row.total += count;
+    }
+    return row;
+  });
+
+  const ideaHooks = papers
+    .filter((paper) => {
+      const hook = compactText(paper.idea_hook, "");
+      return hook && hook !== "暂不明显";
+    })
+    .sort((a, b) => readingScore(b) - readingScore(a))
+    .slice(0, 10)
+    .map((paper) => ({
+      title: paper.title,
+      url: paper.url,
+      idea_hook: paper.idea_hook,
+      read_priority: paper.read_priority,
+      direction_name: paper.direction_name,
+    }));
+
+  const codePapers = papers
+    .filter((paper) => paper.has_code)
+    .sort((a, b) => Number(b.repo_stars || 0) - Number(a.repo_stars || 0) || String(a.title || "").localeCompare(String(b.title || "")))
+    .map((paper) => ({
+      title: paper.title,
+      url: paper.url,
+      repo_url: paper.repo_url,
+      repo_stars: paper.repo_stars || 0,
+      direction_name: paper.direction_name,
+    }));
+
+  return {
+    ...base,
+    current_week: weekLabel,
+    selected_week: week,
+    weeks,
+    total_papers: papers.length,
+    unique_papers: uniquePaperCount(papers),
+    total_code: papers.filter((paper) => paper.has_code).length,
+    total_authority: uniquePaperCount(authorityPapers),
+    authority_anchor_count: scopedAnchors.length,
+    authority_anchors: scopedAnchors,
+    directions,
+    trend,
+    themes: countEntries(papers, (paper) => paper.theme, { limit: 16, skip: ["未分类"] }),
+    method_families: countEntries(papers, (paper) => paper.method_family || paper.theme, { limit: 16, skip: ["未分类"] }),
+    cross_directions: countEntries(papers, (paper) => paper.cross_direction, {
+      limit: 12,
+      skip: ["not-crossing", "benchmark-only"],
+    }),
+    priorities: countEntries(papers, (paper) => paper.read_priority, { limit: 8 }),
+    venues: countEntries(papers, (paper) => paper.venue, { limit: 12 }),
+    authority_venues: countEntries(authorityPapers, (paper) => paper.venue, { limit: 12 }),
+    categories: countEntries(papers, (paper) => paper.category || "unknown", { limit: 10 }),
+    idea_hooks: ideaHooks,
+    code_papers: codePapers,
+  };
+}
+
 function setOptions(select, options, value) {
   select.innerHTML = options.map((option) => (
     `<option value="${escapeHtml(option.value)}">${escapeHtml(option.label)}</option>`
@@ -235,24 +369,26 @@ function setOptions(select, options, value) {
 }
 
 function renderSummary() {
-  const summary = state.summary;
+  const summary = buildScopedSummary();
+  const baseSummary = state.summary || {};
   const source = staticData ? `静态快照 · ${staticData.generated_at || "local"}` : "实时 API";
-  $("subtitle").textContent = `agent harness / reliability / factuality · ${summary.current_week || "no week"} · ${source}`;
+  const directionLabel = state.direction === "all"
+    ? "全部方向"
+    : (baseSummary.directions || []).find((direction) => direction.id === state.direction)?.name || state.direction;
+  $("subtitle").textContent = `agent harness / reliability · ${summary.current_week || "no week"} · ${directionLabel} · ${source}`;
   $("totalPapers").textContent = summary.unique_papers || summary.total_papers;
   $("totalCode").textContent = summary.total_code;
-  $("authorityCount").textContent = summary.authority_anchor_count || 0;
-  $("directionCount").textContent = (summary.directions || []).filter((direction) => direction.count > 0).length;
-  $("currentWeek").textContent = summary.current_week || "-";
+  $("authorityCount").textContent = summary.total_authority || 0;
 
   const weekOptions = [
-    ...summary.weeks.map((week) => ({ value: week, label: week })),
+    ...(baseSummary.weeks || []).map((week) => ({ value: week, label: week })),
     { value: "all", label: "全部周" },
   ];
-  setOptions($("weekSelect"), weekOptions, state.week || summary.current_week || "all");
+  setOptions($("weekSelect"), weekOptions, activeWeek());
 
   const directionOptions = [
     { value: "all", label: "全部方向" },
-    ...summary.directions.map((direction) => ({ value: direction.id, label: direction.name })),
+    ...(baseSummary.directions || []).map((direction) => ({ value: direction.id, label: direction.name })),
   ];
   setOptions($("directionSelect"), directionOptions, state.direction);
 
@@ -261,8 +397,6 @@ function renderSummary() {
   renderAuthorityAnchors(summary);
   renderCrossDirections(summary);
   renderVenues(summary);
-  renderFailureModes(summary);
-  renderEvaluationSignals(summary);
   renderIdeaHooks(summary);
   renderCodePapers(summary);
 }
@@ -358,12 +492,14 @@ function renderAuthorityAnchors(summary) {
 }
 
 function renderMethodFamilies() {
-  const families = state.methodFamilies.length ? state.methodFamilies : (state.summary?.method_families || []);
+  const container = $("themeCloud");
+  if (!container) return;
+  const families = state.methodFamilies.length ? state.methodFamilies : (buildScopedSummary().method_families || []);
   const chips = families.map(([family, count]) => (
     `<button class="chip ${state.theme === family ? "active" : ""}" type="button" data-theme="${escapeHtml(family)}">${escapeHtml(family)} <strong>${count}</strong></button>`
   )).join("");
-  $("themeCloud").innerHTML = `<button class="chip ${state.theme === "all" ? "active" : ""}" type="button" data-theme="all">全部</button>${chips || `<span class="empty-inline">暂无数据</span>`}`;
-  $("themeCloud").querySelectorAll("button").forEach((button) => {
+  container.innerHTML = `<button class="chip ${state.theme === "all" ? "active" : ""}" type="button" data-theme="all">全部</button>${chips || `<span class="empty-inline">暂无数据</span>`}`;
+  container.querySelectorAll("button").forEach((button) => {
     button.addEventListener("click", () => {
       state.theme = button.dataset.theme;
       loadPapers();
@@ -377,20 +513,6 @@ function renderVenues(summary) {
   $("venueList").innerHTML = venues.map(([venue, count]) => (
     `<li class="venue-row"><span class="venue venue-${venueClass(venue)}">${escapeHtml(venue)}</span><span>${count} 篇</span></li>`
   )).join("") || `<li>本周暂无已识别 A 会标签</li>`;
-}
-
-function renderFailureModes(summary) {
-  const groups = summary.failure_mode_groups || [];
-  $("failureModesList").innerHTML = groups.map((item) => (
-    `<li class="signal-card"><strong>${escapeHtml(item.label)}</strong><p>${escapeHtml(item.example)}</p><span>${item.count} 篇</span></li>`
-  )).join("") || `<li>本周摘要未显式提到 failure mode</li>`;
-}
-
-function renderEvaluationSignals(summary) {
-  const groups = summary.evaluation_signal_groups || [];
-  $("evaluationSignalsList").innerHTML = groups.map((item) => (
-    `<li class="signal-card"><strong>${escapeHtml(item.label)}</strong><p>${escapeHtml(item.example)}</p><span>${item.count} 篇</span></li>`
-  )).join("") || `<li>本周暂无明确评测信号</li>`;
 }
 
 function renderIdeaHooks(summary) {
@@ -616,6 +738,12 @@ function closePaperDetail() {
 
 async function loadAll() {
   state.summary = await fetchJson("/api/summary");
+  if (staticData) {
+    state.sourcePapers = staticData.papers || [];
+  } else {
+    const data = await fetchJson("/api/papers?week=all&direction=all&limit=100000");
+    state.sourcePapers = data.papers || [];
+  }
   if (!state.week) state.week = state.summary.current_week || "all";
   renderSummary();
   await loadMethodFamilies();
@@ -633,6 +761,7 @@ function debounce(fn, delay) {
 $("weekSelect").addEventListener("change", (event) => {
   state.week = event.target.value;
   state.theme = "all";
+  renderSummary();
   loadMethodFamilies();
   loadPapers();
 });
@@ -640,7 +769,7 @@ $("weekSelect").addEventListener("change", (event) => {
 $("directionSelect").addEventListener("change", (event) => {
   state.direction = event.target.value;
   state.theme = "all";
-  renderAuthorityAnchors(state.summary);
+  renderSummary();
   loadMethodFamilies();
   loadPapers();
 });

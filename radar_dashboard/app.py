@@ -353,8 +353,6 @@ def summarize(papers):
         "limitations": limitation_counts.most_common(10),
         "failure_modes": failure_mode_counts.most_common(10),
         "evaluation_signals": evaluation_signal_counts.most_common(10),
-        "failure_mode_groups": _group_text_signals(current, "failure_mode", FAILURE_GROUPS),
-        "evaluation_signal_groups": _group_text_signals(current, "evaluation_signal", EVALUATION_GROUPS),
         "idea_hooks": idea_hooks[:10],
         "code_papers": code_papers,
     }

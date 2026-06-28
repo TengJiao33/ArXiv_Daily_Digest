@@ -11,7 +11,7 @@
   <header class="topbar">
     <div class="brand">
       <h1>Agent Reliability Radar</h1>
-      <p id="subtitle">Loading agent harness / reliability / factuality signals...</p>
+      <p id="subtitle">Loading agent harness / reliability signals...</p>
     </div>
     <div class="toolbar">
       <select id="weekSelect" aria-label="week"></select>
@@ -31,16 +31,8 @@
         <strong id="totalCode">0</strong>
       </article>
       <article class="metric">
-        <span>A 会锚点</span>
+        <span>A 会论文</span>
         <strong id="authorityCount">0</strong>
-      </article>
-      <article class="metric">
-        <span>方向命中</span>
-        <strong id="directionCount">0</strong>
-      </article>
-      <article class="metric">
-        <span>当前周</span>
-        <strong id="currentWeek">-</strong>
       </article>
     </section>
 
@@ -69,13 +61,6 @@
             <ul id="authorityAnchorList" class="compact-list authority-anchor-list"></ul>
           </div>
 
-          <div class="panel evaluations-panel">
-            <div class="panel-head">
-              <h2>可靠性信号</h2>
-            </div>
-            <ul id="evaluationSignalsList" class="compact-list"></ul>
-          </div>
-
           <div class="panel code-panel">
             <div class="panel-head">
               <h2>代码资源</h2>
@@ -85,13 +70,6 @@
         </div>
 
         <div class="dashboard-column">
-          <div class="panel methods-panel">
-            <div class="panel-head">
-              <h2>方法与机制</h2>
-            </div>
-            <div id="themeCloud" class="chip-cloud"></div>
-          </div>
-
           <div class="panel cross-panel">
             <div class="panel-head">
               <h2>交叉标签</h2>
@@ -104,13 +82,6 @@
               <h2>A 会标签</h2>
             </div>
             <ul id="venueList" class="compact-list"></ul>
-          </div>
-
-          <div class="panel failures-panel">
-            <div class="panel-head">
-              <h2>风险模式</h2>
-            </div>
-            <ul id="failureModesList" class="compact-list"></ul>
           </div>
 
           <div class="panel hooks-panel">
