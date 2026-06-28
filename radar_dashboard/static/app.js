@@ -487,7 +487,6 @@ function renderSummary() {
 
   renderTrend(summary);
   renderDirections(summary);
-  renderAuthorityAnchors(summary);
   renderCrossDirections(summary);
   renderVenues(summary);
   renderIdeaHooks(summary);
@@ -535,7 +534,6 @@ function renderDirections(summary) {
     ].map(([label, value]) => (
       `<div class="direction-metric"><strong>${value}</strong><span>${label}</span></div>`
     )).join("");
-    const anchorTag = direction.anchor_count ? `<span class="tag authority">锚点 ${direction.anchor_count}</span>` : "";
     return `
       <article class="direction-card" style="border-left-color:${colors[index % colors.length]}">
         <div class="direction-head">
@@ -543,45 +541,10 @@ function renderDirections(summary) {
           <div class="direction-metrics">${metrics}</div>
         </div>
         <p class="direction-desc">${escapeHtml(direction.description)}</p>
-        <div class="paper-meta direction-families">${anchorTag}${families}</div>
+        <div class="paper-meta direction-families">${families}</div>
       </article>
     `;
   }).join("") || `<p class="empty">暂无方向配置</p>`;
-}
-
-function renderAuthorityAnchors(summary) {
-  const anchors = summary.authority_anchors || [];
-  const scoped = state.direction && state.direction !== "all"
-    ? anchors.filter((anchor) => anchor.direction_id === state.direction)
-    : anchors;
-  const shown = scoped.slice(0, 12);
-  const hidden = scoped.length - shown.length;
-  $("authorityMeta").textContent = state.direction === "all"
-    ? `${anchors.length} 篇`
-    : `${scoped.length} 篇 · 当前方向`;
-  $("authorityAnchorList").innerHTML = shown.map((anchor) => {
-    const tags = (anchor.tags || []).slice(0, 3).map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("");
-    const badge = venueBadge({
-      venue: anchor.venue,
-      venue_year: anchor.year,
-      venue_type: anchor.type,
-      venue_url: anchor.url,
-    });
-    return `
-      <li class="anchor-card">
-        <div class="anchor-top">
-          ${badge}
-          <span class="tag">${escapeHtml(anchor.direction_name || anchor.direction_id)}</span>
-          ${tags}
-        </div>
-        <a class="anchor-title" href="${escapeHtml(anchor.url)}" target="_blank" rel="noreferrer">${escapeHtml(anchor.title)}</a>
-        ${anchor.note ? `<p class="anchor-note">${escapeHtml(truncateText(anchor.note, 130))}</p>` : ""}
-      </li>
-    `;
-  }).join("") || `<li>暂无手工权威锚点</li>`;
-  if (hidden > 0) {
-    $("authorityAnchorList").innerHTML += `<li class="anchor-card"><strong>还有 ${hidden} 篇</strong><p class="anchor-note">切到具体方向可查看对应锚点，导师讨论时优先对齐这些已发表工作。</p></li>`;
-  }
 }
 
 function renderMethodFamilies() {

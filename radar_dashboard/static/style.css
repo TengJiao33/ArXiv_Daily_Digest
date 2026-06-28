@@ -348,7 +348,6 @@ main {
 }
 
 #venueList,
-#authorityAnchorList,
 #crossDirectionList,
 #ideaHooksList,
 #codeList {
@@ -367,7 +366,6 @@ main {
 
 .signal-card,
 .hook-card,
-.anchor-card,
 .resource-card {
   border: 1px solid var(--line);
   border-radius: 7px;
@@ -377,39 +375,10 @@ main {
 
 .compact-list .signal-card,
 .compact-list .hook-card,
-.compact-list .anchor-card,
 .compact-list .resource-card,
 .compact-list .venue-row {
   border: 1px solid var(--line);
   padding-bottom: 10px;
-}
-
-.authority-anchor-list {
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-}
-
-.anchor-card {
-  align-content: start;
-  gap: 9px;
-}
-
-.anchor-top {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-}
-
-.anchor-title {
-  color: var(--text);
-  font-weight: 700;
-  line-height: 1.35;
-}
-
-.anchor-note {
-  color: var(--text-secondary);
-  font-size: 13px;
-  line-height: 1.55;
 }
 
 .venue-row {
@@ -1237,7 +1206,6 @@ main {
   }
 
   #venueList,
-  #authorityAnchorList,
   #crossDirectionList,
   #ideaHooksList,
   #codeList {
