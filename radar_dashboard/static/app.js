@@ -1,6 +1,6 @@
 const state = {
   summary: null,
-  week: "",
+  week: "all",
   direction: "all",
   query: "",
   theme: "all",
@@ -38,6 +38,10 @@ const authorityVenues = new Set([
 const staticData = window.RADAR_STATIC_DATA || null;
 
 const $ = (id) => document.getElementById(id);
+
+function removeRetiredDashboardPanels() {
+  document.querySelectorAll(".venues-panel, .hooks-panel").forEach((panel) => panel.remove());
+}
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -243,7 +247,7 @@ function uniquePaperCount(papers) {
 }
 
 function activeWeek() {
-  return state.week || state.summary?.current_week || "all";
+  return state.week || "all";
 }
 
 function countEntries(items, getValue, { limit = 16, skip = [] } = {}) {
@@ -488,8 +492,6 @@ function renderSummary() {
   renderTrend(summary);
   renderDirections(summary);
   renderCrossDirections(summary);
-  renderVenues(summary);
-  renderIdeaHooks(summary);
   renderCodePapers(summary);
 }
 
@@ -870,6 +872,7 @@ function closePaperDetail() {
 }
 
 async function loadAll() {
+  removeRetiredDashboardPanels();
   state.summary = await fetchJson("/api/summary");
   if (staticData) {
     state.sourcePapers = staticData.papers || [];
@@ -877,7 +880,7 @@ async function loadAll() {
     const data = await fetchJson("/api/papers?week=all&direction=all&limit=100000");
     state.sourcePapers = data.papers || [];
   }
-  if (!state.week) state.week = state.summary.current_week || "all";
+  if (!state.week) state.week = "all";
   renderSummary();
   await loadMethodFamilies();
   await loadPapers();

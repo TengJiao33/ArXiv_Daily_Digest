@@ -170,7 +170,7 @@ python mentor_brief.py --stdout
 
 ## Venue Backfill
 
-Semantic Scholar venue lookup is rate-limited. The resolver supports `SEMANTIC_SCHOLAR_API_KEY` or `S2_API_KEY`, local response caching under `data/_cache/`, and 429 backoff.
+Venue labeling uses manual overrides first, then OpenReview accepted-paper metadata, then Semantic Scholar. OpenReview is useful for papers whose Semantic Scholar venue still appears as `arXiv`, such as newly accepted ICLR posters. Both OpenReview and Semantic Scholar responses are cached under `data/_cache/`; Semantic Scholar supports `SEMANTIC_SCHOLAR_API_KEY` or `S2_API_KEY` and 429 backoff.
 
 Backfill venue labels for stored records:
 
@@ -182,6 +182,13 @@ Dry run is the default:
 
 ```bash
 python venue_backfill.py --week 2026-W23
+```
+
+Useful variants:
+
+```bash
+python venue_backfill.py --week 2026-W23 --write --no-openreview
+python venue_backfill.py --week 2026-W23 --write --manual-only
 ```
 
 ## Repository Layout

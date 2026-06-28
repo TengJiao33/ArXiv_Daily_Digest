@@ -1212,3 +1212,7 @@ main {
     grid-template-columns: 1fr;
   }
 }
+.venues-panel,
+.hooks-panel {
+  display: none;
+}
