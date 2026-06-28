@@ -118,6 +118,84 @@ by_arxiv:
     type: "poster"
     url: "https://openreview.net/forum?id=CHsdtzCip6"
     confidence: "manual"
+  "2603.07972":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=IKVUB9Exuc"
+    confidence: "manual"
+  "2509.21993":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=pdNaYcApbz"
+    confidence: "manual"
+  "2603.06495":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=afV4qzquBN"
+    confidence: "manual"
+  "2512.20745":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=e2s7YHeVZW"
+    confidence: "manual"
+  "2505.20819":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=AiT8F6pbfi"
+    confidence: "manual"
+  "2604.12493":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=H0B7pDTT0M"
+    confidence: "manual"
+  "2602.22817":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=T8Dev99qnz"
+    confidence: "manual"
+  "2605.14075":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=mRLnS8jQWt"
+    confidence: "manual"
+  "2504.03735":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=HRkrWi3FWP"
+    confidence: "manual"
+  "2603.05044":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=HaIEP2PD4S"
+    confidence: "manual"
+  "2603.20215":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=EdTt8nMAMA"
+    confidence: "manual"
+  "2603.06923":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=Af16P0ODP6"
+    confidence: "manual"
+  "2510.03346":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=F7rUng23nw"
+    confidence: "manual"
 
   "2605.11836":
     venue: "ICML"
