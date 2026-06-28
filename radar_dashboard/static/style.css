@@ -604,7 +604,7 @@ main {
 
 .paper-filters {
   display: grid;
-  grid-template-columns: minmax(260px, 1.5fr) minmax(126px, 0.7fr) minmax(136px, 0.7fr) minmax(136px, 0.7fr) minmax(180px, 1fr);
+  grid-template-columns: minmax(260px, 1.45fr) minmax(112px, 0.55fr) minmax(126px, 0.6fr) minmax(136px, 0.65fr) minmax(136px, 0.65fr) minmax(170px, 0.9fr);
   gap: 9px;
   min-width: 0;
 }
@@ -1122,7 +1122,7 @@ main {
   }
 
   .paper-filters {
-    grid-template-columns: minmax(240px, 1fr) repeat(4, minmax(120px, 0.55fr));
+    grid-template-columns: minmax(240px, 1fr) repeat(5, minmax(112px, 0.55fr));
   }
 }
 

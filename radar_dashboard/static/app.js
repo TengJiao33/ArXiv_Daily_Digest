@@ -5,6 +5,7 @@ const state = {
   query: "",
   theme: "all",
   method: "all",
+  year: "all",
   priority: "all",
   codeFilter: "all",
   authorityFilter: "all",
@@ -303,6 +304,22 @@ function paperSearchText(paper) {
   ].map((key) => String(paper[key] || "")).join(" ").toLowerCase();
 }
 
+function paperYear(paper) {
+  const text = String(paper.published || paper.venue_year || paper.collected || paper.week || "");
+  const match = text.match(/\b(20\d{2})\b/);
+  return match ? match[1] : "";
+}
+
+function countPaperYears(papers) {
+  const counts = new Map();
+  for (const paper of papers) {
+    const year = paperYear(paper);
+    if (!year) continue;
+    counts.set(year, (counts.get(year) || 0) + 1);
+  }
+  return [...counts.entries()].sort((a, b) => b[0].localeCompare(a[0]));
+}
+
 function matchesQuery(paper) {
   const query = String(state.query || "").trim().toLowerCase();
   if (!query) return true;
@@ -314,6 +331,9 @@ function matchesQuery(paper) {
 function paperMatchesFilters(paper) {
   const method = state.method || state.theme || "all";
   if (method !== "all" && paper.theme !== method && paper.method_family !== method) {
+    return false;
+  }
+  if (state.year !== "all" && paperYear(paper) !== state.year) {
     return false;
   }
   if (state.priority !== "all" && String(paper.read_priority || "").toLowerCase() !== state.priority) {
@@ -689,6 +709,7 @@ function paperTile(paper, index) {
   const priority = paper.read_priority || "low";
   const authority = isAuthorityVenue(paper);
   const family = paper.method_family || paper.theme || "未分类";
+  const year = paperYear(paper);
   const summary = truncateText(
     paper.title_zh || paper.abstract_zh || paper.idea_hook || paper.key_finding || paper.contribution,
     128
@@ -702,7 +723,7 @@ function paperTile(paper, index) {
       </div>
       <h3>${escapeHtml(paper.title || "Untitled")}</h3>
       ${summary ? `<p class="tile-summary">${escapeHtml(summary)}</p>` : ""}
-      <p class="tile-meta">${escapeHtml(paper.direction_name || "")} · ${escapeHtml(family)} · ${escapeHtml(paper.week || "")}</p>
+      <p class="tile-meta">${escapeHtml(paper.direction_name || "")} · ${escapeHtml(family)} · ${escapeHtml(year || paper.week || "")}</p>
     </article>
   `;
 }
@@ -725,6 +746,19 @@ async function loadMethodFamilies() {
 }
 
 function renderPaperFilterOptions() {
+  const yearSelect = $("yearFilter");
+  if (yearSelect) {
+    const years = countPaperYears(scopedPapers());
+    const yearValues = new Set(years.map(([year]) => year));
+    if (state.year !== "all" && !yearValues.has(state.year)) {
+      state.year = "all";
+    }
+    const yearOptions = [
+      { value: "all", label: "全部年份" },
+      ...years.map(([year, count]) => ({ value: year, label: `${year} ${count}` })),
+    ];
+    setOptions(yearSelect, yearOptions, state.year || "all");
+  }
   const methodSelect = $("methodFilter");
   if (methodSelect) {
     const methodValues = new Set(state.methodFamilies.map(([family]) => family));
@@ -741,6 +775,7 @@ function renderPaperFilterOptions() {
     ];
     setOptions(methodSelect, methodOptions, state.method || "all");
   }
+  if ($("yearFilter")) $("yearFilter").value = state.year;
   if ($("priorityFilter")) $("priorityFilter").value = state.priority;
   if ($("codeFilter")) $("codeFilter").value = state.codeFilter;
   if ($("authorityFilter")) $("authorityFilter").value = state.authorityFilter;
@@ -751,6 +786,9 @@ function activeFilterText() {
   const method = state.method || state.theme;
   if (method && method !== "all") {
     filters.push(`方法族：${method}`);
+  }
+  if (state.year !== "all") {
+    filters.push(`年份：${state.year}`);
   }
   if (state.priority !== "all") {
     filters.push(`优先级：${state.priority}`);
@@ -931,6 +969,11 @@ $("authorityFilter").addEventListener("change", (event) => {
 $("methodFilter").addEventListener("change", (event) => {
   state.method = event.target.value;
   state.theme = state.method;
+  loadPapers();
+});
+
+$("yearFilter").addEventListener("change", (event) => {
+  state.year = event.target.value;
   loadPapers();
 });
 
