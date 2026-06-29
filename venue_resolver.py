@@ -27,6 +27,7 @@ from semantic_scholar_client import (
     make_s2_session,
     semantic_scholar_get,
 )
+from venue_catalog import AUTHORITY_VENUES, normalize_venue
 
 
 ROOT = Path(__file__).resolve().parent
@@ -35,34 +36,6 @@ CACHE_PATH = ROOT / "data" / "_cache" / "semantic_scholar_venue_cache.json"
 OPENREVIEW_CACHE_PATH = ROOT / "data" / "_cache" / "openreview_venue_cache.json"
 S2_SEARCH_URL = "https://api.semanticscholar.org/graph/v1/paper/search"
 OPENREVIEW_SEARCH_URL = "https://api2.openreview.net/notes/search"
-
-A_VENUES = {
-    "ACL",
-    "EMNLP",
-    "NAACL",
-    "EACL",
-    "TACL",
-    "ICLR",
-    "ICML",
-    "NeurIPS",
-    "COLM",
-    "AAAI",
-}
-
-VENUE_ALIASES = {
-    "association for computational linguistics": "ACL",
-    "annual meeting of the association for computational linguistics": "ACL",
-    "findings of the association for computational linguistics": "ACL",
-    "conference on empirical methods in natural language processing": "EMNLP",
-    "empirical methods in natural language processing": "EMNLP",
-    "north american chapter of the association for computational linguistics": "NAACL",
-    "transactions of the association for computational linguistics": "TACL",
-    "international conference on learning representations": "ICLR",
-    "international conference on machine learning": "ICML",
-    "advances in neural information processing systems": "NeurIPS",
-    "conference on language modeling": "COLM",
-    "aaai conference on artificial intelligence": "AAAI",
-}
 
 OPENREVIEW_VENUE_PATTERNS = [
     (re.compile(r"^ICLR\.cc/(?P<year>\d{4})/Conference$"), "ICLR"),
@@ -90,23 +63,6 @@ def normalize_title(title: str) -> str:
     text = (title or "").lower()
     text = re.sub(r"[^a-z0-9]+", " ", text)
     return re.sub(r"\s+", " ", text).strip()
-
-
-def normalize_venue(venue: str) -> str:
-    raw = (venue or "").strip()
-    if not raw:
-        return ""
-
-    upper = raw.upper()
-    for name in A_VENUES:
-        if upper == name or re.search(rf"\b{re.escape(name)}\b", upper):
-            return name
-
-    lower = raw.lower()
-    for pattern, alias in VENUE_ALIASES.items():
-        if pattern in lower:
-            return alias
-    return raw
 
 
 def extract_arxiv_id(paper: dict[str, Any]) -> str:
@@ -301,7 +257,7 @@ def _format_openreview_label(note: dict[str, Any]) -> dict[str, Any]:
     venue_id = str(note.get("venueid", "") or "")
     venue_text = str(note.get("venue", "") or "")
     venue, year = _openreview_venue_from_id(venue_id)
-    if not venue or venue not in A_VENUES:
+    if not venue or venue not in AUTHORITY_VENUES:
         return {}
 
     lowered_venue = venue_text.lower()
@@ -434,7 +390,7 @@ def _lookup_semantic_scholar(
         if isinstance(publication_venue, dict):
             venue = publication_venue.get("name") or ""
         venue = normalize_venue(venue or candidate.get("venue") or "")
-        if venue not in A_VENUES:
+        if venue not in AUTHORITY_VENUES:
             continue
 
         return {

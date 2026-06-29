@@ -13,7 +13,72 @@
 #       pdf_url: "https://openreview.net/pdf?id=eONq7FdiHa"
 #       summary: "..."
 manual_papers:
+  multi-agent-consistency:
+    - arxiv_id: "2602.02350"
+      reason: "Manual ICLR 2026 backfill: multi-agent discussion context learning paper missed by recent arXiv windows."
+      tags: ["ICLR 2026", "multi-agent discussion", "M2CL", "context alignment"]
+    - arxiv_id: "2502.02533"
+      reason: "Manual ICLR 2026 backfill: multi-agent prompt and topology design."
+      tags: ["ICLR 2026", "multi-agent design", "prompt optimization", "topology"]
+    - arxiv_id: "2512.04388"
+      reason: "Manual ICLR 2026 backfill: learned orchestration of multiple LLM agents."
+      tags: ["ICLR 2026", "multi-agent orchestration", "conductor", "coordination"]
+    - arxiv_id: "2512.04695"
+      reason: "Manual ICLR 2026 backfill: evolved coordinator for multi-LLM collaboration."
+      tags: ["ICLR 2026", "multi-agent coordination", "LLM coordinator", "evolution"]
+    - arxiv_id: "2510.13903"
+      reason: "Manual ICLR 2026 backfill: theoretical analysis of communication in multi-agent reasoning."
+      tags: ["ICLR 2026", "multi-agent reasoning", "communication", "theory"]
+    - arxiv_id: "2510.05174"
+      reason: "Manual ICLR 2026 backfill: information-theoretic measurement of emergent coordination."
+      tags: ["ICLR 2026", "multi-agent coordination", "emergence", "information decomposition"]
+    - arxiv_id: "2510.03215"
+      reason: "Manual ICLR 2026 backfill: direct semantic communication between LLMs through KV cache."
+      tags: ["ICLR 2026", "multi-LLM communication", "KV cache", "semantic communication"]
+
   agent-skills-harness:
+    - arxiv_id: "2601.11868"
+      reason: "Manual ICLR 2026 backfill: terminal-agent benchmark and evaluation harness."
+      tags: ["ICLR 2026", "agent benchmark", "terminal", "harness"]
+    - title: "OrchestrationBench: LLM-Driven Agentic Planning and Tool Use in Multi-Domain Scenarios"
+      authors:
+        - "Aelim Ahn"
+        - "Sooyeon Lee"
+        - "Hyosun Wang"
+        - "Chiwan Park"
+        - "Daeryong Kim"
+        - "Jihyeon Roh"
+        - "Kichang Yang"
+        - "Wonjun Jang"
+        - "Hwang Wonwoo"
+      url: "https://openreview.net/forum?id=Oljnxmf4pc"
+      pdf_url: "https://openreview.net/pdf?id=Oljnxmf4pc"
+      category: "manual"
+      published: "2026"
+      reason: "Manual ICLR 2026 backfill: agentic planning and tool-use benchmark without an arXiv ID found during curation."
+      tags: ["ICLR 2026", "agent benchmark", "tool use", "workflow planning"]
+      summary: "Recent progress in Large Language Models (LLMs) has transformed them from text generators into agentic systems capable of multi-step reasoning, structured planning, and tool use. However, existing benchmarks inadequately capture their ability to orchestrate complex workflows across multiple domains under realistic constraints. To address this, we propose OrchestrationBench, a bilingual (English/Korean) benchmark that systematically evaluates workflow-based planning and constraint-aware tool execution. OrchestrationBench spans 17 representative domains with nearly 100 realistic virtual tools, covering scenarios that require sequential and parallel planning, inter-tool dependencies, and constraint satisfaction across realistic agentic workflows."
+    - arxiv_id: "2510.04550"
+      reason: "Manual ICLR 2026 backfill: trajectory-aware benchmark for agentic tool use."
+      tags: ["ICLR 2026", "tool use", "trajectory evaluation", "benchmark"]
+    - arxiv_id: "2510.11977"
+      reason: "Manual ICLR 2026 backfill: standardized infrastructure for holistic AI agent evaluation."
+      tags: ["ICLR 2026", "agent evaluation", "leaderboard", "harness"]
+    - arxiv_id: "2509.26490"
+      reason: "Manual ICLR 2026 backfill: real-world interactive task benchmark for LLM agents."
+      tags: ["ICLR 2026", "interactive agents", "real-world benchmark", "tools"]
+    - arxiv_id: "2508.11987"
+      reason: "Manual ICLR 2026 backfill: live future-prediction benchmark for LLM agents."
+      tags: ["ICLR 2026", "live benchmark", "future prediction", "agent evaluation"]
+    - arxiv_id: "2504.11536"
+      reason: "Manual ICLR 2026 backfill: reinforcement learning for strategic tool use."
+      tags: ["ICLR 2026", "tool use", "reinforcement learning", "code interpreter"]
+    - arxiv_id: "2512.14805"
+      reason: "Manual ICLR 2026 backfill: prompt-program state sharing abstraction relevant to harness design."
+      tags: ["ICLR 2026", "prompt programming", "program state", "harness"]
+    - arxiv_id: "2509.23040"
+      reason: "Manual ICLR 2026 backfill: revisitable memory for long-context LLM agents."
+      tags: ["ICLR 2026", "agent memory", "long context", "ReMemR1"]
     - title: "Agent Harness Engineering: A Survey"
       authors:
         - "Junjie Li"

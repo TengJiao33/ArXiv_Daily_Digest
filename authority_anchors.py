@@ -6,37 +6,11 @@ from pathlib import Path
 
 import yaml
 
+from venue_catalog import is_authority_venue, normalize_venue
+
 
 ROOT = Path(__file__).resolve().parent
 CONFIG_PATH = ROOT / "config" / "authority_anchors.yaml"
-
-A_VENUES = {
-    "AAAI",
-    "ACL",
-    "COLM",
-    "CVPR",
-    "EACL",
-    "EMNLP",
-    "ICLR",
-    "ICML",
-    "IJCAI",
-    "KDD",
-    "NAACL",
-    "NeurIPS",
-    "SIGIR",
-    "TACL",
-    "WWW",
-}
-
-_A_VENUE_KEYS = {venue.upper() for venue in A_VENUES}
-
-
-def normalize_venue(value: str | None) -> str:
-    return str(value or "").strip()
-
-
-def is_authority_venue(value: str | None) -> bool:
-    return normalize_venue(value).upper() in _A_VENUE_KEYS
 
 
 def _as_list(value) -> list[str]:

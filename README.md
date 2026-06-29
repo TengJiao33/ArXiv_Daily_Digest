@@ -147,6 +147,30 @@ manual_papers:
 
 Manual papers fetch the arXiv record directly and bypass keyword relevance filtering. They still pass through code checks, structured extraction, Hugging Face matching, venue annotation, and JSONL storage. Historical de-duplication prevents repeated extraction for papers already processed.
 
+Operational note: if the required API keys are only configured as GitHub Actions
+secrets, do not run `python main.py` locally for manual backfills. Add the papers
+to `config/manual_papers.yaml`, add known venue labels to
+`config/venue_overrides.yaml`, commit those config changes, and let the next
+scheduled workflow run process them. The workflow can also be started manually
+from GitHub Actions with `workflow_dispatch` when the backfill should not wait
+for the next daily schedule.
+
+For accepted A-conference papers that were published before the recent arXiv
+collection window, prefer this path:
+
+```text
+1. Add the paper under the closest direction in config/manual_papers.yaml.
+2. Add a stable venue override in config/venue_overrides.yaml.
+3. Commit and push the config changes.
+4. Let .github/workflows/daily.yml run with repository secrets.
+5. Pull the bot commit that updates data/ and radar_dashboard/static/data.js.
+```
+
+This is the preferred workflow for ICLR/ICML/NeurIPS/ACL/EMNLP/AAAI/IJCAI
+accepted papers that should enter the same enrichment pipeline as daily arXiv
+papers, especially when Doubao or notification credentials are not available in
+the local `.env`.
+
 ## Review Brief
 
 Generate a local Markdown brief from stored records:

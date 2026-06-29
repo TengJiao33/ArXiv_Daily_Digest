@@ -196,6 +196,96 @@ by_arxiv:
     type: "poster"
     url: "https://openreview.net/forum?id=F7rUng23nw"
     confidence: "manual"
+  "2602.02350":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=EUu8TILWpR"
+    confidence: "manual"
+  "2502.02533":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=I05H9RUzHB"
+    confidence: "manual"
+  "2512.04388":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=U23A2BUKYt"
+    confidence: "manual"
+  "2512.04695":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=5HaRjXai12"
+    confidence: "manual"
+  "2510.13903":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=0aPIVJUz5T"
+    confidence: "manual"
+  "2510.05174":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=SRn1MtMPRq"
+    confidence: "manual"
+  "2510.03215":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=LeatkxrBCi"
+    confidence: "manual"
+  "2601.11868":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=a7Qa4CcHak"
+    confidence: "manual"
+  "2510.04550":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=TZWnWvsQ0X"
+    confidence: "manual"
+  "2510.11977":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=vUaY1t64ZZ"
+    confidence: "manual"
+  "2509.26490":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=rtcX9qOBaz"
+    confidence: "manual"
+  "2508.11987":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=z28PLIEj6l"
+    confidence: "manual"
+  "2504.11536":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=tRk1nofSmz"
+    confidence: "manual"
+  "2512.14805":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=E7ZZRnBQU7"
+    confidence: "manual"
+  "2509.23040":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=1cymflI2Lh"
+    confidence: "manual"
 
   "2605.11836":
     venue: "ICML"
@@ -271,4 +361,10 @@ by_title:
     year: 2026
     type: "poster"
     url: "https://icml.cc/Downloads/2026"
+    confidence: "manual"
+  "OrchestrationBench: LLM-Driven Agentic Planning and Tool Use in Multi-Domain Scenarios":
+    venue: "ICLR"
+    year: 2026
+    type: "poster"
+    url: "https://openreview.net/forum?id=Oljnxmf4pc"
     confidence: "manual"
