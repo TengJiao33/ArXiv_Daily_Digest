@@ -6,20 +6,20 @@
 
 ## 优先阅读
 
-| # | 优先级 | Venue | 论文 | 方法族 | 控制/评测 | 风险 | Idea Hook | 代码 |
-|:-:|:------:|:-----:|------|--------|----------|------|-----------|:----:|
-| 1 | high | - | [A Controlled Study of Decoding-Time Truthfulness Methods on Inst...](http://arxiv.org/abs/2606.12160v2) | evaluation/benchmark | 通过设计六维度对照评估框架，系统性检验各类解码阶段真实性方法的实际有效性，规范后... | 真实性研究领域缺乏规范评测流程，偏差结果会误导后续方法研发的方向... | 基于本文发现的现有解码真实性方法评测偏差，能否设计适配指令微调大模型的可靠真实性控制方案？ | — |
-| 2 | high | - | [Activation Steering Induces Emergent Misalignment: A More Compre...](http://arxiv.org/abs/2606.08682v1) | model steering | 通过全面评估激活引导这一推理时调控技术，分析其诱发涌现失准的特性与影响因素，揭示... | 广泛应用的推理时模型控制技术激活引导，存在未被重视的涌现失准安全... | 可研究如何在使用激活引导做模型行为调控时规避涌现失准风险，构建更安全可靠的推理时模型控制方案... | — |
-| 3 | high | - | [Aligning large language models across the lifecycle: A survey on...](https://www.semanticscholar.org/paper/3234af474a9ae104e2f5b134f1bad856bb8deea8) | survey | 从全生命周期视角梳理对齐、编辑与遗忘方法，以安全-可用性权衡为框架给出评估清单指... | 现有对齐缺乏全流程视角，各阶段交互不清晰，编辑与遗忘环节安全保障... | 基于本文的全生命周期框架，构建面向知识编辑的安全-可用性权衡评测基准，完善编辑可靠性评测。 | — |
-| 4 | high | - | [Benchmarking Knowledge Editing using Logical Rules](http://arxiv.org/abs/2606.10554v1) | evaluation/benchmark | 通过构建面向逻辑推论影响的评测基准，暴露现有知识编辑方法缺陷，推动语义感知评测发... | 现有知识编辑忽略编辑的逻辑一致性要求，会导致输出不合逻辑的错误，... | 可基于该基准研究兼顾逻辑一致性的低副作用知识编辑方法，提升知识编辑落地的可靠性。 | — |
-| 5 | high | - | [Beyond Linear Activation Steering: Invertible Latent Transformat...](http://arxiv.org/abs/2606.08454v1) | model steering | 推理阶段学习可逆潜变换，将激活映射到易线性控制空间，引导后逆变换回原空间实现非线... | 引入额外可逆变换模块，针对新行为控制任务需重新训练，通用性和落地... | 能否将这种非线性激活引导方法用于知识编辑后的副作用控制，降低编辑对无关知识的负面影响？ | — |
-| 6 | high | - | [CIAware-Bench: Benchmarking Control Intervention Awareness Acros...](http://arxiv.org/abs/2606.11063v1) | evaluation/benchmark | 本文构建控制干预感知评测基准，度量模型感知能力，为设计更难被检测逃逸的AI控制协... | 现有AI控制未评估模型干预感知能力，存在被逃逸风险，会导致控制机... | 可基于该基准研究如何设计更难被大模型检测的控制干预方案，提升大模型安全控制的可靠性。 | — |
-| 7 | high | - | [CRANE: Knowledge Editing for Reasoning MLLMs](http://arxiv.org/abs/2606.09033v1) | evaluation/benchmark | 构建感知思维链的评测基准暴露编辑失效问题，提出带认知路由奖励的检索增强框架实现无... | 性能依赖检索质量，仅在金检索条件下达到高性能，未验证更大规模模型... | 可将该无需逐次修改参数的知识编辑思路拓展到大模型，探究其缓解知识编辑副作用的效果。 | — |
-| 8 | high | - | [Causal Agent Replay: Counterfactual Attribution for LLM-Agent Fa...](http://arxiv.org/abs/2606.08275v1) | agent harness | 通过因果建模与反事实干预重放定位智能体失败根源，为智能体行为可靠性改进提供归因支... | 需要多次重执行智能体轨迹完成归因，算力开销会随智能体运行步骤数增... | 可将该因果归因方法拓展到知识编辑场景，定位编辑后智能体副作用的根源步骤，验证编辑可靠性。 | — |
-| 9 | high | - | [Gradient-Guided Reward Optimization for Inference-time Alignment](http://arxiv.org/abs/2606.09635v1) | model steering | 在解码阶段通过梯度引导做最小目标干预，识别不对齐区域后注入奖励模型生成的引导to... | 依赖现成奖励模型的性能，奖励模型本身的偏差会传导到引导过程，未验... | 能否将这种轻量推理时引导方法应用到知识编辑后的副作用抑制，提升知识编辑后模型的可靠性？ | — |
-| 10 | high | - | [Learning What to Say to Your VLA: Mostly Harmless Vision Languag...](http://arxiv.org/abs/2606.12299v1) | model steering | 搜索优化输入语言序列，蒸馏得到语言反馈策略，结合共形化改进头判断引导时机，实现冻... | 仅在特定机器人场景验证，未验证该方法在不同架构VLA上的无害性保... | 可将这种带共形无害保证的引导思路，迁移到通用LLM Agent的行为控制，抑制有害副作用。 | — |
-| 11 | high | - | [On The Effectiveness-Fluency Trade-Off In LLM Conditioning: A Sy...](http://arxiv.org/abs/2606.12234v1) | evaluation/benchmark | 系统评测多种大语言模型条件引导方法，分析其在目标概念注入移除场景下的效果与生成流... | 现有大语言模型条件控制方法往往难以兼顾控制效果与输出质量，损害生... | 基于本文发现的效果-流畅度权衡，可探索面向知识编辑的激活引导改进方法，兼顾编辑效果与输出质量... | — |
-| 12 | high | - | [Order Is Not Control](http://arxiv.org/abs/2606.12923v1) | model steering | 定义接收器门控响应算子，从介观层面明确控制成立条件，区分有序性与实际控制，刻画不... | 该研究为理论框架，未在实际下游控制任务验证，实际控制的可靠性尚未... | 能否基于该响应算子框架，分析知识编辑中参数有序更新和可靠行为控制的差异，改进编辑可靠性？ | — |
+| # | 优先级 | Venue | 论文 | 方法族 | 关键发现 | 控制/评测 | 风险 | 代码 |
+|:-:|:------:|:-----:|------|--------|----------|----------|------|:----:|
+| 1 | high | - | [A Controlled Study of Decoding-Time Truthfulness Methods on Inst...](http://arxiv.org/abs/2606.12160v2) | evaluation/benchmark | 严格控制评估后，原有解码方法提分大幅缩水，全TruthfulQA上无token级方法有统计显... | 通过设计六维度对照评估框架，系统性检验各类解码阶段真实性方法的实际有效性，规范后... | 真实性研究领域缺乏规范评测流程，偏差结果会误导后续方法研发的方向... | — |
+| 2 | high | - | [Activation Steering Induces Emergent Misalignment: A More Compre...](http://arxiv.org/abs/2606.08682v1) | model steering | 激活引导可诱发广泛涌现失准，其产生的有害响应比微调的语义相关性更强、连贯性更高，潜在危害更大... | 通过全面评估激活引导这一推理时调控技术，分析其诱发涌现失准的特性与影响因素，揭示... | 广泛应用的推理时模型控制技术激活引导，存在未被重视的涌现失准安全... | — |
+| 3 | high | - | [Aligning large language models across the lifecycle: A survey on...](https://www.semanticscholar.org/paper/3234af474a9ae104e2f5b134f1bad856bb8deea8) | survey | 各阶段对齐选择会相互影响，孤立评估难以平衡安全与可用性，模型编辑既可能侵蚀也可修复前期安全保... | 从全生命周期视角梳理对齐、编辑与遗忘方法，以安全-可用性权衡为框架给出评估清单指... | 现有对齐缺乏全流程视角，各阶段交互不清晰，编辑与遗忘环节安全保障... | — |
+| 4 | high | - | [Benchmarking Knowledge Editing using Logical Rules](http://arxiv.org/abs/2606.10554v1) | evaluation/benchmark | 现有知识编辑方法可准确插入直接断言，但注入蕴含知识表现差，ROME和FT存在最高24%的性能... | 通过构建面向逻辑推论影响的评测基准，暴露现有知识编辑方法缺陷，推动语义感知评测发... | 现有知识编辑忽略编辑的逻辑一致性要求，会导致输出不合逻辑的错误，... | — |
+| 5 | high | - | [Beyond Linear Activation Steering: Invertible Latent Transformat...](http://arxiv.org/abs/2606.08454v1) | model steering | 输入依赖的非线性激活干预相比固定全局线性偏移，能更有效控制LLM行为，同时不明显损失生成流畅... | 推理阶段学习可逆潜变换，将激活映射到易线性控制空间，引导后逆变换回原空间实现非线... | 引入额外可逆变换模块，针对新行为控制任务需重新训练，通用性和落地... | — |
+| 6 | high | - | [CIAware-Bench: Benchmarking Control Intervention Awareness Acros...](http://arxiv.org/abs/2606.11063v1) | evaluation/benchmark | 默认设置下11个前沿模型控制干预感知准确率最高0.87（随机为0.5），跨模型家族更易检测，... | 本文构建控制干预感知评测基准，度量模型感知能力，为设计更难被检测逃逸的AI控制协... | 现有AI控制未评估模型干预感知能力，存在被逃逸风险，会导致控制机... | — |
+| 7 | high | - | [CRANE: Knowledge Editing for Reasoning MLLMs](http://arxiv.org/abs/2606.09033v1) | evaluation/benchmark | 现有传统知识编辑方法在推理MLLM上接地成功率低至0%，归纳出三类相互作用的编辑失效模式。 | 构建感知思维链的评测基准暴露编辑失效问题，提出带认知路由奖励的检索增强框架实现无... | 性能依赖检索质量，仅在金检索条件下达到高性能，未验证更大规模模型... | — |
+| 8 | high | - | [Causal Agent Replay: Counterfactual Attribution for LLM-Agent Fa...](http://arxiv.org/abs/2606.08275v1) | agent harness | 现有最优智能体失败步骤级归因准确率仅约14%，本文方法归因效率和达0.909，非常接近理论值... | 通过因果建模与反事实干预重放定位智能体失败根源，为智能体行为可靠性改进提供归因支... | 需要多次重执行智能体轨迹完成归因，算力开销会随智能体运行步骤数增... | — |
+| 9 | high | - | [Gradient-Guided Reward Optimization for Inference-time Alignment](http://arxiv.org/abs/2606.09635v1) | model steering | GGRO仅需极小计算开销，即可稳定提升推理时对齐效果，同时提升对奖励黑客的鲁棒性与高质量响应... | 在解码阶段通过梯度引导做最小目标干预，识别不对齐区域后注入奖励模型生成的引导to... | 依赖现成奖励模型的性能，奖励模型本身的偏差会传导到引导过程，未验... | — |
+| 10 | high | - | [Learning What to Say to Your VLA: Mostly Harmless Vision Languag...](http://arxiv.org/abs/2606.12299v1) | model steering | 共形化后的LFP在仿真提升基础VLA性能24.7%，硬件提升65.0%，可保证分布外扰动场景... | 搜索优化输入语言序列，蒸馏得到语言反馈策略，结合共形化改进头判断引导时机，实现冻... | 仅在特定机器人场景验证，未验证该方法在不同架构VLA上的无害性保... | — |
+| 11 | high | - | [On The Effectiveness-Fluency Trade-Off In LLM Conditioning: A Sy...](http://arxiv.org/abs/2606.12234v1) | evaluation/benchmark | 高效引导方法常以大幅牺牲生成流畅度为代价，激活引导在指令微调模型上效果远弱于底座模型。 | 系统评测多种大语言模型条件引导方法，分析其在目标概念注入移除场景下的效果与生成流... | 现有大语言模型条件控制方法往往难以兼顾控制效果与输出质量，损害生... | — |
+| 12 | high | - | [Order Is Not Control](http://arxiv.org/abs/2606.12923v1) | model steering | 有序不等于控制，控制符合局部接收器门控响应定律；LLM中非零分量响应预测准确率达84.3-8... | 定义接收器门控响应算子，从介观层面明确控制成立条件，区分有序性与实际控制，刻画不... | 该研究为理论框架，未在实际下游控制任务验证，实际控制的可靠性尚未... | — |
 
 ## 方法族分布
 
@@ -85,36 +85,6 @@
 - 依赖现成奖励模型的性能，奖励模型本身的偏差会传导到引导过程，未验证极端漂移场景的效果。
 - 仅在烹饪特定场景验证，基准和方法的泛化能力未验证，缺少通用可靠性测试。
 
-## 可延展 Idea Hook
-
-- 可将该基于探针与自适应问题的行为编辑思路，迁移到LLM交互智能体，研究可解释低风险行为控制。
-- 能否将这种正交小扰动机制引入知识编辑场景，抑制知识编辑带来的副作用，提升编辑可靠性？
-- 能否结合知识编辑方法，改进时序基础模型在血糖预测高危区间的性能，提升临床应用可靠性？
-- 可借鉴该论文的数据质量分析思路，研究评测数据集本身污染对大模型可靠性评测结果的影响
-- 能否将这种生成早期表征调控的思路迁移到LLM生成，解决LLM生成同质化、早期错误锁定问题？
-- 能否借鉴这种人类对齐的评估思路，优化大模型知识编辑效果的可靠性评测方案？
-- 能否将本文的因果评估思路引入大模型知识编辑的副作用评测，减少混杂因素带来的错误结论
-- 能否将这种轻量推理时引导方法应用到知识编辑后的副作用抑制，提升知识编辑后模型的可靠性？
-- 可将流式即时错误纠正思路引入大模型行为控制，探索模型输出错误发生时的即时干预方案。
-- 能否基于该多Agent疏散基准，评测不同agent行为控制方法在动态场景下的可靠性提升效果？
-- 可拓展研究如何检测知识编辑后残留的隐藏后门隐写载荷，提升编辑后模型的安全可靠性。
-- 如何将干预反馈错误归因的思路应用到知识编辑后的副作用定位，提升编辑可靠性？
-
-## 下次可问导师的问题
-
-- 这种添加概念token探测模型机制的思路，能否迁移到知识编辑的机制解释研究中？
-- 这种显式符号行为建模的编辑思路，能不能用于降低大模型智能体的行为副作用？
-- 我们能不能基于这个方法做知识编辑副作用抑制的小方向探索，这个选题的可行性怎么样？
-- 我们是否需要结合现有知识编辑方向，跟进改进医疗时序模型的预测可靠性？
-- 我们方向是否需要关注评测数据集本身的质量问题，将数据污染控制纳入可靠性研究？
-- 我们是否可以尝试将这种生成早期steering的思路迁移到大模型生成可靠性优化中？
-- 我们是否可以借鉴该研究的思路，改进现有知识编辑效果评测的对齐性？
-- 我们做知识编辑副作用评测时，是否需要引入因果分析来消除混杂因素的干扰？
-- 这种推理时引导的思路，是否可以迁移用来解决知识编辑场景的副作用控制问题？
-- 我们方向是否可以借鉴该即时错误干预思路，开展大模型行为动态控制研究？
-- 我们是否可以借用这类多Agent基准来验证我们提出的agent行为控制方法的有效性？
-- 我们是否需要将隐写后门检测纳入知识编辑可靠性评测的考量范围？
-
 ## 代码资源
 
 - [Trajectory-Refined Distillation](https://github.com/louieworth/trd) · 3 stars
@@ -147,4 +117,4 @@
 - **15个公开糖尿病相关数据集**：1 篇
 
 ---
-*自动生成于 2026-06-14 | ArXiv_Daily_Digest*
+*自动生成于 2026-07-01 | ArXiv_Daily_Digest*

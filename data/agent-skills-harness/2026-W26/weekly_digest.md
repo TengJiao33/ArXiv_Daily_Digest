@@ -6,20 +6,20 @@
 
 ## 优先阅读
 
-| # | 优先级 | Venue | 论文 | 方法族 | 控制/评测 | 风险 | Idea Hook | 代码 |
-|:-:|:------:|:-----:|------|--------|----------|------|-----------|:----:|
-| 1 | high | - | [EnterpriseClawBench: Benchmarking Agents from Real Workplace Ses...](http://arxiv.org/abs/2606.23654v1) | evaluation/benchmark | 通过构建带多维度标注的标准化评测基准，提出多维度评测协议，规范企业智能体的能力评... | 基准原始数据未公开，第三方无法直接复现原实验，难以验证论文得到的... | 能否基于该论文的评测协议，构建小规模开源中文企业场景agent评测基准，验证不同harnes... | ✅ |
-| 2 | high | - | [MacAgentBench: Benchmarking AI Agents on Real-World macOS Deskto...](http://arxiv.org/abs/2606.22557v1) | evaluation/benchmark | 通过构建带细粒度多检查点评分的评测基准，为桌面智能体能力评估提供反馈支撑。 | 仅覆盖macOS平台，对其他桌面系统通用性不足，评测范围存在一定... | 基于MacAgentBench研究技能库对桌面Agent性能的影响，探索轻量工业友好的桌面A... | ✅ |
-| 3 | high | - | [MedGuards: Multi-Agent System for Reliable Medical Error Detecti...](http://arxiv.org/abs/2606.25651v1) | agent harness | 将医疗错误检测纠正任务拆分给多个专用智能体，通过置信度引导仲裁解决分歧，无需额外... | 仅在公开医疗文本数据集验证，未在真实临床落地场景测试，实际效果待... | 能否将这种无需微调的多智能体置信度仲裁护栏方案，推广到通用领域Agent的输出可靠性保障？ | ✅ |
-| 4 | high | - | [OPID: On-Policy Skill Distillation for Agentic Reinforcement Lea...](http://arxiv.org/abs/2606.26790v1) | online distillation | 从同策略轨迹提取分层技能生成稠密令牌级监督，结合结果优势优化策略，改进智能体决策... | 仅在中小规模任务基准测试，未验证大规模真实场景下的稳定性与适配性 | 可将该同策略分层技能蒸馏思路推广到工具调用场景，优化多轮工具交互的决策效率 | ✅ |
-| 5 | high | - | [Why Multi-Step Tool-Use Reinforcement Learning Collapses and How...](http://arxiv.org/abs/2606.26027v1) | tool-use control | 引入多种监督信号，采用监督微调与强化学习交错训练，修正控制token概率异常，提... | 分布外泛化性能较差，未在真实任务验证，落地应用存在一定不确定性。 | 如何基于该方法设计低算力的稳定多步工具调用agent训练方案，适配工业demo落地需求？ | ✅ |
-| 6 | high | - | [A Deterministic Control Plane for LLM Coding Agents](http://arxiv.org/abs/2606.26924v1) | agent harness | 在现有harness之上新增确定性控制平面，通过内容寻址、层级权限、可追溯、漂移... | 仅在人工注入违规的测试中验证机制，缺乏真实开发者场景的落地效果验... | 可基于该思路构建开源通用的确定性Agent控制平面，适配多场景，打造工业友好的可控Agent... | — |
-| 7 | high | - | [A Process Harness for Uplifting Legacy Workflows to Agentic BPM:...](http://arxiv.org/abs/2606.27188v1) | agent harness | 通过在原有确定性工作流引擎外部增设策略管控的智能体线束层，拦截指定控制点实现管控... | 仅在单一场景验证，未经过多类大规模业务场景测试，落地通用性有待验... | 能否基于该流程线束思路，构建面向国内企业遗留业务系统的低成本智能体升级改造管控框架 | — |
-| 8 | high | - | [A Stackelberg Framework for Resource-Aware LLM Agents: Learning,...](http://arxiv.org/abs/2606.23026v1) | agent harness | 通过斯塔克尔伯格博弈建模资源治理问题，优化策略后结合真实API校准完成策略修复与... | 仅开展300轮小规模实验，理论结果为条件性，未得到经认证的真实系... | 如何将该博弈资源管控框架适配到多工具调用场景，实现低算力工业级Agent？ | — |
-| 9 | high | - | [A Survey on Multi-Agent LLM Frameworks with Semantic Memory Inte...](https://www.semanticscholar.org/paper/21c04ba4ed923d1984fb6dd10f4e2681dbaf854a) | survey | 通过梳理现有多智能体的DAG编排、语义记忆集成等架构，归纳核心问题，明确领域评估... | 领域缺乏统一系统设计标准与标准化评估方法，可落地性缺乏验证，工业... | 能否设计低协调开销、具备故障检测能力的标准化动态DAG多智能体harness框架，适配工业落... | — |
-| 10 | high | - | [ATRIA: Adaptive Traceable ECG Reporting with Iterative Agents](http://arxiv.org/abs/2606.24392v1) | multi-agent coordination | 通过将每个报告断言绑定对应证据，支持迭代修正单个结果，复用已有临床可信模型保障输... | 无大规模量化评测验证效果，仅靠案例演示，临床实际落地还需要更多有... | 能否将这种迭代可追溯的多智能体harness框架推广到更多专业领域文档生成任务，提升输出可修... | — |
-| 11 | high | - | [Adaptive Evaluation of Out-of-Band Defenses Against Prompt Injec...](http://arxiv.org/abs/2606.26479v1) | evaluation/benchmark | 提出自适应攻击评测协议，验证带外确定性中介机制对提示注入防御的鲁棒性。 | 多数现有带外防御未经过自适应攻击验证，实际部署存在潜在安全漏洞。 | 可扩展开展各类主流带外防御的自适应攻击测评，为工业界agent防御选型提供参考。 | — |
-| 12 | high | - | [AgentLens: Interpretable Safety Steering via Mechanistic Subspac...](http://arxiv.org/abs/2606.22673v1) | model steering | 基于机制可解释性定位安全相关的隐藏表示子空间，运行时检测风险并干预子空间，调控不... | 仅在小规模自建基准上验证，尚未验证更大模型与真实复杂编码场景的效... | 能否将这种低开销的机制子空间调控方法推广到通用工具智能体的安全控制中？ | — |
+| # | 优先级 | Venue | 论文 | 方法族 | 关键发现 | 控制/评测 | 风险 | 代码 |
+|:-:|:------:|:-----:|------|--------|----------|----------|------|:----:|
+| 1 | high | - | [EnterpriseClawBench: Benchmarking Agents from Real Workplace Ses...](http://arxiv.org/abs/2606.23654v1) | evaluation/benchmark | 当前最优配置Codex+GPT-5.5在该真实场景基准上仅取得0.663得分，企业智能体评测... | 通过构建带多维度标注的标准化评测基准，提出多维度评测协议，规范企业智能体的能力评... | 基准原始数据未公开，第三方无法直接复现原实验，难以验证论文得到的... | ✅ |
+| 2 | high | - | [MacAgentBench: Benchmarking AI Agents on Real-World macOS Deskto...](http://arxiv.org/abs/2606.22557v1) | evaluation/benchmark | 最优配置Claude Opus在OpenClaw上可达73.7% Pass@1，性能优势来自... | 通过构建带细粒度多检查点评分的评测基准，为桌面智能体能力评估提供反馈支撑。 | 仅覆盖macOS平台，对其他桌面系统通用性不足，评测范围存在一定... | ✅ |
+| 3 | high | - | [MedGuards: Multi-Agent System for Reliable Medical Error Detecti...](http://arxiv.org/abs/2606.25651v1) | agent harness | 无需微调基座大模型，多智能体分工加置信度仲裁方案，在四个多语言医疗数据集上各项指标取得显著提... | 将医疗错误检测纠正任务拆分给多个专用智能体，通过置信度引导仲裁解决分歧，无需额外... | 仅在公开医疗文本数据集验证，未在真实临床落地场景测试，实际效果待... | ✅ |
+| 4 | high | - | [OPID: On-Policy Skill Distillation for Agentic Reinforcement Lea...](http://arxiv.org/abs/2606.26790v1) | online distillation | OPID在三个测试基准上全面优于仅结果RL和现有技能蒸馏基线，稳定提升了任务性能与样本效率 | 从同策略轨迹提取分层技能生成稠密令牌级监督，结合结果优势优化策略，改进智能体决策... | 仅在中小规模任务基准测试，未验证大规模真实场景下的稳定性与适配性 | ✅ |
+| 5 | high | - | [Why Multi-Step Tool-Use Reinforcement Learning Collapses and How...](http://arxiv.org/abs/2606.26027v1) | tool-use control | 多步工具使用强化学习的灾难性崩溃源于特定控制token概率异常突增，模型底层工具使用能力完好... | 引入多种监督信号，采用监督微调与强化学习交错训练，修正控制token概率异常，提... | 分布外泛化性能较差，未在真实任务验证，落地应用存在一定不确定性。 | ✅ |
+| 6 | high | - | [A Deterministic Control Plane for LLM Coding Agents](http://arxiv.org/abs/2606.26924v1) | agent harness | 调研发现10.1%的配置路径跨仓库重复，75.5%克隆对跨组织，不到1%的Agent配置声明... | 在现有harness之上新增确定性控制平面，通过内容寻址、层级权限、可追溯、漂移... | 仅在人工注入违规的测试中验证机制，缺乏真实开发者场景的落地效果验... | — |
+| 7 | high | - | [A Process Harness for Uplifting Legacy Workflows to Agentic BPM:...](http://arxiv.org/abs/2606.27188v1) | agent harness | 流程线束可在不替换原有工作流引擎的前提下，同时满足业务流程的结构合规要求和控制点的智能自主适... | 通过在原有确定性工作流引擎外部增设策略管控的智能体线束层，拦截指定控制点实现管控... | 仅在单一场景验证，未经过多类大规模业务场景测试，落地通用性有待验... | — |
+| 8 | high | - | [A Stackelberg Framework for Resource-Aware LLM Agents: Learning,...](http://arxiv.org/abs/2606.23026v1) | agent harness | 修复后的控制器相比保守基线平均token成本降低17.4%，输出质量差异不存在统计显著性。 | 通过斯塔克尔伯格博弈建模资源治理问题，优化策略后结合真实API校准完成策略修复与... | 仅开展300轮小规模实验，理论结果为条件性，未得到经认证的真实系... | — |
+| 9 | high | - | [A Survey on Multi-Agent LLM Frameworks with Semantic Memory Inte...](https://www.semanticscholar.org/paper/21c04ba4ed923d1984fb6dd10f4e2681dbaf854a) | survey | 当前集成语义记忆与动态DAG编排的LLM多智能体框架普遍存在协调需求高、故障检测能力弱、无统... | 通过梳理现有多智能体的DAG编排、语义记忆集成等架构，归纳核心问题，明确领域评估... | 领域缺乏统一系统设计标准与标准化评估方法，可落地性缺乏验证，工业... | — |
+| 10 | high | - | [ATRIA: Adaptive Traceable ECG Reporting with Iterative Agents](http://arxiv.org/abs/2606.24392v1) | multi-agent coordination | 模拟临床迭代流程的多智能体架构，结合已有临床验证模型，可产出可追溯可修正的可信报告，支持直接... | 通过将每个报告断言绑定对应证据，支持迭代修正单个结果，复用已有临床可信模型保障输... | 无大规模量化评测验证效果，仅靠案例演示，临床实际落地还需要更多有... | — |
+| 11 | high | - | [Adaptive Evaluation of Out-of-Band Defenses Against Prompt Injec...](http://arxiv.org/abs/2606.26479v1) | evaluation/benchmark | 单H200的Qwen2.5-7B设置中，Progent将攻击成功率从25.8%降至4.2%，... | 提出自适应攻击评测协议，验证带外确定性中介机制对提示注入防御的鲁棒性。 | 多数现有带外防御未经过自适应攻击验证，实际部署存在潜在安全漏洞。 | — |
+| 12 | high | - | [AgentLens: Interpretable Safety Steering via Mechanistic Subspac...](http://arxiv.org/abs/2606.22673v1) | model steering | 干预大语言模型单个网络层中的10维子空间，即可有效减少多轮编码智能体的有害执行行为。 | 基于机制可解释性定位安全相关的隐藏表示子空间，运行时检测风险并干预子空间，调控不... | 仅在小规模自建基准上验证，尚未验证更大模型与真实复杂编码场景的效... | — |
 
 ## 方法族分布
 
@@ -88,36 +88,6 @@
 - 工业界采用氛围编码开发会引入大量未被发现的应用安全隐患，增大落地后的安全风险。
 - 仅提出评估基准未给出落地方案，结论在不同工业场景的泛化性未进一步验证。
 
-## 可延展 Idea Hook
-
-- 可探索将文本层结构化变异的智能体控制思路，迁移到agent工具调用的可控多样性设计中
-- 可基于该评测基准，探索面向工业级多智能体系统的低成本提示优化可控框架，可做可复现demo。
-- 能否基于该论文的评测协议，构建小规模开源中文企业场景agent评测基准，验证不同harness方案的性能？
-- 可以将这种限定智能体角色、结论锚定可靠源的harness思路，推广到通用智能体任务抑制幻觉影响。
-- 探索将该无需训练的自适应压缩方案集成到长周期任务智能体，降低工业落地的推理成本
-- 可扩展该方法到MCP生态的第三方工具恶意检测，探索低算力下规模化检测工业场景恶意工具的可行性。
-- 将几何信息流控制集成到Agent工具调用框架中，验证轻量安全防护方案的落地效果。
-- 能否基于上下文完整性规则设计agent控制harness，降低计算机使用智能体的隐私泄露风险？
-- 能否设计面向AI Agent编码的安全约束harness，减少氛围编码生成应用的常见安全漏洞？
-- 基于AFTER基准，能否设计面向工业场景的低算力可复现LLM Agent程序记忆管理控制框架？
-- 探索将分歧点偏好学习推广到工业级多工具调用场景，实现agent工具能力的低成本自进化。
-- 可基于本文双环境互补训练思路，探索低算力可复现的移动端智能体harness方案，适配工业落地需求
-
-## 下次可问导师的问题
-
-- 这种文本层引入结构约束的智能体工作流思路，能否迁移到agent可控性优化场景中？
-- 我们是否可以基于该基准，开发适配工业需求的低成本多智能体提示优化控制方案？
-- 我们要不要基于这篇论文的协议，构建小规模开源中文企业场景agent评测基准做后续研究？
-- 这种分离智能体辅助任务与核心结论的角色约束思路，能否推广到通用智能体可靠性提升？
-- 我们能不能基于这个思路做一个面向长对话智能体的低成本自适应压缩演示Demo？
-- 我们是否需要跟进这个方向，开发适配第三方Agent技能平台的低成本恶意检测工具？
-- 我们是否可以基于该思路，开发一个面向Agent工具调用的轻量安全控制可运行demo？
-- 我们是否可以基于该基准开发轻量上下文隐私控制harness，验证约束的实际效果？
-- 我们方向是否需要跟进AI Agent代码生成场景，开发对应的安全约束harness框架？
-- 我们是否可以基于AFTER基准，开发适配工业需求的轻量可复现Agent程序记忆管理方案？
-- 这种基于分歧点偏好学习的方法，能否适配我们当前的多工具调用agent开发框架？
-- 我们是否可以基于该思路做一个低算力可演示的安卓端手机操作智能体demo？
-
 ## 代码资源
 
 - [MacAgentBench: Benchmarking AI Agents on Real-World macOS Desktop](https://github.com/JetAstra/MacAgentBench.) · 43 stars
@@ -153,4 +123,4 @@
 - **隐私泄露基准任务**：1 篇
 
 ---
-*自动生成于 2026-06-28 | ArXiv_Daily_Digest*
+*自动生成于 2026-07-01 | ArXiv_Daily_Digest*

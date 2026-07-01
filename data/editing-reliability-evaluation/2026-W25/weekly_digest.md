@@ -6,20 +6,20 @@
 
 ## 优先阅读
 
-| # | 优先级 | Venue | 论文 | 方法族 | 控制/评测 | 风险 | Idea Hook | 代码 |
-|:-:|:------:|:-----:|------|--------|----------|------|-----------|:----:|
-| 1 | high | - | [A Low-Rank Subspace Analysis of LLM Interventions](http://arxiv.org/abs/2606.14388v1) | model steering | 通过分析LLM激活空间中行为子空间的几何特性，解释干预副作用的产生机制，为精准行... | 行为共享表征导致干预易产生非预期副作用，难以实现工业所需的精准靶... | 基于该研究得到的子空间几何规律，设计低副作用的靶向LLM行为控制方法，提升控制可靠性。 | — |
-| 2 | high | - | [Auditing Machine Unlearning: A Systematic Research on Whether Mo...](http://arxiv.org/abs/2606.16110v1) | evaluation/benchmark | 提出基于无知证明的机器遗忘审计框架，识别未真正完成遗忘的算法，提升机器遗忘的可靠... | 现有多数机器遗忘方法无法真正遗忘，缺乏可靠审计会带来实际应用中的... | 可将该审计思路延伸到知识编辑领域，构建大语言模型知识编辑后遗忘效果与副作用的评测基准。 | — |
-| 3 | high | - | [Can Editing 1 Neuron Fix Repetition Loops in LLMs?](http://arxiv.org/abs/2606.13705) | model steering | 通过分层消融与神经元归因定位致病神经元，对目标参数执行静态权重编辑，抑制致病单元... | 仅对特定可定位的生成病理有效，无法解决知识缺失类问题，方法适用范... | 能否将这种定位少量致病参数的局部编辑方法，推广解决大语言模型其他常见的生成病理问题？ | — |
-| 4 | high | - | [Capability Minimization as a Safety Primitive: Risk-Aware Causal...](http://arxiv.org/abs/2606.13884v1) | unlearning/safety | 通过反事实因果风险估计对智能体决策做门控，推导满足安全约束的阈值，设计自适应策略... | 依赖因果路径建模假设，未在大规模真实LLM Agent任务中验证... | 将风险感知因果门控思路引入知识编辑领域，能否有效管控知识编辑带来的各类副作用？ | — |
-| 5 | high | - | [Constitutional Value Potentials: reading and steering internal p...](http://arxiv.org/abs/2606.15420v1) | model steering | 在激活空间学习价值势能，基于势能差构建违规监测，通过沿价值方向移动引导模型调整价... | 仅在合成冲突场景验证，未在真实开放场景测试，实际通用性有待验证。 | 可基于该激活空间优先级监测方法，构建大模型价值对齐的安全监测与引导方案，降低价值冲突违规风险... | — |
-| 6 | high | - | [Creative Collision: Directorial Persona Steering and Competition...](http://arxiv.org/abs/2606.16240v1) | model steering | 推理阶段向Transformer残流叠加混合两个对立语义的激活引导向量，以此引导... | 仅在单个40层解码器Transformer上验证结论，结论的跨模... | 能否利用多语义方向激活碰撞的特性，检测大模型中冲突价值表征，提升价值对齐行为控制的可靠性 | — |
-| 7 | high | - | [Dynamic Rollout Editing for Reducing Overthinking in RL-Trained ...](http://arxiv.org/abs/2606.17890v1) | policy optimization | 在GRPO训练过程中干预存在过度思考的成功轨迹，保留正确前缀、编辑多余内容，通过... | 方法仅适配GRPO类强化训练框架，未验证跨框架泛化性，缺乏大规模... | 可将这种训练阶段动态轨迹编辑思路，迁移到知识编辑场景中，抑制知识编辑带来的行为副作用。 | — |
-| 8 | high | - | [Frame-Conditioned Moral Computation in LLaMA 3.1-8B-Instruct: A ...](http://arxiv.org/abs/2606.15507v1) | evaluation/benchmark | 通过机械可解释性审计分析大模型伦理推理的内部机制，提出行为对齐需补充机制对齐思路... | 仅测试54个prompt，样本量较小，结论通用性不足，未形成实际... | 能否基于本文发现的框架效应设计steering方法，让伦理特征保持因果优先级，提升大模型行为... | — |
-| 9 | high | - | [GEMS: Geometric Constraints Enable Multi-Semantic Superposition ...](http://arxiv.org/abs/2606.19946v1) | model steering | 推理阶段无需训练，通过对激活施加范数约束和实时正交化两类几何约束实现多方向语义引... | 仅验证了少量方向叠加的效果，未测试更多方向、更多任务下的方法稳定... | 可将该多方向几何约束引导思路引入知识编辑，解决多知识同时编辑的副作用叠加问题。 | — |
-| 10 | high | - | [Gaze Heads: How VLMs Look at What They Describe](http://arxiv.org/abs/2606.14703v1) | model steering | 通过机制分析识别出特定功能注意力头，在推理时施加注意力掩码干预，无需重训练即可 ... | 仅在部分VLM架构中生效，通用性不足，控制场景局限于图像描述任务... | 能否基于机制识别出的模型功能单元实现精准行为控制，规避传统知识编辑带来的各类副作用？ | — |
-| 11 | high | - | [High-Dimensional Random Projection for Activation Steering in La...](http://arxiv.org/abs/2606.15092v1) | model steering | 通过高维随机投影将激活变换到高维空间，在投影空间执行激活加法，实现更有效的大语言... | 仅在通用基准验证性能，未验证该方法在下游任务中的长期调控可靠性与... | 能否将本文的HiDRA激活调控方法用于抑制大模型知识编辑后的行为副作用，提升编辑可靠性？ | — |
-| 12 | high | - | [Leverage Is Not Reach: A Control-Window Law for Single-Neuron St...](http://arxiv.org/abs/2606.19831v1) | model steering | 通过残差流与神经元写方向的对齐构建控制窗，基于该框架构建前向对比筛选，实现单神经... | 仅在少量神经元样本上验证，仅针对单神经元控制场景，多神经元协同场... | 能否将单神经元控制窗定律扩展到知识编辑场景，提前预测编辑是否会引发输出崩溃，降低知识编辑副作... | — |
+| # | 优先级 | Venue | 论文 | 方法族 | 关键发现 | 控制/评测 | 风险 | 代码 |
+|:-:|:------:|:-----:|------|--------|----------|----------|------|:----:|
+| 1 | high | - | [A Low-Rank Subspace Analysis of LLM Interventions](http://arxiv.org/abs/2606.14388v1) | model steering | 不同行为共享表征，干预影响不对称；行为子空间重叠越高，源子空间越靠近决策子空间，干预副作用越... | 通过分析LLM激活空间中行为子空间的几何特性，解释干预副作用的产生机制，为精准行... | 行为共享表征导致干预易产生非预期副作用，难以实现工业所需的精准靶... | — |
+| 2 | high | - | [Auditing Machine Unlearning: A Systematic Research on Whether Mo...](http://arxiv.org/abs/2606.16110v1) | evaluation/benchmark | 基于去优化、Fisher/Hessian的方法都无法实现真正遗忘，重训练、微调类即使目标数据... | 提出基于无知证明的机器遗忘审计框架，识别未真正完成遗忘的算法，提升机器遗忘的可靠... | 现有多数机器遗忘方法无法真正遗忘，缺乏可靠审计会带来实际应用中的... | — |
+| 3 | high | - | [Can Editing 1 Neuron Fix Repetition Loops in LLMs?](http://arxiv.org/abs/2606.13705) | model steering | Gemma模型长事实列举的重复循环发生率最高达95%，小模型仅编辑单个神经元即可修复且保留通... | 通过分层消融与神经元归因定位致病神经元，对目标参数执行静态权重编辑，抑制致病单元... | 仅对特定可定位的生成病理有效，无法解决知识缺失类问题，方法适用范... | — |
+| 4 | high | - | [Capability Minimization as a Safety Primitive: Risk-Aware Causal...](http://arxiv.org/abs/2606.13884v1) | unlearning/safety | 基于反事实因果风险的门控策略，在匹配弃权率下大幅降低高成本误差，同时保留原策略大部分效用。 | 通过反事实因果风险估计对智能体决策做门控，推导满足安全约束的阈值，设计自适应策略... | 依赖因果路径建模假设，未在大规模真实LLM Agent任务中验证... | — |
+| 5 | high | - | [Constitutional Value Potentials: reading and steering internal p...](http://arxiv.org/abs/2606.15420v1) | model steering | 价值冲突违规信号出现在答案生成初期，预测冲突违规AUROC最高达0.95，沿价值方向移动可按... | 在激活空间学习价值势能，基于势能差构建违规监测，通过沿价值方向移动引导模型调整价... | 仅在合成冲突场景验证，未在真实开放场景测试，实际通用性有待验证。 | — |
+| 6 | high | - | [Creative Collision: Directorial Persona Steering and Competition...](http://arxiv.org/abs/2606.16240v1) | model steering | 斯皮尔伯格表征方向几乎在全插值范围压制斯科塞斯，两人人设均最大定位于40层Transform... | 推理阶段向Transformer残流叠加混合两个对立语义的激活引导向量，以此引导... | 仅在单个40层解码器Transformer上验证结论，结论的跨模... | — |
+| 7 | high | - | [Dynamic Rollout Editing for Reducing Overthinking in RL-Trained ...](http://arxiv.org/abs/2606.17890v1) | policy optimization | GRPO训练初期，相同提示下成功轨迹的过度思考程度略高于失败轨迹，序列级信用分配会放大该初始... | 在GRPO训练过程中干预存在过度思考的成功轨迹，保留正确前缀、编辑多余内容，通过... | 方法仅适配GRPO类强化训练框架，未验证跨框架泛化性，缺乏大规模... | — |
+| 8 | high | - | [Frame-Conditioned Moral Computation in LLaMA 3.1-8B-Instruct: A ...](http://arxiv.org/abs/2606.15507v1) | evaluation/benchmark | 发现情境锚定效应：大模型伦理能力基本稳定，伦理特征显著性高度依赖prompt框架，还找到跨温... | 通过机械可解释性审计分析大模型伦理推理的内部机制，提出行为对齐需补充机制对齐思路... | 仅测试54个prompt，样本量较小，结论通用性不足，未形成实际... | — |
+| 9 | high | - | [GEMS: Geometric Constraints Enable Multi-Semantic Superposition ...](http://arxiv.org/abs/2606.19946v1) | model steering | 多方向叠加崩溃可分解为分布偏移和方向干扰两个独立来源，GEMS处理后GSM8K准确率达98%... | 推理阶段无需训练，通过对激活施加范数约束和实时正交化两类几何约束实现多方向语义引... | 仅验证了少量方向叠加的效果，未测试更多方向、更多任务下的方法稳定... | — |
+| 10 | high | - | [Gaze Heads: How VLMs Look at What They Describe](http://arxiv.org/abs/2606.14703v1) | model steering | 不到9%的Top注视头做单注意力掩码干预就能以83.1%准确率 steering输出到指定区... | 通过机制分析识别出特定功能注意力头，在推理时施加注意力掩码干预，无需重训练即可 ... | 仅在部分VLM架构中生效，通用性不足，控制场景局限于图像描述任务... | — |
+| 11 | high | - | [High-Dimensional Random Projection for Activation Steering in La...](http://arxiv.org/abs/2606.15092v1) | model steering | 高维随机投影后的激活加法，可捕获线性均值差方法无法得到的判别结构，性能提升且不增加显著计算开... | 通过高维随机投影将激活变换到高维空间，在投影空间执行激活加法，实现更有效的大语言... | 仅在通用基准验证性能，未验证该方法在下游任务中的长期调控可靠性与... | — |
+| 12 | high | - | [Leverage Is Not Reach: A Control-Window Law for Single-Neuron St...](http://arxiv.org/abs/2606.19831v1) | model steering | 预测控制天花板平均绝对误差为0.14，大块层仅0.07；仅3/6的Llama枢纽在长输出范围... | 通过残差流与神经元写方向的对齐构建控制窗，基于该框架构建前向对比筛选，实现单神经... | 仅在少量神经元样本上验证，仅针对单神经元控制场景，多神经元协同场... | — |
 
 ## 方法族分布
 
@@ -88,36 +88,6 @@
 - 仅开展小样本专家评估，样本量有限，结论的通用性和可推广性有待进一步验证。
 - 文化信号流失会导致文化对齐偏向性，影响模型输出的文化可靠性，给对齐落地带来风险。
 
-## 可延展 Idea Hook
-
-- 能否基于机制识别出的模型功能单元实现精准行为控制，规避传统知识编辑带来的各类副作用？
-- 可将分阶段定位错误来源的思路，迁移到知识编辑后大模型的推理副作用评测研究中
-- 可将这种可审计证据审核的分层控制思路，推广到通用LLM agent行为可靠性控制场景。
-- 基于该研究得到的子空间几何规律，设计低副作用的靶向LLM行为控制方法，提升控制可靠性。
-- 将风险感知因果门控思路引入知识编辑领域，能否有效管控知识编辑带来的各类副作用？
-- 可借鉴该区分故障模式的探测思路，研究大语言模型中两类不同幻觉的区分与检测方法
-- 能否将来源优先的可追溯设计引入知识编辑场景，降低编辑后的幻觉副作用，提升输出可信度？
-- 知识编辑流程是否也存在类似文化漏斗效应，如何控制编辑后文化表示偏移的副作用？
-- 能否将这种定位少量致病参数的局部编辑方法，推广解决大语言模型其他常见的生成病理问题？
-- 能否利用学习到的大模型可解释电路，分析知识编辑的作用机制，提前识别知识编辑带来的副作用？
-- 能否基于CoffeeBench评测多智能体长程行为的可靠性，挖掘大模型无行动失效的机制，改进agent行为控制？
-- 可研究如何通过模型steering消除多模态检索增强问答的首因偏差，提升RAG系统的可靠性。
-
-## 下次可问导师的问题
-
-- 这种基于机制识别单元的推理时 steering思路，能否推广到大模型通用行为控制场景？
-- 我们是否可以借鉴这种分阶段诊断错误的思路，改进现有知识编辑的副作用评测方案？
-- 这篇移动健康领域的基准比较研究，有没有思路可迁移到我们的模型编辑评测方向？
-- 这种分层可审计的控制思路，能否迁移解决通用agent的低风险行为控制问题？
-- 基于这一子空间分析结论，我们能不能设计出副作用更低的大语言模型行为干预方案？
-- 这篇医疗领域的架构安全思路，是否能为我们的agent行为控制研究提供借鉴？
-- 我们是否可以适配该因果门控方法到知识编辑的副作用控制场景做验证？
-- 将这种基于隐层激活的故障区分思路迁移到LLM幻觉检测是否具备可行性？
-- 将来源追溯的设计思路应用到知识编辑副作用控制方向，是否具备足够的研究价值？
-- 我们是否可以将文化漏斗的分析思路引入知识编辑副作用的研究当中？
-- 我们能不能顺着这个思路，做中文大模型常见生成错误的局部参数编辑方法验证？
-- 将电路可解释性方法用于知识编辑机制分析的方向，是否值得我们课题组深入跟进？
-
 ## 代码资源
 
 - [ClinHallu: A Benchmark for Diagnosing Stage-Wise Hallucinations in Medical MLLM ...](https://github.com/alibaba-damo-academy/ClinHallu.) · 5 stars
@@ -153,4 +123,4 @@
 - **城市级循环性评估可持续发展报告**：1 篇
 
 ---
-*自动生成于 2026-06-21 | ArXiv_Daily_Digest*
+*自动生成于 2026-07-01 | ArXiv_Daily_Digest*

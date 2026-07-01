@@ -6,20 +6,20 @@
 
 ## 优先阅读
 
-| # | 优先级 | Venue | 论文 | 方法族 | 控制/评测 | 风险 | Idea Hook | 代码 |
-|:-:|:------:|:-----:|------|--------|----------|------|-----------|:----:|
-| 1 | high | - | [Consensus-based Agentic Large Language Model Framework for Harmo...](http://arxiv.org/abs/2606.16987v1) | multi-agent coordination | 通过共识验证、分层级元素投票、置信度估计结合人工介入，优化规范多智能体分类推理行... | 实验基于私有数据集，无公开基准对比，方法在不同关税区域的泛化可靠... | 可探索将本文层级投票加共识验证的机制，推广到通用多智能体任务中提升输出一致性 | ✅ |
-| 2 | high | - | [A Neuro-Symbolic Approach to Strategy Synthesis for Strategic Lo...](http://arxiv.org/abs/2606.17962v1) | multi-agent coordination | 采用生成-认证架构，以大语言模型作为策略生成器，结合形式化验证器验证生成策略，保... | 对于大规模多智能体场景，形式化验证的计算开销仍然较高，落地的扩展... | 能否将该LLM加形式化验证的生成-验证框架，拓展应用到多智能体交互的一致性验证场景中？ | — |
-| 3 | high | - | [AdaSTORM: Scaling LLM Reasoning on Dynamic Graphs via Adaptive S...](http://arxiv.org/abs/2606.16328v1) | multi-agent coordination | 通过自适应分区匹配模型推理容量，结合时空解耦多智能体架构实现协作推理，突破规模瓶... | 未披露具体推理开销与延迟，未列出基线具体细节，可复现性存在一定不... | 能否借鉴这种自适应分区多智能体协作的思路，优化大规模多Agent交互的共识一致性？ | — |
-| 4 | high | - | [AgentFinVQA: A Deployable Multi-Agent Pipeline for Auditable Fin...](http://arxiv.org/abs/2606.19782v1) | multi-agent coordination | 将问答任务分解为多智能体分工步骤，引入验证器生成置信判决，记录全流程轨迹实现可追... | 仅在单一基准评测，未验证真实金融场景下的合规性与方案鲁棒性 | 可将这种带全流程记录的多智能体验证机制推广到通用场景，提升多智能体输出的可追溯可靠性 | — |
-| 5 | high | - | [CAPRA: Scaling Feedback on Software Architecture Deliverables wi...](http://arxiv.org/abs/2606.18976v1) | multi-agent coordination | 采用基于归一化莱文斯坦距离模糊匹配的确定性证据锚定，搭配一致性管理智能体交叉验证... | 仅在10份小规模样本上验证，结论泛化性不足，主观评估维度仍无法自... | 能否将本文的证据锚定加一致性管理智能体方案推广到通用多智能体协作场景，提升输出一致性？ | — |
-| 6 | high | - | [Contagion Networks: Evaluator Bias Propagation in Multi-Agent LL...](http://arxiv.org/abs/2606.20493v1) | evaluation/benchmark | 构建传染网络框架度量评估偏差传播，提出增大评估委员会规模抑制偏差传染，提升多智能... | 仅验证了小规模3智能体设置，更大规模复杂多智能体系统中的传播规律... | 能否基于传染网络框架设计多智能体评估偏差仲裁机制，抑制偏差传播，提升多智能体输出一致性 | — |
-| 7 | high | - | [Distributed General-Purpose Agent Networks: Architecture, Key Me...](http://arxiv.org/abs/2606.17368v1) | multi-agent coordination | 通过协议适配层为核心的分层架构，结合可验证身份信誉与语义传播机制，保障开放智能体... | 完全开放分布式网络的通信开销、节点动态性会影响可用性，实际落地部... | 可基于该框架研究开放多智能体协作中声誉机制对共识一致性的提升作用，验证对抗合谋攻击的效果。 | — |
-| 8 | high | - | [EARS: Explanatory Abstention for Reliable Sub-Agent Modeling in ...](http://arxiv.org/abs/2606.18668v1) | multi-agent coordination | 通过校准LLM法官集成生成子智能体失败模式标注，微调子智能体使其输出带理由的弃权... | 依赖LLM-as-Judge生成标注，跨领域泛化未验证，大规模场... | 能否将带解释的弃权机制引入多智能体共识场景，提升多智能体辩论生成共识过程的可靠性？ | — |
-| 9 | high | - | [Formal Verification of Learned Multi-Agent Communication Policie...](http://arxiv.org/abs/2606.19632v1) | unlearning/safety | 通过决策树蒸馏抽象原神经多智能体策略，使用概率模型检测器完成组合形式验证，保障策... | 依赖领域特定特征提取，蒸馏保真度未达100%，框架通用性未在更多... | 能否将该形式验证思路扩展到多Agent一致性验证，实现多Agent运行不一致问题的提前检测？ | — |
-| 10 | high | - | [From Argument Components to Graphs: A Multi-Agent Debate with Co...](http://arxiv.org/abs/2606.16047v1) | multi-agent coordination | 通过置信门控筛选不确定预测样本，依托多智能体辩论改进大模型推理结果，兼顾性能与效... | 仅在单论域数据集验证效果，泛化能力未测试，全场景应用时会出现性能... | 能否将置信门控选择性辩论机制引入多智能体共识场景，降低协作开销同时提升输出一致性？ | — |
-| 11 | high | - | [GeoDisaster: Benchmarking Orchestrated Agents for Operational Di...](http://arxiv.org/abs/2606.17246v1) | evaluation/benchmark | 通过显式执行契约规范多智能体协作，结合失败感知监督微调与契约强化学习对齐智能体行... | 基准与方法针对特定灾害领域，通用性有限，落地还需要适配更多不同的... | 能否将基于执行契约的智能体对齐方法推广到通用多智能体场景，解决同题多次运行不一致的问题？ | — |
-| 12 | high | - | [Hidden Anchors in Multi-Agent LLM Deliberation](http://arxiv.org/abs/2606.19494v1) | multi-agent coordination | 通过引入智能体自身的隐藏锚点信念，构建闭环动力系统建模多智能体商议过程，解释共识... | 仅做机制层面的建模验证，未在实际落地任务中测试模型的实用性与泛化... | 能否基于隐藏锚点的可检测性，设计多智能体推理一致性的早期失败检测方案，提升多Agent可靠性... | — |
+| # | 优先级 | Venue | 论文 | 方法族 | 关键发现 | 控制/评测 | 风险 | 代码 |
+|:-:|:------:|:-----:|------|--------|----------|----------|------|:----:|
+| 1 | high | - | [Consensus-based Agentic Large Language Model Framework for Harmo...](http://arxiv.org/abs/2606.16987v1) | multi-agent coordination | 即使是先进大语言模型，HTS分类性能也从粗粒度章节级到细粒度编码后缀不断下降，10位精确分类... | 通过共识验证、分层级元素投票、置信度估计结合人工介入，优化规范多智能体分类推理行... | 实验基于私有数据集，无公开基准对比，方法在不同关税区域的泛化可靠... | ✅ |
+| 2 | high | - | [A Neuro-Symbolic Approach to Strategy Synthesis for Strategic Lo...](http://arxiv.org/abs/2606.17962v1) | multi-agent coordination | 该生成-验证框架保留形式化可靠性，基于Qwen3-32B的验证流水线在策略合成任务上达到了9... | 采用生成-认证架构，以大语言模型作为策略生成器，结合形式化验证器验证生成策略，保... | 对于大规模多智能体场景，形式化验证的计算开销仍然较高，落地的扩展... | — |
+| 3 | high | - | [AdaSTORM: Scaling LLM Reasoning on Dynamic Graphs via Adaptive S...](http://arxiv.org/abs/2606.16328v1) | multi-agent coordination | 该自适应多智能体框架可将LLM动态图推理扩展到千节点图，多场景下准确率超90%，显著优于七个... | 通过自适应分区匹配模型推理容量，结合时空解耦多智能体架构实现协作推理，突破规模瓶... | 未披露具体推理开销与延迟，未列出基线具体细节，可复现性存在一定不... | — |
+| 4 | high | - | [AgentFinVQA: A Deployable Multi-Agent Pipeline for Auditable Fin...](http://arxiv.org/abs/2606.19782v1) | multi-agent coordination | 验证器置信信号有效，确认答案比修正答案准确率高12.6个百分点，近三分之二失败未被其有效检测 | 将问答任务分解为多智能体分工步骤，引入验证器生成置信判决，记录全流程轨迹实现可追... | 仅在单一基准评测，未验证真实金融场景下的合规性与方案鲁棒性 | — |
+| 5 | high | - | [CAPRA: Scaling Feedback on Software Architecture Deliverables wi...](http://arxiv.org/abs/2606.18976v1) | multi-agent coordination | CAPRA在严格双评估者规则下满足88.8%的评估标准，与人类评估的kappa一致性为0.5... | 采用基于归一化莱文斯坦距离模糊匹配的确定性证据锚定，搭配一致性管理智能体交叉验证... | 仅在10份小规模样本上验证，结论泛化性不足，主观评估维度仍无法自... | — |
+| 6 | high | - | [Contagion Networks: Evaluator Bias Propagation in Multi-Agent LL...](http://arxiv.org/abs/2606.20493v1) | evaluation/benchmark | 同模型智能体的偏差传染系数比跨模型弱3-5倍，评估委员会规模从1增至3可降低72.4%的有效... | 构建传染网络框架度量评估偏差传播，提出增大评估委员会规模抑制偏差传染，提升多智能... | 仅验证了小规模3智能体设置，更大规模复杂多智能体系统中的传播规律... | — |
+| 7 | high | - | [Distributed General-Purpose Agent Networks: Architecture, Key Me...](http://arxiv.org/abs/2606.17368v1) | multi-agent coordination | 测试验证BAID风格分层验证的原型开销可控，MG-EigenTrust可适配跨主题伪装合谋攻... | 通过协议适配层为核心的分层架构，结合可验证身份信誉与语义传播机制，保障开放智能体... | 完全开放分布式网络的通信开销、节点动态性会影响可用性，实际落地部... | — |
+| 8 | high | - | [EARS: Explanatory Abstention for Reliable Sub-Agent Modeling in ...](http://arxiv.org/abs/2606.18668v1) | multi-agent coordination | 引入子智能端侧带解释的弃权机制后，大规模多智能体电商助理的响应通过率从68.5%提升至78.... | 通过校准LLM法官集成生成子智能体失败模式标注，微调子智能体使其输出带理由的弃权... | 依赖LLM-as-Judge生成标注，跨领域泛化未验证，大规模场... | — |
+| 9 | high | - | [Formal Verification of Learned Multi-Agent Communication Policie...](http://arxiv.org/abs/2606.19632v1) | unlearning/safety | 离散VQ-VIB消息比连续方法保真度高11.6-13.6个百分点，验证快3-4倍，安全性质迁... | 通过决策树蒸馏抽象原神经多智能体策略，使用概率模型检测器完成组合形式验证，保障策... | 依赖领域特定特征提取，蒸馏保真度未达100%，框架通用性未在更多... | — |
+| 10 | high | - | [From Argument Components to Graphs: A Multi-Agent Debate with Co...](http://arxiv.org/abs/2606.16047v1) | multi-agent coordination | 仅对不确定样本辩论的选择性方案取得无训练方法最高Macro F1，全样本辩论的性能反而低于基... | 通过置信门控筛选不确定预测样本，依托多智能体辩论改进大模型推理结果，兼顾性能与效... | 仅在单论域数据集验证效果，泛化能力未测试，全场景应用时会出现性能... | — |
+| 11 | high | - | [GeoDisaster: Benchmarking Orchestrated Agents for Operational Di...](http://arxiv.org/abs/2606.17246v1) | evaluation/benchmark | 现有RS-VLMs与通用智能体系统难以满足业务化灾害地理推理需求，RCEA可有效提升多智能体... | 通过显式执行契约规范多智能体协作，结合失败感知监督微调与契约强化学习对齐智能体行... | 基准与方法针对特定灾害领域，通用性有限，落地还需要适配更多不同的... | — |
+| 12 | high | - | [Hidden Anchors in Multi-Agent LLM Deliberation](http://arxiv.org/abs/2606.19494v1) | multi-agent coordination | 仅当隐藏锚点远离初始观点时商议才能跳出初始信念凸包，锚点效应在开源模型中是连续谱而非全有全无... | 通过引入智能体自身的隐藏锚点信念，构建闭环动力系统建模多智能体商议过程，解释共识... | 仅做机制层面的建模验证，未在实际落地任务中测试模型的实用性与泛化... | — |
 
 ## 方法族分布
 
@@ -86,36 +86,6 @@
 - 结论依赖任务可抽象为约束图的假设，真实开放场景的复杂任务未必满足该前提。
 - 未给出实证评测结果，方案的实际可用性与稳定性未经验证，存在较大的落地不确定性
 
-## 可延展 Idea Hook
-
-- 能否将该偏好协调机制引入多智能体共识任务，缓解同题多次运行的不一致问题？
-- 可基于该开源文件化异构Agent协作框架，研究异构多Agent协作的一致性保障机制。
-- 能否将这种无需额外标注的自校准反思方法引入多智能体交互，用于提升多智能体共识一致性？
-- 能否将这种多智能体验证反馈框架推广到通用多智能体交互，降低输出不一致性与事实错误？
-- 可将契约约束思路引入多智能体共识研究，通过契约保证多智能体交互的一致性，降低协调失败风险
-- 可将隐私保护的潜在多智能体通信思路引入多智能体共识研究，实现隐私保护下的多智能体一致性。
-- 能否将这种基于任务信号的多智能体质量控制思路，迁移应用到通用多智能体一致性提升研究中？
-- 能否将本文时间一致性表示的设计思路，引入多智能体交互一致性研究，提升多Agent运行结果的稳定性？
-- 能否基于最小割代价设计多智能体任务分割机制，提升多智能体协作的一致性与整体成功率？
-- 可探究共生多智能体沙箱场景下的协作一致性问题，引入仲裁机制提升这类原生Agent应用的运行稳定性
-- 可探索将本文层级投票加共识验证的机制，推广到通用多智能体任务中提升输出一致性
-- 能否将该多模型集体评估技能的思路，引入多智能体共识机制设计，提升多agent交互结果的一致性？
-
-## 下次可问导师的问题
-
-- 我们是否可以将该偏好协调思路拓展到多智能体共识任务，解决运行不一致问题？
-- 该文件式异构多Agent协作方案，能否推广到通用多Agent共识与一致性任务场景？
-- 这种免费自校准思路能否迁移到多智能体场景，用来解决多智能体多次运行不一致问题？
-- 这种带验证的多智能体反馈框架能否用来解决通用多智能体输出不一致的问题？
-- 我们研究多智能体共识一致性，是否适合借鉴该契约约束思路优化一致性保证？
-- 我们能否将该隐私保护多智能体框架拓展到多智能体共识场景做相关研究？
-- 这种针对特定任务的多智能体结果调和思路，是否可以迁移解决通用多智能体运行不一致问题？
-- 将本文的时间一致性思路迁移到多智能体运行一致性研究，是否具备明确的研究价值？
-- 我们是否可以基于该论文的最小割指标，改进现有多智能体共识协作机制的设计？
-- 我们是否可以基于该沙箱框架，搭建针对多Agent协作一致性的专用评测基准？
-- 我们研究多智能体一致性，可否借鉴该论文的层级共识思路改进现有方法？
-- 我们是否可以基于本文多模型集体评估的思路，改进多智能体交互中的共识生成机制？
-
 ## 代码资源
 
 - [Consensus-based Agentic Large Language Model Framework for Harmonized Tariff Sch...](https://github.com/Analytics-Everywhere-Lab/hts.) · 1 stars
@@ -149,4 +119,4 @@
 - **美国13个州的40份真实高中成绩单**：1 篇
 
 ---
-*自动生成于 2026-06-21 | ArXiv_Daily_Digest*
+*自动生成于 2026-07-01 | ArXiv_Daily_Digest*

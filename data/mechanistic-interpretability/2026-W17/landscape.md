@@ -1,14 +1,11 @@
-# 📡 机械可解释性 — 研究版图
-> 2026-W17 (04/20-04/26) | 本周 20 篇 | 自动生成
+# 📡 mechanistic-interpretability — 方法版图
+> 2026-W17 (04/20-04/26) | 本周 17 篇 | 自动生成
 
-📊 **1** 个研究主题 | **1** 篇附带代码
+📊 **1** 个方法族 | **0** 篇 high priority | **1** 篇附带代码
 
 ---
 
-### 🔬 未分类（20 篇）
-
-- **证明引入的归纳偏置可提升模型泛化能力，为STEM教育研究提供了实用工具**
-  _[Locating acts of mechanistic reasoning in student team conversati...](http://arxiv.org/abs/2604.21870v1)_
+### 🔬 未分类（17 篇）
 
 - **论证深度学习科学理论正在逐步形成，提出学习力学这一新兴理论视角，回应了相关质疑**
   _[There Will Be a Scientific Theory of Deep Learning](http://arxiv.org/abs/2604.21691v1)_
@@ -22,9 +19,6 @@
 - **证实该方法可降低越狱成功率与攻击迁移性，揭示了稀疏性和层位置对防御的影响规律**
   _[Towards Understanding the Robustness of Sparse Autoencoders](http://arxiv.org/abs/2604.18756v1)_
 
-- **发现最优预测因子因语言和眼动指标不同而异，模型早期层预测早期阅读指标优于标量惊奇值**
-  _[Probing for Reading Times](http://arxiv.org/abs/2604.18712v1)_
-
 - **可有效检出各类替换模型的攻击者，额外开销低于2.1%，原基线方法都被攻击者规避**
   _[Committed SAE-Feature Traces for Audited-Session Substitution Det...](http://arxiv.org/abs/2604.18179v1)_
 
@@ -33,9 +27,6 @@
 
 - **提出两种新的人格相关观点，论证三种观点都是该研究问题的有力候选方案**
   _[Where is the Mind? Persona Vectors and LLM Individuation](http://arxiv.org/abs/2604.17031v1)_
-
-- **验证该框架性能优于多个基线，可输出具备机制可解释性与临床依据的可靠治疗假设**
-  _[Large Language Models Meet Biomedical Knowledge Graphs for Mechan...](http://arxiv.org/abs/2604.19815v1)_
 
 - **实验验证预测指标相关性较高，提出三机制框架说明适用场景，验证其效果优于传统启发式选层。**
   _[Predicting Where Steering Vectors Succeed](http://arxiv.org/abs/2604.15557v1)_
@@ -69,4 +60,4 @@
 
 
 ---
-*Research Radar 自动生成 | 2026-04-26*
+*ArXiv_Daily_Digest 自动生成 | 2026-07-01*

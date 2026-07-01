@@ -9,6 +9,17 @@ import json
 import time
 
 
+RETIRED_EXTRACTION_FIELDS = {
+    "mentor_question",
+    "idea_hook",
+    "direction_fit",
+    "idea_feasibility",
+    "compute_cost",
+    "cross_direction",
+    "edit_target",
+}
+
+
 EXTRACTION_SYSTEM = """你是一位 LLM/Agent reliability、agent harness、model control、unlearning 与 factuality 方向的学术论文信息提取助手。
 你的任务是从论文标题、摘要和当前研究方向中提取结构化信息，服务研究方向跟踪、读论文排序、两周一次导师选题对齐。
 你可以做轻量判断，但必须基于标题和摘要，不要编造。输出必须严格为 JSON 格式。"""
@@ -36,8 +47,6 @@ EXTRACTION_PROMPT = """从以下论文摘要中提取结构化信息。
   "key_finding": "这篇论文最具体、最独特的发现是什么？写出机制、数值、现象或失败模式，不要空泛。（一句话，30-70字中文）",
   "theme": "这篇论文属于什么研究主题？用3-10个中文字概括，例如'可执行技能'、'多Agent一致性'、'奖励学习'、'事实性评测'",
   "method_family": "方法族/论文类型：从 agent harness、skill generation、tool-use control、multi-agent coordination、consistency detection、policy optimization、online distillation、reward learning、factuality benchmark、unlearning/safety、model steering、evaluation/benchmark、survey、other 中选一个或写更贴切短语",
-  "cross_direction": "交叉方向标签：从 multi-agent reliability harness、MCP tool reliability、skill safety、benchmark-only、single-agent harness、not-crossing 中选一个；优先标出 agent harness 与多Agent/工具/MCP/skill安全的交叉点",
-  "edit_target": "被控制、编辑、遗忘或约束的对象：agent action / tool use / workflow / factual knowledge / safety knowledge / private data / reasoning behavior / reward policy / representation / parameter / unknown 等，中文短语",
   "agent_setting": "如果涉及 agent，说明环境和任务形态，如 web/OS/coding/search/KBQA/multi-agent/tool-use；若不涉及写'非Agent论文'",
   "control_mechanism": "论文如何控制或改进模型/agent 行为，如 harness、skill program、verifier、debate、reward、distillation、steering、unlearning、benchmark feedback；30-60字中文",
   "evaluation_environment": "主要评测环境、任务或指标，如 WebArena、OSWorld、SWE-bench、HotpotQA、RuleArena、AntiLeakBench、accuracy/success rate/consistency；若摘要未提及写'摘要未提及'",
@@ -45,22 +54,15 @@ EXTRACTION_PROMPT = """从以下论文摘要中提取结构化信息。
   "failure_mode": "这篇论文暴露或试图解决的失败模式，如工具误用、不一致、早期错误传播、奖励塌缩、遗忘不彻底、副作用；如果摘要未提及写'摘要未提及'",
   "reliability_risk": "从可靠性/工业落地角度看最大风险是什么？如副作用、不可复现、成本高、评测弱、数据污染、回滚困难；30-60字中文",
   "industrial_relevance": "high / medium / low 三选一，判断是否贴近工业界 agent/harness/reliability/应用需求",
-  "idea_feasibility": "high / medium / low 三选一，判断本科远程实习阶段能否低成本形成复现、benchmark、demo 或分析实验",
-  "compute_cost": "low / medium / high 三选一，估计实验算力和工程成本",
-  "idea_hook": "对 LLM/Agent reliability、harness、factuality 或 safety 方向可延展的一句话选题钩子，30-70字中文；若不相关写'暂不明显'",
-  "mentor_question": "下次和导师讨论时最值得问的一个判断问题，20-60字中文",
-  "read_priority": "high / medium / low 三选一，按方向相关性、方法新意、评测价值、工业相关性和可行性判断",
-  "direction_fit": "为什么这篇论文适合或不适合当前研究方向，20-60字中文"
+  "read_priority": "high / medium / low 三选一，按方向相关性、方法新意、评测价值和工业相关性判断"
 }}
 ```
 
 注意：
-- 全部用中文输出，枚举字段 industrial_relevance / idea_feasibility / compute_cost / read_priority 只输出英文 high、medium 或 low。
+- 全部用中文输出，枚举字段 industrial_relevance / read_priority 只输出英文 high、medium 或 low。
 - title_zh 和 abstract_zh 要忠实翻译原文，不要添加摘要中没有的信息。
 - key_finding 要具体到机制、数值、现象或失败模式层面，拒绝空泛描述。
 - method_family 和 theme 要尽量稳定，便于后续聚合。
-- cross_direction 只输出枚举值本身。若论文只是普通单Agent benchmark 且没有工具、MCP、skill安全或多Agent可靠性交叉，写 benchmark-only 或 not-crossing。
-- mentor_question 要像真实导师讨论问题，不要写成泛泛的"是否有意义"。
 - 如果摘要信息不足，如实写"摘要未提及"，不要编造。"""
 
 
@@ -80,8 +82,6 @@ def _empty_extracted():
         "key_finding": "提取失败",
         "theme": "未分类",
         "method_family": "未分类",
-        "cross_direction": "not-crossing",
-        "edit_target": "未知",
         "agent_setting": "提取失败",
         "control_mechanism": "提取失败",
         "evaluation_environment": "提取失败",
@@ -89,13 +89,28 @@ def _empty_extracted():
         "failure_mode": "提取失败",
         "reliability_risk": "提取失败",
         "industrial_relevance": "low",
-        "idea_feasibility": "low",
-        "compute_cost": "high",
-        "idea_hook": "提取失败",
-        "mentor_question": "提取失败",
         "read_priority": "low",
-        "direction_fit": "提取失败",
     }
+
+
+def _sanitize_extracted(extracted):
+    """Drop retired fields even if the model returns them unprompted."""
+    if not isinstance(extracted, dict):
+        return _empty_extracted()
+    sanitized = {}
+    for key, value in extracted.items():
+        if key in RETIRED_EXTRACTION_FIELDS:
+            continue
+        if isinstance(value, dict):
+            sanitized[key] = _sanitize_extracted(value)
+        elif isinstance(value, list):
+            sanitized[key] = [
+                _sanitize_extracted(item) if isinstance(item, dict) else item
+                for item in value
+            ]
+        else:
+            sanitized[key] = value
+    return sanitized
 
 
 def extract_paper_info(paper, client):
@@ -114,7 +129,7 @@ def extract_paper_info(paper, client):
         response, usage = client.chat_completion(
             messages=[{"role": "user", "content": prompt}],
             system_prompt=EXTRACTION_SYSTEM,
-            max_tokens=1600,
+            max_tokens=1300,
         )
 
         if not response:
@@ -125,7 +140,7 @@ def extract_paper_info(paper, client):
             clean = clean.split("\n", 1)[1]
             clean = clean.rsplit("```", 1)[0]
 
-        return json.loads(clean)
+        return _sanitize_extracted(json.loads(clean))
 
     except (json.JSONDecodeError, Exception) as e:
         print(f"[Processor] ⚠️ 提取失败: {paper['title'][:40]}... — {e}")

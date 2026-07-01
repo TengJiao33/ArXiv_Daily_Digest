@@ -6,20 +6,20 @@
 
 ## 优先阅读
 
-| # | 优先级 | Venue | 论文 | 方法族 | 控制/评测 | 风险 | Idea Hook | 代码 |
-|:-:|:------:|:-----:|------|--------|----------|------|-----------|:----:|
-| 1 | high | - | [ARCO: Adaptive Rubric with Co-Evolution for Multi-Step LLM-Based...](http://arxiv.org/abs/2606.21262v1) | reward learning | 通过设计自适应协同进化的步级评分奖励机制，解决步级信用分配问题，优化多步智能体的... | 仅在多跳问答任务验证，未在复杂通用多步智能体任务测试，泛化性待验... | 可将这种自适应协同进化评分准则，结合在线策略蒸馏优化多步智能体的奖励信用分配。 | ✅ |
-| 2 | high | - | [ReNIO: Reweighting Negative Trajectory Importance for LLM On-Pol...](http://arxiv.org/abs/2606.23104v1) | online distillation | 通过对同策略蒸馏中的负推理轨迹进行重要性重加权，优化训练信号质量，提升大语言模型... | 仅在封闭型推理任务验证，未在开放交互类任务测试，方法依赖额外教师... | 可将负轨迹重要性重加权思路引入Agent在线策略蒸馏，优化Agent探索过程的训练信号质量。 | ✅ |
-| 3 | high | - | [What are Key Factors for Updates in RL for LLM Reasoning?](http://arxiv.org/abs/2606.22570v1) | policy optimization | 通过理论分析明确RLVR更新的核心影响因素，设计自适应裁剪策略优化改进RLVR的... | 仅在3B、7B模型上验证，未测试更大参数模型，方法的泛化性未得到... | 基于本文RLVR更新的发现，可探索适配agent在线蒸馏的自适应裁剪策略，提升agent后训... | ✅ |
-| 4 | high | - | [Why Multi-Step Tool-Use Reinforcement Learning Collapses and How...](http://arxiv.org/abs/2606.26027v1) | policy optimization | 引入多种监督信号，通过将监督微调与强化学习交错训练，抑制控制token概率异常，... | 未在公开标准工具使用基准上验证结论，所得结论的泛化性仍需进一步验... | 可结合在线蒸馏技术，改进交错SFT-RL训练方案，解决其分布外性能退化问题，提升多步工具ag... | ✅ |
-| 5 | high | - | [A Formula-Driven Survey and Research Agenda for On-Policy Distil...](http://arxiv.org/abs/2606.22793v1) | survey | 通过公式驱动的分类框架梳理同策略蒸馏中反馈到更新的全流程，厘清混淆的核心机制，提... | 提出的新方法假设尚未经过实证验证，结论缺乏落地数据支撑，可靠性待... | 基于本综述提出的CR-OPD和GAE-OPD假设，可验证其在大语言模型Agent在线策略蒸馏... | — |
-| 6 | high | - | [AsyncOPD: How Stale Can On-Policy Distillation Be?](http://arxiv.org/abs/2606.24143v1) | online distillation | 通过异步解耦rollout生成与模型更新，基于KL鲁棒性设计改进估计器，提升同策... | 未在实际下游任务验证泛化性，仅报告吞吐量与准确率，实际落地效果尚... | 探究将异步同策略蒸馏落地到Agent在线策略优化，解决Agent rollout过慢导致的训... | — |
-| 7 | high | - | [BiPACE: Bisimulation-Guided Policy Optimization with Action Coun...](http://arxiv.org/abs/2606.25556v1) | policy optimization | 通过双模拟引导的隐藏态聚类结合动作条件反事实基线，改进策略优势估计，无需额外判别... | 仅在中小规模文本类智能体基准验证，未测试更大模型与开放域复杂任务... | 这种基于行为等价聚类的优势估计思路，能否用于优化在线策略蒸馏，提升LLM智能体后训练效果？ | — |
-| 8 | high | - | [CalVerT: Augmenting Agents with Calibrated Verifier Telemetry Im...](http://arxiv.org/abs/2606.21777v1) | policy optimization | 通过在智能体原有状态中加入校准自置信度和接地验证器得分，增强状态感知，优化动作决... | 仅在问答任务验证，未在其他类型Agent任务测试，泛化能力未验证... | 能否将这种校准验证器遥测的思路引入在线策略蒸馏，用验证信号改进学生智能体的策略优化？ | — |
-| 9 | high | - | [Curriculum Reinforcement Learning Can Incentivize Reasoning Capa...](http://arxiv.org/abs/2606.22317v1) | policy optimization | 采用边界感知课程强化学习，先定位模型当前推理边界，引入针对性教师引导，再通过RL... | 未公开具体实验使用的推理基准细节，推理边界依赖pass@256代... | 探索将边界感知课程RL思路引入Agent策略优化，能否有效拓展Agent处理复杂任务的能力边... | — |
-| 10 | high | - | [Designing Reward Signals for Portable Query Generation: A Case S...](http://arxiv.org/abs/2606.27291v1) | reward learning | 通过鲁棒奖励塑造，引入确定性规则奖励下界，抑制策略优化对奖励缺陷的利用，提升生成... | 依赖人工/大模型设计奖励，跨任务泛化性未验证，工业落地需要针对不... | 能否将基于规则的奖励下界方法引入agent策略优化，抑制大模型裁判场景下的奖励黑客行为？ | — |
-| 11 | high | - | [EvoRubrics: Dynamic Rubrics as Rewards via Adversarial Co-Evolut...](http://arxiv.org/abs/2606.23038v1) | reward learning | 通过策略模型与评分生成器的对抗共进化，动态生成适配的奖励信号，引导策略优化并自动... | 双模型共进化训练算力开销较高，未在具体下游落地任务验证泛化效果 | 能否将该共进化动态奖励机制引入agent在线策略蒸馏，解决训练中的奖励饱和问题，最终提升ag... | — |
-| 12 | high | - | [GEOALIGN: Geometric Rollout Curation for Robust LLM Reinforcemen...](http://arxiv.org/abs/2606.26917v1) | policy optimization | 基于批次方向共识检测修正不一致训练轨迹，以极低额外开销稳定在线大语言模型强化学习... | 仅在两个封闭任务验证，未测试开放复杂场景下方法的通用性和稳定性。 | 可将基于方向共识的轨迹筛选思路引入Agent在线策略蒸馏，提升在线蒸馏过程的训练稳定性。 | — |
+| # | 优先级 | Venue | 论文 | 方法族 | 关键发现 | 控制/评测 | 风险 | 代码 |
+|:-:|:------:|:-----:|------|--------|----------|----------|------|:----:|
+| 1 | high | - | [ARCO: Adaptive Rubric with Co-Evolution for Multi-Step LLM-Based...](http://arxiv.org/abs/2606.21262v1) | reward learning | ARCO在两个开源骨干模型的所有测试设置下，均提升了最优精确匹配（EM）分数，生成的步级准则... | 通过设计自适应协同进化的步级评分奖励机制，解决步级信用分配问题，优化多步智能体的... | 仅在多跳问答任务验证，未在复杂通用多步智能体任务测试，泛化性待验... | ✅ |
+| 2 | high | - | [ReNIO: Reweighting Negative Trajectory Importance for LLM On-Pol...](http://arxiv.org/abs/2606.23104v1) | online distillation | OPD和OPSD中仅训练错误学生生成输出效果优于仅训练正确输出，在数学推理上对7B模型最高取... | 通过对同策略蒸馏中的负推理轨迹进行重要性重加权，优化训练信号质量，提升大语言模型... | 仅在封闭型推理任务验证，未在开放交互类任务测试，方法依赖额外教师... | ✅ |
+| 3 | high | - | [What are Key Factors for Updates in RL for LLM Reasoning?](http://arxiv.org/abs/2606.22570v1) | policy optimization | 每轮rollout的梯度步数决定的离策略程度，会改变重要性采样比分布与裁剪行为，影响更新中占... | 通过理论分析明确RLVR更新的核心影响因素，设计自适应裁剪策略优化改进RLVR的... | 仅在3B、7B模型上验证，未测试更大参数模型，方法的泛化性未得到... | ✅ |
+| 4 | high | - | [Why Multi-Step Tool-Use Reinforcement Learning Collapses and How...](http://arxiv.org/abs/2606.26027v1) | policy optimization | 多步工具使用RL的灾难性崩溃源于特定控制token概率异常突增，仅破坏输出格式，底层工具能力... | 引入多种监督信号，通过将监督微调与强化学习交错训练，抑制控制token概率异常，... | 未在公开标准工具使用基准上验证结论，所得结论的泛化性仍需进一步验... | ✅ |
+| 5 | high | - | [A Formula-Driven Survey and Research Agenda for On-Policy Distil...](http://arxiv.org/abs/2606.22793v1) | survey | 采样同策略蒸馏的稳定性讨论混淆了时序信用分配和词汇概率路由两个独立作用机制。 | 通过公式驱动的分类框架梳理同策略蒸馏中反馈到更新的全流程，厘清混淆的核心机制，提... | 提出的新方法假设尚未经过实证验证，结论缺乏落地数据支撑，可靠性待... | — |
+| 6 | high | - | [AsyncOPD: How Stale Can On-Policy Distillation Be?](http://arxiv.org/abs/2606.24143v1) | online distillation | 教师加权前向KL对过时rollout更鲁棒，学生加权反向KL更脆弱，AsyncOPD吞吐量提... | 通过异步解耦rollout生成与模型更新，基于KL鲁棒性设计改进估计器，提升同策... | 未在实际下游任务验证泛化性，仅报告吞吐量与准确率，实际落地效果尚... | — |
+| 7 | high | - | [BiPACE: Bisimulation-Guided Policy Optimization with Action Coun...](http://arxiv.org/abs/2606.25556v1) | policy optimization | 在ALFWorld的Qwen2.5-7B上，将验证成功率从GiGPO的90.8提升至97.1... | 通过双模拟引导的隐藏态聚类结合动作条件反事实基线，改进策略优势估计，无需额外判别... | 仅在中小规模文本类智能体基准验证，未测试更大模型与开放域复杂任务... | — |
+| 8 | high | - | [CalVerT: Augmenting Agents with Calibrated Verifier Telemetry Im...](http://arxiv.org/abs/2606.21777v1) | policy optimization | 添加校准验证器遥测后，可在智能体过度依赖参数知识时触发检索提升F1，同时减少充足上下文下的冗... | 通过在智能体原有状态中加入校准自置信度和接地验证器得分，增强状态感知，优化动作决... | 仅在问答任务验证，未在其他类型Agent任务测试，泛化能力未验证... | — |
+| 9 | high | - | [Curriculum Reinforcement Learning Can Incentivize Reasoning Capa...](http://arxiv.org/abs/2606.22317v1) | policy optimization | 边界感知课程RL可同时提升pass@1与pass@256，pass@256较原生RLVR平均... | 采用边界感知课程强化学习，先定位模型当前推理边界，引入针对性教师引导，再通过RL... | 未公开具体实验使用的推理基准细节，推理边界依赖pass@256代... | — |
+| 10 | high | - | [Designing Reward Signals for Portable Query Generation: A Case S...](http://arxiv.org/abs/2606.27291v1) | reward learning | GRPO对虚假奖励信号比RLOO、REINFORCE++更敏感，加规则奖励下界提质量0.14... | 通过鲁棒奖励塑造，引入确定性规则奖励下界，抑制策略优化对奖励缺陷的利用，提升生成... | 依赖人工/大模型设计奖励，跨任务泛化性未验证，工业落地需要针对不... | — |
+| 11 | high | - | [EvoRubrics: Dynamic Rubrics as Rewards via Adversarial Co-Evolut...](http://arxiv.org/abs/2606.23038v1) | reward learning | 仅靠策略生成与评分评估的共进化就足以提供丰富学习信号，无外部监督的全自监督变体仍可获得有意义... | 通过策略模型与评分生成器的对抗共进化，动态生成适配的奖励信号，引导策略优化并自动... | 双模型共进化训练算力开销较高，未在具体下游落地任务验证泛化效果 | — |
+| 12 | high | - | [GEOALIGN: Geometric Rollout Curation for Robust LLM Reinforcemen...](http://arxiv.org/abs/2606.26917v1) | policy optimization | 批次内少量高奖励轨迹的方向分歧会引发训练失稳，基于方向共识筛选轨迹可稳定训练且几乎无额外开销... | 基于批次方向共识检测修正不一致训练轨迹，以极低额外开销稳定在线大语言模型强化学习... | 仅在两个封闭任务验证，未测试开放复杂场景下方法的通用性和稳定性。 | — |
 
 ## 方法族分布
 
@@ -84,36 +84,6 @@
 - 仅在数学推理任务验证，未在通用Agent场景测试，方法通用性待验证
 - 仅在3B、7B模型上验证，未测试更大参数模型，方法的泛化性未得到充分验证。
 
-## 可延展 Idea Hook
-
-- 我们能否将这种带分组约束奖励的自适应交错推理方法，扩展到通用agent任务的策略优化研究中？
-- 能否将特权信息增强蒸馏的思路引入agent在线策略蒸馏，利用训练额外信息提升学生agent的策略性能？
-- 可将负轨迹重要性重加权思路引入Agent在线策略蒸馏，优化Agent探索过程的训练信号质量。
-- 能否将该共进化动态奖励机制引入agent在线策略蒸馏，解决训练中的奖励饱和问题，最终提升agent性能？
-- 可尝试将G2PO的图结构信用分配思路结合在线蒸馏，优化长周期智能体的策略学习效率。
-- 可探索将本文总结的后训练蒸馏规律，迁移应用到agent在线策略蒸馏场景中，提升学生agent性能。
-- 能否基于该理论结论，将RLVR学到的高效回溯能力蒸馏到小模型，降低agent推理成本？
-- 基于本综述提出的CR-OPD和GAE-OPD假设，可验证其在大语言模型Agent在线策略蒸馏中的稳定性效果。
-- 能否将这种稳定奖励设计的思路推广到Agent在线策略蒸馏中，解决Agent训练的奖励塌缩问题
-- 基于本文RLVR更新的发现，可探索适配agent在线蒸馏的自适应裁剪策略，提升agent后训练效果。
-- GRPO是高效的策略优化方法，能否结合在线蒸馏框架，用于通用Agent的策略优化，提升落地性能？
-- 探索将边界感知课程RL思路引入Agent策略优化，能否有效拓展Agent处理复杂任务的能力边界
-
-## 下次可问导师的问题
-
-- 这种分组约束奖励的设计思路，能不能迁移到我们当前的agent策略优化研究中？
-- 我们做agent在线策略蒸馏时，是否值得借鉴这种特权信息增强蒸馏的思路来改进效果？
-- 将该负轨迹重加权方法用到Agent在线蒸馏中，是否能稳定提升Agent策略优化的最终效果？
-- 我们当前做的agent在线策略优化，能不能引入该动态奖励机制解决奖励饱和问题？
-- 我们研究在线策略优化时，引入G2PO的图建模思路是否能有效改进长周期任务的信用分配？
-- 我们是否需要验证这篇论文总结的蒸馏规律，在agent策略蒸馏场景下是否依然成立？
-- 我们是否需要针对这个理论结论做实证验证，将其落地到agent推理任务优化中？
-- 我们是否可以基于该综述的分类框架，做一个小实验验证CR-OPD的效果对齐方向？
-- 将该文的自适应奖励设计思路用到Agent策略优化中，是否能有效提升训练稳定性？
-- 我们是否可以将本文的自适应裁剪思路引入当前agent在线策略优化的研究中？
-- GRPO这类高效策略优化方法，是否适合推广到通用Agent的在线策略优化与蒸馏场景？
-- 我们是否可以将这种边界感知课程RL思路用到当前的在线策略蒸馏研究中？
-
 ## 代码资源
 
 - [ARCO: Adaptive Rubric with Co-Evolution for Multi-Step LLM-Based Agents](https://github.com/zihangtian/ARCO.) · 7 stars
@@ -152,4 +122,4 @@
 - **代码生成基准**：1 篇
 
 ---
-*自动生成于 2026-06-28 | ArXiv_Daily_Digest*
+*自动生成于 2026-07-01 | ArXiv_Daily_Digest*

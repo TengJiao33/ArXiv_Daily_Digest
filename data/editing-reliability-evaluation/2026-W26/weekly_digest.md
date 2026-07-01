@@ -4,20 +4,20 @@
 
 ## 优先阅读
 
-| # | 优先级 | Venue | 论文 | 方法族 | 控制/评测 | 风险 | Idea Hook | 代码 |
-|:-:|:------:|:-----:|------|--------|----------|------|-----------|:----:|
-| 1 | high | - | [AgentLens: Interpretable Safety Steering via Mechanistic Subspac...](http://arxiv.org/abs/2606.22673v1) | model steering | 基于机械可解释性提取模型单层的安全相关机制子空间，运行时检测有害状态并干预子空间... | 仅在中小参数模型和自建基准上验证，方法在大模型真实场景的泛化性未... | 可以探索机制子空间安全引导方法在不同类型多轮智能体中的泛化性与跨模型迁移能力，拓展实用安全控... | — |
-| 2 | high | - | [Auditing Framing-Sensitive Behavioral Instability in Large Langu...](http://arxiv.org/abs/2606.26982v1) | evaluation/benchmark, mo... | 通过分层探测分析框架敏感变异在模型内部的表征规律，借助激活引导调控模型表征以调节... | 敏感应用场景下模型行为不稳定会损害用户信任，现有可靠性评估未覆盖... | 能否基于框架相关表征方向的激活引导，提升知识编辑后大语言模型行为的一致性与可靠性？ | — |
-| 3 | high | - | [Calibration Is Not Control: Why LLM-Agent Oversight Needs Interv...](http://arxiv.org/abs/2606.21399v1) | agent harness | 将监督决策目标从标量风险估计改为干预期望收益估计，通过动作条件控制降低智能体控制... | 传统监督框架方向错误，无法有效控制智能体行为，实际部署中容易引入... | 探索将动作条件干预框架拓展到工具调用场景的智能体监督，降低复杂交互任务的控制遗憾。 | — |
-| 4 | high | - | [Can LLMs Reliably Self-Report Adversarial Prefills, and How?](http://arxiv.org/abs/2606.23671v1) | evaluation/benchmark | 通过将模型权重与拒绝方向正交化分析内省机制，测试三种LoRA微调方法改进模型自我... | 若依赖大语言模型自我报告做安全审计会存在大量漏检，干预易带来副作... | 能否基于模型内省能力构建对抗攻击自动检测方案，如何优化干预避免副作用，提升大语言模型安全自检... | — |
-| 5 | high | - | [Detecting and Controlling Sycophancy with Cascading Linear Featu...](http://arxiv.org/abs/2606.26155v1) | model steering | 通过迭代数据流水线分离级联线性特征，基于激活空间中的特征子空间引导模型远离不良目... | 仅验证了奉承行为场景，未验证对其他不良行为的通用性，方法泛化能力... | 可将该级联线性特征引导方法扩展到大模型知识编辑的副作用抑制，提升知识编辑的行为可靠性 | — |
-| 6 | high | - | [Exposing the Illusion of Erasure in Knowledge Editing for LLMs](http://arxiv.org/abs/2606.23276v1) | unlearning/safety | 本文未提出新的控制机制，通过对抗性诱导实验暴露现有知识编辑方法的可靠性缺陷。 | 现有知识编辑声称的知识擦除不彻底，需要移除的知识仍可被触发，给下... | 针对现有知识编辑擦除不彻底的问题，能否设计更可靠的残留知识检测方法与鲁棒编辑机制？ | — |
-| 7 | high | - | [Inherited Circuits, Learned Semantics: How Fine-Tuning Creates E...](http://arxiv.org/abs/2606.27091v1) | evaluation/benchmark | 提出预部署监测方案，通过线性探针和指示token符号检验识别潜在逃避漏洞，管控安... | 现有安全评测仅测同分布留例数据，无法发现隐藏漏洞，给落地安全系统... | 可将该思路延伸到知识编辑领域，构建知识编辑后逃避性漏洞的评测基准，检验编辑副作用。 | — |
-| 8 | high | - | [ORBIT: Training-Free Multi-Attribute Behavioral Steering via Ort...](http://arxiv.org/abs/2606.22357v1) | model steering | 推理阶段无需训练，通过对隐层表示构建多属性联合正交子空间做保范旋转，实现多行为属... | 仅在参数规模10B以下的开源模型上验证，未测试更多属性场景，泛化... | 可尝试将该正交子空间多属性引导思路引入知识编辑，缓解多知识编辑存在的效果抵消与副作用问题 | — |
-| 9 | high | - | [OpenRCA 2.0: From Outcome Labels to Causal Process Supervision](http://arxiv.org/abs/2606.27154v1) | evaluation/benchmark | 通过构建带分步因果标注的根因分析评测基准，提供更准确的评估反馈，暴露智能体隐藏的... | 现有根因分析智能体评测不充分，无法识别隐藏的推理失效，会给工业落... | 可基于本文发现的未接地诊断问题，研究因果过程引导的大模型智能体推理行为可靠控制方法。 | — |
-| 10 | high | - | [Perfect Detection, Failed Control: The Geometry of Knowing vs. S...](http://arxiv.org/abs/2606.24952v1) | model steering | 通过计算激活空间两类方向的夹角验证隐含假设，通过方向旋转缩小鸿沟实现行为引导 | 基于激活检测的模型行为控制方法可靠性不足，控制效果依赖方向对齐，... | 基于本研究发现的检测-干预鸿沟，能否设计更高效可靠的大模型行为引导与幻觉控制方法？ | — |
-| 11 | high | - | [Reproducibility Study of "AlphaEdit: Null-Space Constrained Know...](http://arxiv.org/abs/2606.26783v1) | evaluation/benchmark | 通过复现原方法并扩展多维度评测，检验知识编辑方法的实际可靠性，明确其性能边界 | 现有知识编辑方法的结论仅在原限定范围成立，大规模编辑落地存在可靠... | 面向大规模顺序知识编辑场景，能否改进零空间约束，缓解编辑带来的下游能力退化与安全副作用？ | — |
-| 12 | high | - | [Skin-Deep: A Geometric Diagnostic for Alignment Fragility in Lar...](http://arxiv.org/abs/2606.22676v1) | evaluation/benchmark | 通过几何方法从模型微调前的隐状态激活提取安全结构，生成脆弱性得分，提前识别存在对... | 仅能检测对齐脆弱性无法解决问题，仅适用于开放权重模型，闭源部署场... | 能否基于该几何脆弱性诊断结果，设计针对性方法提升大模型对齐的鲁棒性，降低部署安全风险 | — |
+| # | 优先级 | Venue | 论文 | 方法族 | 关键发现 | 控制/评测 | 风险 | 代码 |
+|:-:|:------:|:-----:|------|--------|----------|----------|------|:----:|
+| 1 | high | - | [AgentLens: Interpretable Safety Steering via Mechanistic Subspac...](http://arxiv.org/abs/2606.22673v1) | model steering | 仅干预模型单层的10维子空间，即可大幅降低多轮编码智能体有害行为，同时具备一定前瞻风险预判能... | 基于机械可解释性提取模型单层的安全相关机制子空间，运行时检测有害状态并干预子空间... | 仅在中小参数模型和自建基准上验证，方法在大模型真实场景的泛化性未... | — |
+| 2 | high | - | [Auditing Framing-Sensitive Behavioral Instability in Large Langu...](http://arxiv.org/abs/2606.26982v1) | evaluation/benchmark, mo... | 框架会系统性改变模型响应倾向，行为相关信息在Transformer全层可解码，激活引导可部分... | 通过分层探测分析框架敏感变异在模型内部的表征规律，借助激活引导调控模型表征以调节... | 敏感应用场景下模型行为不稳定会损害用户信任，现有可靠性评估未覆盖... | — |
+| 3 | high | - | [Calibration Is Not Control: Why LLM-Agent Oversight Needs Interv...](http://arxiv.org/abs/2606.21399v1) | agent harness | 单独重新校准标量风险评分仅能提升预测指标，无法降低控制遗憾，ALFWorld上遗憾从0.50... | 将监督决策目标从标量风险估计改为干预期望收益估计，通过动作条件控制降低智能体控制... | 传统监督框架方向错误，无法有效控制智能体行为，实际部署中容易引入... | — |
+| 4 | high | - | [Can LLMs Reliably Self-Report Adversarial Prefills, and How?](http://arxiv.org/abs/2606.23671v1) | evaluation/benchmark | 10个3B至70B开源模型中，无模型能可靠识别被攻击输出，平均自称生成意图比例仅27.3%，... | 通过将模型权重与拒绝方向正交化分析内省机制，测试三种LoRA微调方法改进模型自我... | 若依赖大语言模型自我报告做安全审计会存在大量漏检，干预易带来副作... | — |
+| 5 | high | - | [Detecting and Controlling Sycophancy with Cascading Linear Featu...](http://arxiv.org/abs/2606.26155v1) | model steering | 通过级联样本发现的奉承行为特征可形成线性可分子空间，检测引导效果优于基线，计算成本更低且可解... | 通过迭代数据流水线分离级联线性特征，基于激活空间中的特征子空间引导模型远离不良目... | 仅验证了奉承行为场景，未验证对其他不良行为的通用性，方法泛化能力... | — |
+| 6 | high | - | [Exposing the Illusion of Erasure in Knowledge Editing for LLMs](http://arxiv.org/abs/2606.23276v1) | unlearning/safety | 主流低秩知识编辑未移除原有知识，仅抑制其表达，编辑后的残留知识仍可被对抗诱导触发输出。 | 本文未提出新的控制机制，通过对抗性诱导实验暴露现有知识编辑方法的可靠性缺陷。 | 现有知识编辑声称的知识擦除不彻底，需要移除的知识仍可被触发，给下... | — |
+| 7 | high | - | [Inherited Circuits, Learned Semantics: How Fine-Tuning Creates E...](http://arxiv.org/abs/2606.27091v1) | evaluation/benchmark | 微调特化基模继承的晚期注意力分类电路，提升留例准确率却产生标准评测无法发现的逃避漏洞。 | 提出预部署监测方案，通过线性探针和指示token符号检验识别潜在逃避漏洞，管控安... | 现有安全评测仅测同分布留例数据，无法发现隐藏漏洞，给落地安全系统... | — |
+| 8 | high | - | [ORBIT: Training-Free Multi-Attribute Behavioral Steering via Ort...](http://arxiv.org/abs/2606.22357v1) | model steering | ORBIT在Llama-3等三个模型上，相比现有无训练基线获得更强更均衡的多属性引导效果，同... | 推理阶段无需训练，通过对隐层表示构建多属性联合正交子空间做保范旋转，实现多行为属... | 仅在参数规模10B以下的开源模型上验证，未测试更多属性场景，泛化... | — |
+| 9 | high | - | [OpenRCA 2.0: From Outcome Labels to Causal Process Supervision](http://arxiv.org/abs/2606.27154v1) | evaluation/benchmark | 仅结果标注评估下，76.0%案例中模型能找出至少一个正确根因服务，但仅61.5%能给出正确因... | 通过构建带分步因果标注的根因分析评测基准，提供更准确的评估反馈，暴露智能体隐藏的... | 现有根因分析智能体评测不充分，无法识别隐藏的推理失效，会给工业落... | — |
+| 10 | high | - | [Perfect Detection, Failed Control: The Geometry of Knowing vs. S...](http://arxiv.org/abs/2606.24952v1) | model steering | 幻觉任务中模型检测假实体AUC可达1.0，但检测方向与控制拒绝的方向余弦仅约0.12，跨模型... | 通过计算激活空间两类方向的夹角验证隐含假设，通过方向旋转缩小鸿沟实现行为引导 | 基于激活检测的模型行为控制方法可靠性不足，控制效果依赖方向对齐，... | — |
+| 11 | high | - | [Reproducibility Study of "AlphaEdit: Null-Space Constrained Know...](http://arxiv.org/abs/2606.26783v1) | evaluation/benchmark | AlphaEdit原范围内结果可复现但存指标偏差，优势不泛化到新架构，超大规模顺序编辑会降性... | 通过复现原方法并扩展多维度评测，检验知识编辑方法的实际可靠性，明确其性能边界 | 现有知识编辑方法的结论仅在原限定范围成立，大规模编辑落地存在可靠... | — |
+| 12 | high | - | [Skin-Deep: A Geometric Diagnostic for Alignment Fragility in Lar...](http://arxiv.org/abs/2606.22676v1) | evaluation/benchmark | 跨不同模型家族、不同对齐方案的对齐大模型都存在共通的低秩安全子空间，该子空间对应有害请求拒绝... | 通过几何方法从模型微调前的隐状态激活提取安全结构，生成脆弱性得分，提前识别存在对... | 仅能检测对齐脆弱性无法解决问题，仅适用于开放权重模型，闭源部署场... | — |
 
 ## 方法族分布
 
@@ -82,36 +82,6 @@
 - 未提及方法的编辑副作用与长期稳定性，评测不充分，存在落地可靠性风险。
 - 仅在公开任务验证，未提及大规模工业场景下的适配性与长期稳定性测试
 
-## 可延展 Idea Hook
-
-- 能否基于模型内省能力构建对抗攻击自动检测方案，如何优化干预避免副作用，提升大语言模型安全自检的可靠性？
-- 可尝试将该拓扑引导思路应用到知识编辑场景，探索其降低知识编辑副作用、提升编辑可靠性的效果。
-- 能否基于抽象表征几何机制，设计新型模型steering方法，提升大语言模型推理可靠性？
-- 针对现有知识编辑擦除不彻底的问题，能否设计更可靠的残留知识检测方法与鲁棒编辑机制？
-- 能否结合过早承诺的诊断信号，设计面向长推理任务的大模型智能体可靠性控制方法？
-- 能否借鉴该多维度风险融合的领域评测思路，构建知识编辑副作用的专属评测基准？
-- 能否基于该几何脆弱性诊断结果，设计针对性方法提升大模型对齐的鲁棒性，降低部署安全风险
-- 可以探索机制子空间安全引导方法在不同类型多轮智能体中的泛化性与跨模型迁移能力，拓展实用安全控制方案。
-- 可基于该正交解耦思路，研究批量知识编辑中副作用的抑制方法，提升大模型知识编辑的可靠性。
-- 可将该动态对数几率校准思路延伸到知识编辑后的输出校准，缓解知识编辑带来的生成副作用
-- 可基于本文发现的语言身份回路机制，设计低成本模型 steering 方法，解决多语言生成错误的可靠性问题。
-- 可尝试将该正交子空间多属性引导思路引入知识编辑，缓解多知识编辑存在的效果抵消与副作用问题
-
-## 下次可问导师的问题
-
-- 我们能否基于该结论开发大语言模型安全自检可靠性的专项评测基准，这个方向有没有研究价值？
-- 这种基于内部拓扑的引导方法，是否可以推广用来控制知识编辑带来的模型副作用？
-- 我们能不能基于这篇的表征几何结论，开发针对大语言模型推理行为的控制方法？
-- 我们方向要不要跟进这个点，开展知识编辑残留检测与可靠擦除方法的研究？
-- 该隐性故障诊断思路能否用于检测知识编辑后智能体推理的可靠性问题？
-- 这种特定场景的多维度安全评测思路，是否适合迁移到知识编辑的副作用评测中？
-- 该几何脆弱性的发现是否可以用来指导设计更鲁棒的对齐调优方案，降低大模型部署安全风险？
-- 这种基于内部表示子空间的安全引导方法，能否推广到更大参数的真实场景编码智能体中？
-- 这种正交约束解耦语义纠缠的思路，能不能推广用来抑制知识编辑的各类副作用？
-- 这种解码阶段的动态校准思路，能不能用来缓解知识编辑带来的输出分布偏移副作用？
-- 该研究发现的训练重组织回路的规律，能否拓展到知识编辑后的内部机制分析中？
-- 我们是否可以将该正交子空间引导思路，用到多知识编辑的副作用抑制研究中？
-
 ## 代码资源
 
 - [Orthogonal Representation Editing: Decoupling Semantic Entanglement in Batch Kno...](https://github.com/YVVH/ORE.) · 1 stars
@@ -145,4 +115,4 @@
 - **未提及具体数据集**：1 篇
 
 ---
-*自动生成于 2026-06-28 | ArXiv_Daily_Digest*
+*自动生成于 2026-07-01 | ArXiv_Daily_Digest*

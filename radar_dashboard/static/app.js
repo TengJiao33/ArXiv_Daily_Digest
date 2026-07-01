@@ -40,7 +40,7 @@ const staticData = window.RADAR_STATIC_DATA || null;
 const $ = (id) => document.getElementById(id);
 
 function removeRetiredDashboardPanels() {
-  document.querySelectorAll(".venues-panel, .hooks-panel, #methodFilter").forEach((panel) => panel.remove());
+  document.querySelectorAll(".venues-panel, #methodFilter").forEach((panel) => panel.remove());
 }
 
 function escapeHtml(value) {
@@ -147,8 +147,6 @@ function filterStaticPapers(params) {
         "key_finding",
         "theme",
         "method_family",
-        "cross_direction",
-        "edit_target",
         "agent_setting",
         "control_mechanism",
         "evaluation_environment",
@@ -156,11 +154,6 @@ function filterStaticPapers(params) {
         "failure_mode",
         "reliability_risk",
         "industrial_relevance",
-        "idea_feasibility",
-        "compute_cost",
-        "idea_hook",
-        "mentor_question",
-        "direction_fit",
         "category",
       ].map((key) => String(paper[key] || "")).join(" ").toLowerCase();
       return terms.every((term) => haystack.includes(term));
@@ -211,7 +204,6 @@ function mergeDuplicatePapers(papers) {
       ingest_source: current.ingest_source || paper.ingest_source || "",
       manual_reason: current.manual_reason || paper.manual_reason || "",
       manual_tags: current.manual_tags || paper.manual_tags || [],
-      cross_direction: current.cross_direction || paper.cross_direction || "",
       direction_names: [...directions],
       direction_name: [...directions].join(" / "),
     });
@@ -290,8 +282,6 @@ function paperSearchText(paper) {
     "key_finding",
     "theme",
     "method_family",
-    "cross_direction",
-    "edit_target",
     "agent_setting",
     "control_mechanism",
     "evaluation_environment",
@@ -299,11 +289,6 @@ function paperSearchText(paper) {
     "failure_mode",
     "reliability_risk",
     "industrial_relevance",
-    "idea_feasibility",
-    "compute_cost",
-    "idea_hook",
-    "mentor_question",
-    "direction_fit",
     "category",
   ].map((key) => String(paper[key] || "")).join(" ").toLowerCase();
 }
@@ -400,21 +385,6 @@ function buildScopedSummary() {
     return row;
   });
 
-  const ideaHooks = papers
-    .filter((paper) => {
-      const hook = compactText(paper.idea_hook, "");
-      return hook && hook !== "暂不明显";
-    })
-    .sort((a, b) => readingScore(b) - readingScore(a))
-    .slice(0, 10)
-    .map((paper) => ({
-      title: paper.title,
-      url: paper.url,
-      idea_hook: paper.idea_hook,
-      read_priority: paper.read_priority,
-      direction_name: paper.direction_name,
-    }));
-
   const codePapers = papers
     .filter((paper) => paper.has_code)
     .sort((a, b) => Number(b.repo_stars || 0) - Number(a.repo_stars || 0) || String(a.title || "").localeCompare(String(b.title || "")))
@@ -441,15 +411,10 @@ function buildScopedSummary() {
     trend,
     themes: countEntries(papers, (paper) => paper.theme, { limit: 16, skip: ["未分类"] }),
     method_families: countEntries(papers, (paper) => paper.method_family || paper.theme, { limit: 16, skip: ["未分类"] }),
-    cross_directions: countEntries(papers, (paper) => paper.cross_direction, {
-      limit: 12,
-      skip: ["not-crossing", "benchmark-only"],
-    }),
     priorities: countEntries(papers, (paper) => paper.read_priority, { limit: 8 }),
     venues: countEntries(papers, (paper) => paper.venue, { limit: 12 }),
     authority_venues: countEntries(authorityPapers, (paper) => paper.venue, { limit: 12 }),
     categories: countEntries(papers, (paper) => paper.category || "unknown", { limit: 10 }),
-    idea_hooks: ideaHooks,
     code_papers: codePapers,
   };
 }
@@ -487,15 +452,7 @@ function renderSummary() {
 
   renderTrend(summary);
   renderDirections(summary);
-  renderCrossDirections(summary);
   renderCodePapers(summary);
-}
-
-function renderCrossDirections(summary) {
-  const rows = summary.cross_directions || [];
-  $("crossDirectionList").innerHTML = rows.map(([label, count]) => (
-    `<li class="cross-row"><span class="tag cross">${escapeHtml(label)}</span><span>${count} 篇</span></li>`
-  )).join("") || `<li>本周暂无明显交叉标签</li>`;
 }
 
 function renderTrend(summary) {
@@ -571,12 +528,6 @@ function renderVenues(summary) {
   )).join("") || `<li>本周暂无已识别 A 会标签</li>`;
 }
 
-function renderIdeaHooks(summary) {
-  $("ideaHooksList").innerHTML = (summary.idea_hooks || []).slice(0, 5).map((item) => (
-    `<li class="hook-card"><div class="hook-summary"><span class="priority ${escapeHtml(item.read_priority)}">${escapeHtml(item.read_priority)}</span><span class="hook-text">${escapeHtml(truncateText(item.idea_hook, 96))}</span></div><a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">${escapeHtml(truncateText(item.title, 80))}</a></li>`
-  )).join("") || `<li>本周暂无可延展 idea hook</li>`;
-}
-
 function renderCodePapers(summary) {
   $("codeList").innerHTML = (summary.code_papers || []).slice(0, 6).map((paper) => (
     `<li class="resource-card"><a href="${escapeHtml(paper.url)}" target="_blank" rel="noreferrer">${escapeHtml(truncateText(paper.title, 82))}</a><span>${escapeHtml(paper.direction_name)}</span>${paper.repo_url ? `<a class="repo-link" href="${escapeHtml(paper.repo_url)}" target="_blank" rel="noreferrer">repo</a>` : ""}</li>`
@@ -627,10 +578,6 @@ function paperCard(paper, index) {
   const abstractZh = compactText(paper.abstract_zh, "");
   const priority = paper.read_priority || "low";
   const authority = isAuthorityVenue(paper);
-  const crossTag = compactText(paper.cross_direction, "");
-  const crossBadge = crossTag && !["not-crossing", "benchmark-only"].includes(crossTag)
-    ? `<span class="tag cross">${escapeHtml(crossTag)}</span>`
-    : "";
   return `
     <article class="paper-card paper-priority-${escapeHtml(priority)} ${authority ? "paper-authority" : ""}">
       <div class="paper-main">
@@ -640,7 +587,6 @@ function paperCard(paper, index) {
           ${paper.ingest_source === "manual" ? `<span class="tag manual">手动</span>` : ""}
           ${directionBadges(paper)}
           <span class="tag">${escapeHtml(paper.method_family || paper.theme || "未分类")}</span>
-          ${crossBadge}
           <span class="priority ${escapeHtml(priority)}">${escapeHtml(priority)}</span>
           ${paper.has_code ? `<span class="tag code">代码</span>` : ""}
         </div>
@@ -656,8 +602,8 @@ function paperCard(paper, index) {
       </div>
       <aside class="insight-list" aria-label="结构化信号">
         <div class="read-why">
-          <span>看点</span>
-          <p>${escapeHtml(truncateText(paper.idea_hook || paper.key_finding || paper.contribution, 150))}</p>
+          <span>关键发现</span>
+          <p>${escapeHtml(truncateText(paper.key_finding || paper.contribution, 150))}</p>
         </div>
         ${insight("控制机制", paper.control_mechanism || paper.evaluation_signal, 96)}
         ${insight("可靠性风险", paper.reliability_risk || paper.failure_mode, 84)}
@@ -672,7 +618,7 @@ function paperTile(paper, index) {
   const family = paper.method_family || paper.theme || "未分类";
   const year = paperYear(paper);
   const summary = truncateText(
-    paper.title_zh || paper.abstract_zh || paper.idea_hook || paper.key_finding || paper.contribution,
+    paper.title_zh || paper.abstract_zh || paper.key_finding || paper.contribution,
     128
   );
   return `
@@ -822,8 +768,6 @@ function openPaperDetail(index) {
       ${detailRow("贡献", paper.contribution)}
       ${detailRow("关键发现", paper.key_finding)}
       ${detailRow("方法族", paper.method_family)}
-      ${detailRow("交叉标签", paper.cross_direction)}
-      ${detailRow("编辑对象", paper.edit_target)}
       ${detailRow("Agent 场景", paper.agent_setting)}
       ${detailRow("控制机制", paper.control_mechanism)}
       ${detailRow("评测环境", paper.evaluation_environment)}
@@ -831,12 +775,7 @@ function openPaperDetail(index) {
       ${detailRow("失败模式", paper.failure_mode)}
       ${detailRow("可靠性风险", paper.reliability_risk)}
       ${detailRow("工业相关性", paper.industrial_relevance)}
-      ${detailRow("Idea 可行性", paper.idea_feasibility)}
-      ${detailRow("计算成本", paper.compute_cost)}
-      ${detailRow("看点", paper.idea_hook)}
-      ${detailRow("想问导师", paper.mentor_question)}
       ${detailRow("手动注入原因", paper.manual_reason)}
-      ${detailRow("方向契合", paper.direction_fit)}
       ${detailRow("局限", paper.limitations)}
     </dl>
     <section class="detail-section">

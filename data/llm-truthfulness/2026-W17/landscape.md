@@ -1,7 +1,7 @@
-# 📡 LLM 真值性与事实性 — 研究版图
-> 2026-W17 (04/20-04/26) | 本周 163 篇 | 自动生成
+# 📡 llm-truthfulness — 方法版图
+> 2026-W17 (04/20-04/26) | 本周 155 篇 | 自动生成
 
-📊 **123** 个研究主题 | **7** 篇附带代码
+📊 **120** 个方法族 | **0** 篇 high priority | **6** 篇附带代码
 
 ---
 
@@ -178,7 +178,7 @@
 
 ### 🔬 大模型潜在规划（1 篇）
 
-- **Qwen-3系列（0.6B-14B）的潜在规划能力随模型规模提升增长，复杂押韵任务中大模型也很少做长远规划。**
+- **Qwen-3系列（0.6B-14B）的潜在规划能力随模型规模提升增长，复杂押韵任务中大模型也很少做长远规划。** `ICLR 2026`
   _[Latent Planning Emerges with Scale](http://arxiv.org/abs/2604.12493)_
 
 
@@ -358,7 +358,7 @@
 
 ### 🔬 大模型行为引导（1 篇）
 
-- **COLD-Steer可达到最高95%的引导效果，相比最优基线所需样本数量减少了50倍**
+- **COLD-Steer可达到最高95%的引导效果，相比最优基线所需样本数量减少了50倍** `ICLR 2026`
   _[COLD-Steer: Steering Large Language Models via In-Context One-ste...](http://arxiv.org/abs/2603.06495)_
 
 
@@ -578,12 +578,6 @@
   _[AlpsBench: An LLM Personalization Benchmark for Real-Dialogue Mem...](http://arxiv.org/abs/2603.26680)_
 
 
-### 🔬 蛋白质逆折叠（1 篇）
-
-- **将ProtAlign应用于ProteinMPNN得到的MoMPNN，在三类蛋白质设计任务中提升可开发性且不损失可设计性**
-  _[Property-driven Protein Inverse Folding With Multi-Objective Pref...](http://arxiv.org/abs/2603.06748)_
-
-
 ### 🔬 交替强化学习（1 篇）
 
 - **奖励聚合存在方差收缩效应，在HealthBench上，ARL-RR在1.7B到14B不同规模均优于标量化方法**
@@ -606,12 +600,6 @@
 
 - **rePIRL可统一在线与离线PRM学习，在标准化数学、编码推理任务上效果优于现有方法**
   _[rePIRL: Learn PRM with Inverse RL for LLM Reasoning](http://arxiv.org/abs/2602.07832)_
-
-
-### 🔬 视频生成后训练（1 篇）
-
-- **分阶段诊断驱动的优化流程相比孤立技巧，可在保留初始可控性的同时提升视频生成质量**
-  _[TeleBoost: A Systematic Alignment Framework for High-Fidelity, Co...](http://arxiv.org/abs/2602.07595)_
 
 
 ### 🔬 解码时个性化（1 篇）
@@ -716,12 +704,6 @@
   _[Towards Reinforcement Learning from Neural Feedback: Mapping fNIR...](http://arxiv.org/abs/2511.12844)_
 
 
-### 🔬 语音合成优化（1 篇）
-
-- **预训练编码解码ASR（如Whisper）的交叉注意力可精准捕捉音文间词级不匹配，能提供细粒度奖励信号**
-  _[Speech Recognition Model Improves Text-to-Speech Synthesis using ...](http://arxiv.org/abs/2511.17555)_
-
-
 ### 🔬 文本优化（1 篇）
 
 - **在DOCKSTRING分子发现基准中，该方法识别出超26万化合物数据库99.9百分位的新型类药分子**
@@ -770,7 +752,7 @@
   _[Revisiting Self-Play Preference Optimization: On the Role of Prom...](http://arxiv.org/abs/2510.05534)_
 
 
-### 🔬 未分类（30 篇）
+### 🔬 未分类（25 篇）
 
 - **分析发现幻觉主要源于文本先验，提出的方法可有效缓解幻觉且保留模型原有性能**
   _[When Prompts Override Vision: Prompt-Induced Hallucinations in LV...](http://arxiv.org/abs/2604.21911v1)_
@@ -781,15 +763,6 @@
 - **该方法无需访问相机ISP，仅占180KB存储空间，可作为元数据存入标准图像格式**
   _[Addressing Image Authenticity When Cameras Use Generative AI](http://arxiv.org/abs/2604.21879v1)_
 
-- **数据集提供多类高质量标注，支持多任务联合研究，填补了遥感研究的关键缺口** 💻
-  _[SyMTRS: Benchmark Multi-Task Synthetic Dataset for Depth, Domain ...](http://arxiv.org/abs/2604.21801v1)_
-
-- **证明TVA可实现诚实报告均衡，指出设计不当的强制要求会降低福利，模拟显示其福利优于现有方案**
-  _[Compliance Moral Hazard and the Backfiring Mandate](http://arxiv.org/abs/2604.21789v1)_
-
-- **证实显式过饱和度条件建模效果更优，模型可扩展，明确了两种方法的优劣**
-  _[Neural surrogates for crystal growth dynamics with variable super...](http://arxiv.org/abs/2604.21753v1)_
-
 - **该框架无需公开测试用例，性能匹配SOTA方法，还可减少输出令牌的消耗**
   _[DryRUN: On the Role of Public Tests in LLM-Driven Code Generation](http://arxiv.org/abs/2604.21598v1)_
 
@@ -798,9 +771,6 @@
 
 - **揭示当前评估型VLM存在大量评估盲点，可靠性不足，呼吁部署使用时需保持谨慎**
   _[Seeing Isn't Believing: Uncovering Blind Spots in Evaluator Visio...](http://arxiv.org/abs/2604.21523v1)_
-
-- **构建多语言TTS排行榜，分析人类偏好、排行榜可靠性以及模型在感知维度的优劣权衡**
-  _[Preferences of a Voice-First Nation: Large-Scale Pairwise Evaluat...](http://arxiv.org/abs/2604.21481v1)_
 
 - **明确表征是抽象视觉推理的核心瓶颈，证明符号输入可作为可控的诊断性能上界**
   _[Symbolic Grounding Reveals Representational Bottlenecks in Abstra...](http://arxiv.org/abs/2604.21346v1)_
@@ -847,9 +817,6 @@
 - **揭示主流全模态模型感知精度与乐理理解存在根本脱节，为诊断复杂规则领域推理缺陷提供框架**
   _[ONOTE: Benchmarking Omnimodal Notation Processing for Expert-leve...](http://arxiv.org/abs/2604.20719v1)_
 
-- **实证发现官方咨询摘要代表性低于随机基线，异议群体被高比例排除，开发了开源交互式审计工具**
-  _[Participatory provenance as representational auditing for AI-medi...](http://arxiv.org/abs/2604.20711v1)_
-
 - **为真值不确定场景下的机器学习系统开发提供了逻辑自洽可行的实现路径与原则性基础**
   _[LAF-Based Evaluation and UTTL-Based Learning Strategies with MIAT...](http://arxiv.org/abs/2604.20944v1)_
 
@@ -864,4 +831,4 @@
 
 
 ---
-*Research Radar 自动生成 | 2026-04-26*
+*ArXiv_Daily_Digest 自动生成 | 2026-07-01*

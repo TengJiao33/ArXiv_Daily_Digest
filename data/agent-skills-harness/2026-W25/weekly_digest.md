@@ -6,20 +6,20 @@
 
 ## 优先阅读
 
-| # | 优先级 | Venue | 论文 | 方法族 | 控制/评测 | 风险 | Idea Hook | 代码 |
-|:-:|:------:|:-----:|------|--------|----------|------|-----------|:----:|
-| 1 | high | - | [Benign in Isolation, Harmful in Composition: Security Risks in A...](http://arxiv.org/abs/2606.15242) | evaluation/benchmark | 构建可控沙箱评测基准SCR-Bench，从激活路径层面评估智能体多技能组合的安全... | 工业级agent技能生态大量复用第三方技能，现有审核漏检风险，会... | 如何基于路径感知风险评估思路，设计面向工业级agent技能生态的可落地安全审核机制？ | ✅ |
-| 2 | high | - | [Consensus-based Agentic Large Language Model Framework for Harmo...](http://arxiv.org/abs/2606.16987v1) | multi-agent coordination | 通过共识验证、分层投票、置信度估计结合人机闭环，约束智能体行为，提升分类可靠性与... | 采用私有标注数据集，无公开基准对比，结果的可比较性存在不足。 | 可基于该多智能体共识框架，探索垂直领域工业任务中多智能体harness的可靠性优化方案。 | ✅ |
-| 3 | high | - | [GD$^2$PO: Mitigating Multi-Reward Conflicts via Group-Dynamic re...](http://arxiv.org/abs/2606.16771) | policy optimization | 通过冲突感知过滤存在严重奖励分歧的rollout，结合查询级重加权调整更新强度，... | 仅在通用研究场景验证，未在大规模真实工业场景测试，实际落地效果尚... | 能否将该多奖励冲突缓解机制引入工具调用agent的harness框架，提升多约束下agent... | ✅ |
-| 4 | high | - | [VeriGraph: Towards Verifiable Data-Analytic Agents](http://arxiv.org/abs/2606.16603) | agent harness | 通过构建显式异质证据DAG，结合图基策略优化联合监督多维度，提升智能体推理的可验... | 仅在学术基准测试，未验证真实工业数据分析场景的可用性与稳定性 | 可将VeriGraph的证据图推理框架推广到通用工具调用场景，提升工具调用结果的可验证性与可... | ✅ |
-| 5 | high | - | [A Framework for Evaluating Agentic Skills at Scale](http://arxiv.org/abs/2606.17819v1) | evaluation/benchmark | 构建可复用评估框架，支持开发者自定义任务评估技能效用，通过标准化评分规则评测技能... | 未验证该评估框架得到的技能效用结果，与工业场景实际落地效果的一致... | 能否基于该公开数据集，构建适配工业需求的轻量智能体技能验证基准，测试小模型的技能适配能力？ | — |
-| 6 | high | - | [Agent trajectories as programs: fingerprinting and programming c...](http://arxiv.org/abs/2606.16988) | evaluation/benchmark | 通过将智能体轨迹转化为压缩的程序化表征，提取行为指纹，实现对智能体行为过程的审计... | 仅聚焦行为特性分析，未落地到实际任务性能改进，缺乏真实场景部署验... | 基于行为指纹能否实现编码智能体的任务自适应路由，降低工业场景的整体调用成本？ | — |
-| 7 | high | - | [AgentFairBench: Do LLM Agents Discriminate When They Act?](http://arxiv.org/abs/2606.16723v1) | evaluation/benchmark | 构建标准化评测基准和轻量化NumPy实现的评测harness，通过统计校正度量A... | 基于合成数据的评测和真实业务场景存在差距，仅用名字编码人口属性的... | 如何基于这个低成本可复现的基准，构建面向工业落地Agent的公平性合规校验 harness？ | — |
-| 8 | high | - | [Agentic Electronic Design Automation: A Handoff Perspective](http://arxiv.org/abs/2606.19795v1) | survey | 通过定义交接有效性概念、分类现有系统，提出标准化五层通信协议规范智能体跨边界交接... | 仅提出框架协议，未做实际落地验证，缺乏实测的可靠性数据支撑 | 可将交接有效性框架迁移到通用多Agent工作流，设计通用跨Agent交接契约的可靠性控制方案 | — |
-| 9 | high | - | [Analyzing Defensive Misdirection Against Model-Guided Automated ...](http://arxiv.org/abs/2606.20470v1) | unlearning/safety | 采用检测-误导的控制机制，对检测出的恶意交互返回安全且带策略误导性的响应，干扰攻... | 未验证误导策略对正常合法交互的负面影响，缺乏大规模业务场景的落地... | 能否将检测-误导防御思路整合到工具调用Agent的安全harness中，低成本提升工业Age... | — |
-| 10 | high | - | [Are Online Skill and Memory Modules Always Worth Their Tokens? A...](http://arxiv.org/abs/2606.15017) | evaluation/benchmark | 通过设定固定总推理token预算，对比增强模块方案与同预算朴素基线，评估在线模块... | 现有技能记忆模块徒增推理部署成本，实际落地收益不足，不符合低算力... | 可探索成本感知的Agent harness框架，裁剪冗余技能模块，在低推理预算下保持Agen... | — |
-| 11 | high | - | [Auditing Reward Hackability in Code RL Training Environments](http://arxiv.org/abs/2606.16062) | evaluation/benchmark | 通过审计识别缺陷测试任务，采用带Docker黄金校验门的LLM裁判强化测试环境，... | 现有代码Agent评测基准存在大量可破解任务，会高估模型能力，误... | 可借鉴该奖励可破解性审计思路，构建鲁棒性更强的代码Agent评测基准，满足工业落地的评测需求... | — |
-| 12 | high | - | [Autonomous Event-Driven Multi-Agent Orchestration for Enterprise...](http://arxiv.org/abs/2606.20058v1) | multi-agent coordination | 通过引入带有优先级推理、关联事件合并、抢占功能的任务管理器，优化大规模多智能体编... | DAG架构在企业规模下开销较高，未针对低算力工业路线做针对性优化 | 面向大规模企业事件驱动场景，设计低开销任务管理器优化多智能体编排的可靠性与运行效率 | — |
+| # | 优先级 | Venue | 论文 | 方法族 | 关键发现 | 控制/评测 | 风险 | 代码 |
+|:-:|:------:|:-----:|------|--------|----------|----------|------|:----:|
+| 1 | high | - | [Benign in Isolation, Harmful in Composition: Security Risks in A...](http://arxiv.org/abs/2606.15242) | evaluation/benchmark | 孤立评估无风险的技能组合后，SCR-CapFlow攻击成功率达33.6%，SCR-Trust... | 构建可控沙箱评测基准SCR-Bench，从激活路径层面评估智能体多技能组合的安全... | 工业级agent技能生态大量复用第三方技能，现有审核漏检风险，会... | ✅ |
+| 2 | high | - | [Consensus-based Agentic Large Language Model Framework for Harmo...](http://arxiv.org/abs/2606.16987v1) | multi-agent coordination | 大语言模型HTS分类性能从粗粒度章节级到细粒度编码后缀级逐步下降，先进LLM也无法保证精确1... | 通过共识验证、分层投票、置信度估计结合人机闭环，约束智能体行为，提升分类可靠性与... | 采用私有标注数据集，无公开基准对比，结果的可比较性存在不足。 | ✅ |
+| 3 | high | - | [GD$^2$PO: Mitigating Multi-Reward Conflicts via Group-Dynamic re...](http://arxiv.org/abs/2606.16771) | policy optimization | 过滤存在严重奖励分歧的rollout可避免冲突信号相互抵消，能有效提升训练效率，性能显著优于... | 通过冲突感知过滤存在严重奖励分歧的rollout，结合查询级重加权调整更新强度，... | 仅在通用研究场景验证，未在大规模真实工业场景测试，实际落地效果尚... | ✅ |
+| 4 | high | - | [VeriGraph: Towards Verifiable Data-Analytic Agents](http://arxiv.org/abs/2606.16603) | agent harness | 构建显式异质证据DAG可提升数据分析智能体的主张锚定能力，VeriGraph-8B达到87.... | 通过构建显式异质证据DAG，结合图基策略优化联合监督多维度，提升智能体推理的可验... | 仅在学术基准测试，未验证真实工业数据分析场景的可用性与稳定性 | ✅ |
+| 5 | high | - | [A Framework for Evaluating Agentic Skills at Scale](http://arxiv.org/abs/2606.17819v1) | evaluation/benchmark | 不同模型对智能体技能编码的指令遵循度差异大，性能增益差异显著，技能可显著改变模型行为固化工作... | 构建可复用评估框架，支持开发者自定义任务评估技能效用，通过标准化评分规则评测技能... | 未验证该评估框架得到的技能效用结果，与工业场景实际落地效果的一致... | — |
+| 6 | high | - | [Agent trajectories as programs: fingerprinting and programming c...](http://arxiv.org/abs/2606.16988) | evaluation/benchmark | 同发布周期、蒸馏师生模型行为相似度更高，师生模型JS散度仅0.25，未知轨迹识别准确率达85... | 通过将智能体轨迹转化为压缩的程序化表征，提取行为指纹，实现对智能体行为过程的审计... | 仅聚焦行为特性分析，未落地到实际任务性能改进，缺乏真实场景部署验... | — |
+| 7 | high | - | [AgentFairBench: Do LLM Agents Discriminate When They Act?](http://arxiv.org/abs/2606.16723v1) | evaluation/benchmark | 传统统计方法仅因统计维度问题就将歧视程度高估约2.4倍，校正后未发现Claude Haiku... | 构建标准化评测基准和轻量化NumPy实现的评测harness，通过统计校正度量A... | 基于合成数据的评测和真实业务场景存在差距，仅用名字编码人口属性的... | — |
+| 8 | high | - | [Agentic Electronic Design Automation: A Handoff Perspective](http://arxiv.org/abs/2606.19795v1) | survey | 现有Agentic EDA系统可按交接边界分为三类，不同类别的交接契约要求存在显著差异。 | 通过定义交接有效性概念、分类现有系统，提出标准化五层通信协议规范智能体跨边界交接... | 仅提出框架协议，未做实际落地验证，缺乏实测的可靠性数据支撑 | — |
+| 9 | high | - | [Analyzing Defensive Misdirection Against Model-Guided Automated ...](http://arxiv.org/abs/2606.20470v1) | unlearning/safety | 传统检测拦截的可预测拒绝会给攻击者提供反馈，随查询预算提升攻击成功率趋近1，CMPE可降AS... | 采用检测-误导的控制机制，对检测出的恶意交互返回安全且带策略误导性的响应，干扰攻... | 未验证误导策略对正常合法交互的负面影响，缺乏大规模业务场景的落地... | — |
+| 10 | high | - | [Are Online Skill and Memory Modules Always Worth Their Tokens? A...](http://arxiv.org/abs/2606.15017) | evaluation/benchmark | 固定token推理预算下，现有技能记忆增强模块的性能增益大多消失，朴素基线可匹配甚至反超其成... | 通过设定固定总推理token预算，对比增强模块方案与同预算朴素基线，评估在线模块... | 现有技能记忆模块徒增推理部署成本，实际落地收益不足，不符合低算力... | — |
+| 11 | high | - | [Auditing Reward Hackability in Code RL Training Environments](http://arxiv.org/abs/2606.16062) | evaluation/benchmark | SWE-bench Verified中28.5%的任务测试套件过弱，可破解任务比鲁棒任务模型... | 通过审计识别缺陷测试任务，采用带Docker黄金校验门的LLM裁判强化测试环境，... | 现有代码Agent评测基准存在大量可破解任务，会高估模型能力，误... | — |
+| 12 | high | - | [Autonomous Event-Driven Multi-Agent Orchestration for Enterprise...](http://arxiv.org/abs/2606.20058v1) | multi-agent coordination | 规模而非任务复杂度主导性能，企业规模下智能体发现噪声是瓶颈，任务管理器降延迟14-75%，提... | 通过引入带有优先级推理、关联事件合并、抢占功能的任务管理器，优化大规模多智能体编... | DAG架构在企业规模下开销较高，未针对低算力工业路线做针对性优化 | — |
 
 ## 方法族分布
 
@@ -88,36 +88,6 @@
 - 仅针对无人机场景验证，方法在通用agent任务的泛化性未验证，工业落地需进一步适配
 - 仅在Text-to-SQL任务验证效果，未在更通用的多工具智能体场景验证泛化性
 
-## 可延展 Idea Hook
-
-- 如何将这种缓存级并行合成方法推广到并行工具调用场景，搭建低延迟工业级Agent harness框架？
-- 我们可以尝试设计推理资源受限、成本可控的鲁棒Agent护栏，防御这类针对共享护栏的拒绝服务攻击。
-- 基于"工作区+技能"范式搭建轻量持久自主Agent，验证其长期任务执行的可靠性
-- 可基于GauntletBench测试不同agent harness方案对智能体复杂场景泛化能力的实际提升效果。
-- 可基于该开放基准评测开源Agent的网络安全技能，探索安全场景下的Agent行为约束方案。
-- 能否构建低算力、符合工业流程的角色分工智能体harness，实现可落地的软件漏洞处理工具？
-- 如何基于执行轨迹反馈自动演化适配不同任务的低算力Agent Harness，满足工业场景动态需求？
-- 基于SkillAudit的无真值审计思路，探索面向工业部署Agent的在线自动技能演化方案
-- 可将本文选择性调用智能体推理的CVI机制推广到通用LLM Agent工具调用场景，降低调用成本提升可靠性
-- 能否将这种无额外成本的反思校准方法推广到通用工具使用智能体，提升智能体落地的可靠性
-- 如何设计鲁棒的技能条件化信任防御机制，抵御跨技能污染攻击，满足工业异构多智能体任务调度需求。
-- 面向工业落地低算力需求，探索基于缓存展开的小参数工具调用智能体训练方案的实际可用性
-
-## 下次可问导师的问题
-
-- 这种基于KV缓存的并行合成方案，能不能适配我们正在研发的低延迟Agent框架？
-- 我们是否需要在现有的Agent harness框架中加入推理资源限制，来防范这类拒绝服务攻击？
-- 我们是否可以沿着该范式做一个轻量可复现的持久Agent demo来探索方向？
-- 我们要不要基于这个新基准测试我们设计的agent harness框架在复杂场景下的能力表现？
-- 我们是否可以基于该基准开展开源大模型Agent的网络安全能力评测相关工作？
-- 我们是否可以基于该分工思路，裁剪模型得到低成本可演示的漏洞处理智能体？
-- 这个基于轨迹自动演化Agent Harness的思路，能不能适配我们要做的低算力工业友好型Agent路线？
-- 这种无真值的Agent技能自动演化方案，是否适合我们落地工具调用Agent的需求？
-- 这种选择性准入调用机制，是否可以复用在通用Agent工具调用的成本优化场景中？
-- 我们是否可以基于该思路，改进工具调用智能体的自我校验能力，做一个低成本可演示方案？
-- 我们要不要跟进设计可防御跨技能信任污染攻击的鲁棒多智能体任务路由框架？
-- 我们能否基于这个思路复现一个低算力、可演示的本地多轮工具调用智能体Demo？
-
 ## 代码资源
 
 - [From Generation to Judgment: Opportunities and Challenges of LLM-as-a-judge](https://github.com/llm-as-a-judge/Awesome-LLM-as-a-judge.) · 556 stars
@@ -156,4 +126,4 @@
 - **多类Agent基准**：1 篇
 
 ---
-*自动生成于 2026-06-21 | ArXiv_Daily_Digest*
+*自动生成于 2026-07-01 | ArXiv_Daily_Digest*

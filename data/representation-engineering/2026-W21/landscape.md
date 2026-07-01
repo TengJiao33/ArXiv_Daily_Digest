@@ -1,7 +1,7 @@
-# 📡 表示工程、激活引导与价值对齐干预 — 研究版图
+# 📡 representation-engineering — 方法版图
 > 2026-W21 (05/18-05/24) | 本周 52 篇 | 自动生成
 
-📊 **47** 个研究主题 | **2** 篇附带代码
+📊 **47** 个方法族 | **0** 篇 high priority | **2** 篇附带代码
 
 ---
 
@@ -10,7 +10,7 @@
 - **多模态输入压缩拒绝方向可用间隔，模态漂移越强拒绝可分性越弱，抵消漂移可恢复安全并产生自整流**
   _[Safety Geometry Collapse in Multimodal LLMs and Adaptive Drift Co...](http://arxiv.org/abs/2605.18104v1)_
 
-- **在多个VLM的八种设置下验证，攻击可组合得到更强攻击，其在残差流负拒绝方向投影更高**
+- **在多个VLM的八种设置下验证，攻击可组合得到更强攻击，其在残差流负拒绝方向投影更高** `ICLR 2026`
   _[Misaligned Roles, Misplaced Images: Structural Input Perturbation...](http://arxiv.org/abs/2504.03735)_
 
 
@@ -303,4 +303,4 @@
 
 
 ---
-*Research Radar 自动生成 | 2026-05-24*
+*ArXiv_Daily_Digest 自动生成 | 2026-07-01*

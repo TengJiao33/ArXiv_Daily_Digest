@@ -1,65 +1,68 @@
-# 表示工程与激活引导 — 2026-W18 (04/27-05/03)
+# representation-engineering — 2026-W18 (04/27-05/03)
 
-本周新增 **13** 篇论文。1 篇附带代码仓库。
+本周新增 **13** 篇论文，**1** 篇附带代码。优先级：high 0 / medium 0 / low 13。
 
-## 分类分布
+## 优先阅读
 
-- `via-citation`: 5 篇
-- `cs.CL`: 4 篇
-- `cs.AI`: 2 篇
-- `cs.CV`: 1 篇
-- `cs.AR`: 1 篇
+| # | 优先级 | Venue | 论文 | 方法族 | 关键发现 | 控制/评测 | 风险 | 代码 |
+|:-:|:------:|:-----:|------|--------|----------|----------|------|:----:|
+| 1 | low | - | [Prefill-Time Intervention for Mitigating Hallucination in Large ...](http://arxiv.org/abs/2604.25642v1) | 大模型幻觉缓解 | PTI仅在预填充阶段干预一次，将键引向视觉接地目标、值过滤噪声，可与现有解码方法正交集成。 | — | — | ✅ |
+| 2 | low | - | [AIPsy-Affect: A Keyword-Free Clinical Stimulus Battery for Mecha...](http://arxiv.org/abs/2604.23719v2) | 情绪可解释性 | 上下文分类器可检测该库的情绪存在（p<10^-15），但情绪类别top-1准确率仅5.2%，... | — | — | — |
+| 3 | low | - | [Architecture Determines Observability in Transformers](http://arxiv.org/abs/2604.24801) | Transformer可观测性 | 24层16头Transformer配置可观测性约为0.10，其余配置在0.21-0.38，训... | — | — | — |
+| 4 | low | - | [Contextual Linear Activation Steering of Language Models](http://arxiv.org/abs/2604.24693v1) | 大模型激活引导 | 在11个引导基准、4个模型族中，CLAS持续优于标准线性激活引导，有限标注数据下性能匹配或超... | — | — | — |
+| 5 | low | - | [DPN-LE: Dual Personality Neuron Localization and Editing for Lar...](http://arxiv.org/abs/2604.27929v1) | 大模型性格编辑 | 神经元具有多功能性，同时关联性格特质与通用知识，对立性格特质呈现互斥表示模式 | — | — | — |
+| 6 | low | - | [How LLMs Detect and Correct Their Own Errors: The Role of Intern...](http://arxiv.org/abs/2604.22271) | 大模型自我纠错 | PANL信号可超出对数概率、语言置信预测错误检测，还能预测可纠正错误，对错误检测存在因果作用... | — | — | — |
+| 7 | low | - | [Latent Adversarial Detection: Adaptive Probing of LLM Activation...](http://arxiv.org/abs/2604.28129) | 大模型攻击检测 | 多轮攻击存在对抗躁动特征，加入该特征将检测准确率从76.2%提升至93.8%，探针无法跨架构... | — | — | — |
+| 8 | low | - | [Latent Agents: A Post-Training Procedure for Internalized Multi-...](http://arxiv.org/abs/2604.24881v1) | 多智能体辩论蒸馏 | 内化会生成对应不同智能体视角的激活可解释子空间，匹配性能时最高减93%token，控有害行为... | — | — | — |
+| 9 | low | - | [Perturbation Probing: A Two-Pass-per-Prompt Diagnostic for FFN B...](http://arxiv.org/abs/2604.27401) | FFN回路探测 | 安全拒绝任务中仅约0.014%（50个）神经元控制拒绝模板，消融后仅3/520样本出现有害合... | — | — | — |
+| 10 | low | - | [Representational Curvature Modulates Behavioral Uncertainty in L...](http://arxiv.org/abs/2604.23985) | 大模型表征研究 | 在GPT-2 XL和Pythia-2.8B中，上下文曲率与下token熵相关，轨迹对齐曲率干... | — | — | — |
+| 11 | low | - | [Subliminal Steering: Stronger Encoding of Hidden Signals](http://arxiv.org/abs/2604.25783v1) | 阈下偏差编码 | 阈下学习不仅转移目标行为偏差，还会转移定位在教师对应层的原引导向量，新向量与原向量余弦相似度... | — | — | — |
+| 12 | low | - | [TimingLLM: A Two-Stage Retrieval-Augmented Framework for Pre-Syn...](http://arxiv.org/abs/2604.23602v1) | 预合成时序预测 | 在VerilogEval上该方法R_WNS达0.91、R_TNS达0.97，速度比以往方法快... | — | — | — |
 
-## 论文列表
+## 方法族分布
 
-| # | 论文 | 核心方法 | 主要贡献 | 代码 |
-|:-:|------|---------|---------|:----:|
-| 1 | [How LLMs Detect and Correct Their Own Errors: The Role of In...](http://arxiv.org/abs/2604.22271) | 基于决策神经科学二阶置信框架，采用验证后纠正范式，结合因果干预检验PANL信号作... | 揭示大语言模型天然具备二阶置信架构，内部评估信号可编码答案正误与自我修复可能性。 | — |
-| 2 | [Subliminal Steering: Stronger Encoding of Hidden Signals](http://arxiv.org/abs/2604.25783v1) | 提出阈下引导方法，使用训练好的引导向量而非系统提示实现教师模型的偏差编码 | 验证了可转移复杂多词偏差，给出阈下学习的机制证据，证实偏差编码具备高精度 | — |
-| 3 | [Prefill-Time Intervention for Mitigating Hallucination in La...](http://arxiv.org/abs/2604.25642v1) | 提出预填充阶段干预PTI方法，在错误积累前增强初始KV缓存，分模态修正幻觉易感表... | PTI可有效减轻幻觉，泛化性强，可与现有解码方法即插即用结合进一步提升性能。 | ✅ |
-| 4 | [Latent Agents: A Post-Training Procedure for Internalized Mu...](http://arxiv.org/abs/2604.24881v1) | 通过结合辩论结构学习、动态奖励调度与长度截断的两阶段微调，将多智能体辩论蒸馏到单... | 所得内化模型性能匹配或超越显式辩论，最高减少93%token，为内化推理行为控制... | — |
-| 5 | [Contextual Linear Activation Steering of Language Models](http://arxiv.org/abs/2604.24693v1) | 提出上下文线性激活引导方法CLAS，可根据输入上下文动态适配调整引导强度 | CLAS在多个基准与模型族上表现更优，是可扩展可解释准确的大模型专门化引导方法 | — |
-| 6 | [AIPsy-Affect: A Keyword-Free Clinical Stimulus Battery for M...](http://arxiv.org/abs/2604.23719v2) | 构建匹配对结构的无情绪关键词临床刺激库，采用三种NLP方法验证其无混淆特性。 | 推出四倍于旧版的480项AIPsy-Affect刺激库，消除关键词混淆，以MIT... | — |
-| 7 | [TimingLLM: A Two-Stage Retrieval-Augmented Framework for Pre...](http://arxiv.org/abs/2604.23602v1) | 提出两阶段检索增强大语言模型框架TimingLLM，直接从Verilog预测WN... | 发布含6万个带合成报告模块的新Verilog语料，模型性能优于SOTA，预测速度... | — |
-| 8 | [Ulterior Motives: Detecting Misaligned Reasoning in Continuo...](http://arxiv.org/abs/2604.23460v1) | 构建含12000个社会场景的MoralChain基准，用双触发范式训练带后门的连... | 提出专用检测基准，揭示错位推理的隐空间特性，验证检测有效性，指明安全监控方向 | — |
-| 9 | [Representational Curvature Modulates Behavioral Uncertainty ...](http://arxiv.org/abs/2604.23985) | 将上下文曲率与下一token熵关联分析，开展扰动与正则化训练实验验证 | 证实表征轨迹曲率是影响大语言模型行为不确定性的任务对齐表征特征 | — |
-| 10 | [Architecture Determines Observability in Transformers](http://arxiv.org/abs/2604.24801) | 定义可观测性为控制置信与激活范数后，冻结中层激活中逐词决策质量的线性可读性，以此... | 证明Transformer可观测性并非通用属性，架构决定可观测性，训练所得检测器... | — |
-| 11 | [DPN-LE: Dual Personality Neuron Localization and Editing for...](http://arxiv.org/abs/2604.27929v1) | 提出DPN-LE方法，对比高低特质样本MLP激活筛选性格特异神经元，稀疏线性干预... | 所提方法仅干预约0.5%的神经元，实现有效性格控制同时，大幅保留模型的通用能力 | — |
-| 12 | [Perturbation Probing: A Two-Pass-per-Prompt Diagnostic for F...](http://arxiv.org/abs/2604.27401) | 采用扰动探测法，每个提示两次前向传播无需反向传播，结合神经元干预扫描识别回路结构 | 识别出两种FFN行为回路结构，提出区分结构的预测指标，提供大模型精准编辑工具包 | — |
-| 13 | [Latent Adversarial Detection: Adaptive Probing of LLM Activa...](http://arxiv.org/abs/2604.28129) | 提取大语言模型残差流中对抗躁动的标量轨迹特征，以此检测多轮攻击 | 证实对抗躁动是可靠的激活层攻击信号，明确了实际部署的数据要求，提升了检测性能 | — |
+- **大模型自我纠错**：1 篇
+- **阈下偏差编码**：1 篇
+- **大模型幻觉缓解**：1 篇
+- **多智能体辩论蒸馏**：1 篇
+- **大模型激活引导**：1 篇
+- **情绪可解释性**：1 篇
+- **预合成时序预测**：1 篇
+- **错位推理检测**：1 篇
+- **大模型表征研究**：1 篇
+- **Transformer可观测性**：1 篇
+- **大模型性格编辑**：1 篇
+- **FFN回路探测**：1 篇
+
+## 代码资源
+
+- [Prefill-Time Intervention for Mitigating Hallucination in Large Vision-Language ...](https://github.com/huaiyi66/PTI.) · 2 stars
 
 ## 常见基线方法
 
-- **一阶置信模型** (1 篇引用)
-- **token对数概率** (1 篇引用)
-- **语言置信信号** (1 篇引用)
-- **行为信号** (1 篇引用)
-- **基于系统提示的传统阈下学习方法** (1 篇引用)
-- **显式多智能体辩论** (1 篇引用)
-- **基础大语言模型** (1 篇引用)
-- **标准线性激活引导** (1 篇引用)
-- **ReFT** (1 篇引用)
-- **LoRA** (1 篇引用)
-
-## 本周提到的 Limitations
-
-- 方向引导干预仅适用于满足条件的路由回路，在多类模型和多类任务回路中效果不佳
-- 检测探针为模型特定，无法跨架构迁移，检测泛化能力依赖训练数据源
+- **一阶置信模型**：1 篇
+- **token对数概率**：1 篇
+- **语言置信信号**：1 篇
+- **行为信号**：1 篇
+- **基于系统提示的传统阈下学习方法**：1 篇
+- **显式多智能体辩论**：1 篇
+- **基础大语言模型**：1 篇
+- **标准线性激活引导**：1 篇
+- **ReFT**：1 篇
+- **LoRA**：1 篇
 
 ## 常用数据集
 
-- **TriviaQA** (1 篇使用)
-- **MNLI** (1 篇使用)
-- **多个基准测试集** (1 篇使用)
-- **摘要未提及具体数据集名称** (1 篇使用)
-- **AIPsy-Affect临床刺激库** (1 篇使用)
-- **早期96项情绪刺激库** (1 篇使用)
-- **VerilogEval** (1 篇使用)
-- **6万模块带合成报告Verilog语料** (1 篇使用)
-- **MoralChain** (1 篇使用)
-- **Pile** (1 篇使用)
-
+- **TriviaQA**：1 篇
+- **MNLI**：1 篇
+- **多个基准测试集**：1 篇
+- **摘要未提及具体数据集名称**：1 篇
+- **AIPsy-Affect临床刺激库**：1 篇
+- **早期96项情绪刺激库**：1 篇
+- **VerilogEval**：1 篇
+- **6万模块带合成报告Verilog语料**：1 篇
+- **MoralChain**：1 篇
+- **Pile**：1 篇
 
 ---
-
-*自动生成于 2026-05-03 | Research Radar*
+*自动生成于 2026-07-01 | ArXiv_Daily_Digest*

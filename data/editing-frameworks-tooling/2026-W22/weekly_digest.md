@@ -1,23 +1,23 @@
-# 编辑框架、工具与基准 — 2026-W22 (05/25-05/31)
+# editing-frameworks-tooling — 2026-W22 (05/25-05/31)
 
 本周新增 **20** 篇论文，**2** 篇附带代码。优先级：high 8 / medium 12 / low 0。
 
 ## 优先阅读
 
-| # | 优先级 | Venue | 论文 | 方法族 | 评测信号 | Idea Hook | 代码 |
-|:-:|:------:|:-----:|------|--------|----------|-----------|:----:|
-| 1 | high | - | [Evi-Steer: Learning to Steer Biomedical Vision-Language Models t...](http://arxiv.org/abs/2605.26292v1) | steering | 在15个覆盖8器官8模态的生物医学数据集的少样本、域泛化设置下评测，性能优于SOTA... | 可将证据不确定性适配思路拓展到大模型知识编辑，提升编辑后模型的域泛化鲁棒性。 | ✅ |
-| 2 | high | - | [Benchmarking Safety Risks of Knowledge-Intensive Reasoning under...](http://arxiv.org/abs/2605.10146v1) | evaluation/benchmark | 从攻击有效性、推理正确性、副作用三个维度，评估注入恶意知识对下游推理行为和可靠性的影... | 可基于EditRisk-Bench开发抵御恶意知识注入的安全编辑方法，降低知识编辑引入的推理... | — |
-| 3 | high | - | [FineSteer: A Unified Framework for Fine-Grained Inference-Time S...](http://arxiv.org/abs/2604.15488v1) | steering | 在安全和真实性两类基准上开展实验，对比现有最优方法，验证引导效果与效用保留能力 | 可将该细粒度推理引导思路适配到知识编辑场景，缓解编辑后模型通用能力下降的问题 | — |
-| 4 | high | - | [Harnessing Agentic Evolution](http://arxiv.org/abs/2605.13821v1) | meta-learning editor | 在智能体推理基准与三个开放端优化任务上，对比多个基线评测长周期进化搜索的性能 | 可将元智能体编辑进化机制的思路引入知识编辑，解决长周期知识编辑的漂移问题 | — |
-| 5 | high | - | [Mitigating Hallucination in Vision-Language Models through Barri...](http://arxiv.org/abs/2605.29881v1) | steering | 在LLaVA-1.5-7B和Qwen-VL-Chat两个模型上测试，幻觉基准性能更优... | 这种按需自适应干预的引导思路，可迁移到通用大语言模型的事实幻觉缓解研究中。 | — |
-| 6 | high | - | [Robust and Generalizable Safety Steering for Text-to-Image Diffu...](http://arxiv.org/abs/2605.30049v1) | steering | 评测目标域与整体不安全生成率，同时验证源域安全保留效果与生成图像质量，检验方法鲁棒泛... | 可将该位置感知稀疏特征迁移思路扩展到大模型安全对齐，探索跨风险域安全适配新方案 | — |
-| 7 | high | - | [SAVeS: Steering Safety Judgments in Vision-Language Models via S...](http://arxiv.org/abs/2603.19092v1) | steering | 提出SAVeS基准与评测协议，可区分行为拒绝、接地安全推理和错误拒绝三类情形 | 可研究如何修正多模态安全模型的偏置，使其依赖接地视觉理解而非浅层语义提升鲁棒性 | — |
-| 8 | high | - | [SCAN: Sparse Circuit Anchor Interpretable Neuron for Lifelong Kn...](http://arxiv.org/abs/2603.15226v1) | locate-then-edit | 评测多类大语言模型多次顺序编辑后的通用能力保留效果，验证编辑后模型的完整性 | 可扩展探索稀疏电路锚定机制在大模型海量编辑场景下的稳定性与泛化能力 | — |
-| 9 | medium | - | [DIRECT: Video Mashup Creation via Hierarchical Multi-Agent Plann...](http://arxiv.org/abs/2604.04875v1) | framework/tooling | 构建了带视觉连续性、听觉对齐定制指标的Mashup-Bench基准，通过客观指标和人... | 可借鉴该分层多智能体分工协调思路，解决复杂多模态场景下的知识编辑任务 | ✅ |
-| 10 | medium | - | [AST: Adaptive, Seamless, and Training-Free Precise Speech Editin...](http://arxiv.org/abs/2604.16056v1) | framework/tooling | 提出WDTW指标评估未编辑区域时间一致性，构建公开基准数据集LibriSpeech-... | 可借鉴该无训练编辑、边界自适应约束思路，解决知识编辑中保留原知识一致性的问题。 | — |
-| 11 | medium | - | [ATHENA: Adaptive Test-Time Steering for Improving Count Fidelity...](http://arxiv.org/abs/2603.19676v1) | steering | 在多个标准基准与新增复杂数据集、多个扩散骨干上验证，证明方法可提升计数保真度且保持良... | 可将测试时间自适应引导思路引入知识编辑领域，优化生成约束满足度，提升知识编辑输出可靠性。 | — |
-| 12 | medium | - | [Beyond Static Personas: Situational Personality Steering for Lar...](http://arxiv.org/abs/2604.13846v3) | steering | 在公开基准PersonalityBench和自建SPBench上评测，验证方法对未知... | 可将这种神经元级情境引导思路迁移到知识编辑，提升编辑结果的情境适配能力 | — |
+| # | 优先级 | Venue | 论文 | 方法族 | 关键发现 | 控制/评测 | 风险 | 代码 |
+|:-:|:------:|:-----:|------|--------|----------|----------|------|:----:|
+| 1 | high | - | [Evi-Steer: Learning to Steer Biomedical Vision-Language Models t...](http://arxiv.org/abs/2605.26292v1) | steering | 仅更新模型0.11%的总参数，在少样本与领域偏移设置下性能始终优于现有最优方法。 | 在15个覆盖8器官8模态的生物医学数据集的少样本、域泛化设置下评测，性能优于SO... | 现有确定性参数适配方法在领域偏移、图文对齐模糊场景下性能不佳 | ✅ |
+| 2 | high | - | [Benchmarking Safety Risks of Knowledge-Intensive Reasoning under...](http://arxiv.org/abs/2605.10146v1) | evaluation/benchmark | 恶意知识编辑可稳定诱导错误不安全推理，同时基本保留模型通用能力，这类风险难以检测，受三类关键... | 从攻击有效性、推理正确性、副作用三个维度，评估注入恶意知识对下游推理行为和可靠性... | 现有基准缺失相关评估，恶意知识编辑的安全风险隐蔽难以检测 | — |
+| 3 | high | - | [FineSteer: A Unified Framework for Fine-Grained Inference-Time S...](http://arxiv.org/abs/2604.15488v1) | steering | 分阶段的条件引导与混合专家合成设计，让FineSteer在极小效用损失下获得优于SOTA的引... | 在安全和真实性两类基准上开展实验，对比现有最优方法，验证引导效果与效用保留能力 | 现有推理引导一刀切刚性设计，适应性不足，无法兼顾效果、效用与训练... | — |
+| 4 | high | - | [Harnessing Agentic Evolution](http://arxiv.org/abs/2605.13821v1) | meta-learning editor | AEvo相对最强基线取得26%的相对提升，相同迭代预算下开放优化任务达到当前最优性能 | 在智能体推理基准与三个开放端优化任务上，对比多个基线评测长周期进化搜索的性能 | 长周期进化易漂移，无法有效利用积累的进化证据 | — |
+| 5 | high | - | [Mitigating Hallucination in Vision-Language Models through Barri...](http://arxiv.org/abs/2605.29881v1) | steering | BRACS可降低CHAIR$_s$ 9.4个点、提升POPE F1 2.7个点，平均推理速度... | 在LLaVA-1.5-7B和Qwen-VL-Chat两个模型上测试，幻觉基准性能... | 解码过程中视觉grounding退化，模型生成不存在物体的幻觉，... | — |
+| 6 | high | - | [Robust and Generalizable Safety Steering for Text-to-Image Diffu...](http://arxiv.org/abs/2605.30049v1) | steering | 在FLUX.1 Dev与Stable Diffusion 3.5 Large上，SafeDI... | 评测目标域与整体不安全生成率，同时验证源域安全保留效果与生成图像质量，检验方法鲁... | 固定层安全引导不稳定，已知风险学习的引导机制无法可靠迁移到新风险... | — |
+| 7 | high | - | [SAVeS: Steering Safety Judgments in Vision-Language Models via S...](http://arxiv.org/abs/2603.19092v1) | steering | VLM的安全决策高度依赖语义线索，依赖习得图文关联而非接地视觉理解，易被自动引导流程利用 | 提出SAVeS基准与评测协议，可区分行为拒绝、接地安全推理和错误拒绝三类情形 | 多模态安全决策依赖浅层图文关联而非接地视觉理解，存在被诱导利用的... | — |
+| 8 | high | - | [SCAN: Sparse Circuit Anchor Interpretable Neuron for Lifelong Kn...](http://arxiv.org/abs/2603.15226v1) | locate-then-edit | 经3000次顺序编辑后，SCAN仍可在MMLU、GSM8K保持模型完整性，现有方法会逐渐恶化... | 评测多类大语言模型多次顺序编辑后的通用能力保留效果，验证编辑后模型的完整性 | 顺序知识编辑累积后引发模型崩溃与灾难性遗忘 | — |
+| 9 | medium | - | [DIRECT: Video Mashup Creation via Hierarchical Multi-Agent Plann...](http://arxiv.org/abs/2604.04875v1) | framework/tooling | 采用三层分工的分层多智能体框架，在视频混剪的客观指标和人工评估中均显著优于现有最优方法 | 构建了带视觉连续性、听觉对齐定制指标的Mashup-Bench基准，通过客观指标... | 现有自动视频混剪缺乏跨层级多模态协调，导致片段脱节、转场突兀、音... | ✅ |
+| 10 | medium | - | [AST: Adaptive, Seamless, and Training-Free Precise Speech Editin...](http://arxiv.org/abs/2604.16056v1) | framework/tooling | 相比先前时间一致性最优基线，词错率降低近70%，在基础TTS上WDTW降低27%，取得SOT... | 提出WDTW指标评估未编辑区域时间一致性，构建公开基准数据集LibriSpeec... | 编辑后未编辑区域时间保真度低，编辑边界存在伪影，编辑质量与一致性... | — |
+| 11 | medium | - | [ATHENA: Adaptive Test-Time Steering for Improving Count Fidelity...](http://arxiv.org/abs/2603.19676v1) | steering | 在去噪早期修正计数偏差可避免结构错误固化，动态调整比静态引导以少量计算换得更高计数准确率，高... | 在多个标准基准与新增复杂数据集、多个扩散骨干上验证，证明方法可提升计数保真度且保... | 文生图扩散模型物体计数控制系统性失效 | — |
+| 12 | medium | - | [Beyond Static Personas: Situational Personality Steering for Lar...](http://arxiv.org/abs/2604.13846v3) | steering | 通过多视角分析证实，大语言模型人格存在情境依赖性，且具有稳定一致的情境-行为关联模式 | 在公开基准PersonalityBench和自建SPBench上评测，验证方法对... | 现有个性化方法可控性差、资源需求高，静态人格建模缺乏跨情境适应性 | — |
 
 ## 方法族分布
 
@@ -53,21 +53,6 @@
 - 从攻击有效性、推理正确性、副作用三个维度，评估注入恶意知识对下游推理行为和可靠性的影响
 - 重点评测复杂指令编辑的鲁棒性，以及合成数据学习得到的分解能力在真实场景的泛化迁移能力
 
-## 可延展 Idea Hook
-
-- 可将该位置感知稀疏特征迁移思路扩展到大模型安全对齐，探索跨风险域安全适配新方案
-- 这种按需自适应干预的引导思路，可迁移到通用大语言模型的事实幻觉缓解研究中。
-- 可将该推理模式引导思路用于优化知识编辑后小模型，提升其推理性能与可靠性
-- 可将证据不确定性适配思路拓展到大模型知识编辑，提升编辑后模型的域泛化鲁棒性。
-- 可将分区域差异化噪声引导的思路引入知识编辑，优化编辑后原有正确知识的保留效果
-- 可将元智能体编辑进化机制的思路引入知识编辑，解决长周期知识编辑的漂移问题
-- 可将该结果引导校准思路引入知识编辑后输出校准，缓解编辑偏差，提升编辑可靠性
-- 可借鉴该工作约束编辑范围的思路，解决知识编辑中修改串扰非目标知识的问题
-- 可基于EditRisk-Bench开发抵御恶意知识注入的安全编辑方法，降低知识编辑引入的推理安全风险
-- 可借鉴本文顺序分解加合成数据训练的思路，解决多步复杂知识编辑的误差累积问题
-- 可借鉴该无训练编辑、边界自适应约束思路，解决知识编辑中保留原知识一致性的问题。
-- 可将该细粒度推理引导思路适配到知识编辑场景，缓解编辑后模型通用能力下降的问题
-
 ## 代码资源
 
 - [DIRECT: Video Mashup Creation via Hierarchical Multi-Agent Planning and Intent-G...](https://github.com/AK-DREAM/DIRECT) · 14 stars
@@ -100,4 +85,4 @@
 - **LibriSpeech-Edit**：1 篇
 
 ---
-*自动生成于 2026-05-31 | Knowledge Editing Direction Radar*
+*自动生成于 2026-07-01 | ArXiv_Daily_Digest*

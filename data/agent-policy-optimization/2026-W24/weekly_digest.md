@@ -6,20 +6,20 @@
 
 ## 优先阅读
 
-| # | 优先级 | Venue | 论文 | 方法族 | 控制/评测 | 风险 | Idea Hook | 代码 |
-|:-:|:------:|:-----:|------|--------|----------|------|-----------|:----:|
-| 1 | high | - | [3SPO: State-Score-Supervised Policy Optimization for LLM Agents](http://arxiv.org/abs/2606.09961v1) | policy optimization | 通过每步基于历史成功率生成的状态分数做监督，实现步级策略优化，改进信用分配，提升... | 仅在两个中小规模基准验证，未验证大规模复杂长周期任务的泛化效果。 | 能否将这种步级状态分数监督思路引入在线策略蒸馏，提升稀疏奖励场景下智能体后训练效率？ | ✅ |
-| 2 | high | - | [Pushing the Limits of LLM Tool Calling via Experiential Knowledg...](http://arxiv.org/abs/2606.10875v1) | tool-use control | 通过整合经验知识，推理阶段并行采样扩展推理宽度激活知识，训练阶段用知识增强数据做... | 仅在两个公开基准验证效果，未验证真实场景泛化性，摘要未披露详细消... | 探索将本文经验知识整合激活思路结合到Agent在线策略蒸馏中，优化工具调用场景的策略性能。 | ✅ |
-| 3 | high | - | [Trajectory-Refined Distillation](http://arxiv.org/abs/2606.08432v1) | online distillation | 通过教师引导在蒸馏前修正学生模型生成的错误前缀，从轨迹层面干预，缓解原有蒸馏的梯... | 未在具体下游agent任务验证，方法通用性有待验证，未披露详细的... | 可将该轨迹修正蒸馏思路迁移到agent在线策略蒸馏中，解决agent rollout过程的前... | ✅ |
-| 4 | high | - | [APPO: Agentic Procedural Policy Optimization](http://arxiv.org/abs/2606.12384v1) | policy optimization | 通过将分支与信用分配转移到细粒度决策点，设计分支分数筛选有效分支点，结合程序级优... | 未披露具体基准细节与工程实现细节，结果的可复现性存在一定不确定性... | 能否将APPO的细粒度信用分配思路结合在线蒸馏，优化大语言模型智能体的后训练效果？ | — |
-| 5 | high | - | [AliyunConsoleAgent: Training Web Agents in Real-World Cloud Envi...](http://arxiv.org/abs/2606.09447v1) | policy optimization | 通过前沿模型轨迹蒸馏做监督微调，结合GRPO强化学习与双通道奖励模型，优化智能体... | 仅在阿里云内部场景验证，方法在其他厂商异构云环境的泛化能力未得到... | 能否借鉴这种蒸馏结合GRPO的方案，在通用场景中低成本训练性能达标的专用Web Agent？ | — |
-| 6 | high | - | [Beyond Absolute Imitation: Anchored Residual Guidance for Privil...](http://arxiv.org/abs/2606.10385v1) | online distillation | 通过锚定残差解耦特权监督，实现可控同策略蒸馏，减少模型后见偏差，规范推理生成行为... | 未披露具体公开基准，未在真实落地Agent场景验证，方法的泛化能... | 可借鉴锚定残差解耦思路，改进现有Agent在线策略蒸馏方案，缓解长轨迹推理的后见泄漏问题。 | — |
-| 7 | high | - | [Beyond Uniform Token-Level Trust Region in LLM Reinforcement Lea...](http://arxiv.org/abs/2606.10968v1) | policy optimization | 通过位置加权阈值与累积前缀预算调整信任域约束，优化RLVR框架下的策略更新过程。 | 未在具体下游任务基准验证，方法泛化性与实际落地效果未明确说明。 | 将累积前缀偏差约束思路引入agent在线策略优化，能否缓解agent推理的早期错误累积问题？ | — |
-| 8 | high | - | [Bittensor Agent Arenas as a Trajectory Primitive: Distilling a S...](http://arxiv.org/abs/2606.10064v1) | online distillation | 通过激励对齐的Agent竞技场生成合格轨迹，经过滤后结合SFT与教师引导的Dr.... | 数据依赖特定Bittensor子网产出，脱离该生态可复用性较低，... | 探索如何利用激励对齐的开放Agent竞技场生成低成本高质量轨迹，解决小模型Agent后训练的... | — |
-| 9 | high | - | [Breaking Entropy Bounds: Accelerating RL Training via MTP with R...](http://arxiv.org/abs/2606.12370v1) | policy optimization | 通过分析熵波动对MTP接受率的约束，引入概率拒绝采样，设计端到端TV损失优化接受... | 仅在Qwen系列底座模型上验证，未验证其他架构底座的泛化效果，跨... | 在Agent在线策略蒸馏的rollout阶段引入该MTP方案，能否有效降低蒸馏过程的算力成本... | — |
-| 10 | high | - | [Breaking the Tokenizer Barrier: On-Policy Distillation across Mo...](http://arxiv.org/abs/2606.09456v1) | online distillation | 通过设计精确的分词映射算法，实现跨模型族、跨分词器场景下高保真的在线策略知识蒸馏... | 未在下游实际任务尤其是agent场景验证效果，跨大模型族蒸馏的效... | 能否将该跨模型族在线蒸馏方法，用于不同开源模型的agent策略在线蒸馏，优化学生agent的... | — |
-| 11 | high | - | [Capability-Aligned Hierarchical Learning for Tool-Augmented LLMs](http://arxiv.org/abs/2606.09371v1) | policy optimization | 通过RLVR对分层工具学习框架的高层规划与低层执行策略做联合优化，对齐二者能力，... | 仅在有限公开基准验证，未验证方法在大规模真实工业场景中的泛化性与... | 能否将该分层能力对齐思路结合在线蒸馏，优化工具增强agent后训练阶段的策略性能？ | — |
-| 12 | high | - | [Co-Evolving Skill Generation and Policy Optimization](http://arxiv.org/abs/2606.08755v1) | policy optimization | 通过预存储验证估计候选技能边际效用，基于奖励间隙过滤劣质技能，用效用信号训练技能... | 未经过大规模实际任务验证，边际效用估计偏差可能误滤有用技能，影响... | 如何在在线迭代的agent技能库中，低成本验证新技能边际效用，提升长周期运行agent的可靠... | — |
+| # | 优先级 | Venue | 论文 | 方法族 | 关键发现 | 控制/评测 | 风险 | 代码 |
+|:-:|:------:|:-----:|------|--------|----------|----------|------|:----:|
+| 1 | high | - | [3SPO: State-Score-Supervised Policy Optimization for LLM Agents](http://arxiv.org/abs/2606.09961v1) | policy optimization | 同等算力下，3SPO相比GRPO在ALFWorld涨22.6%、WebShop涨15.6个百... | 通过每步基于历史成功率生成的状态分数做监督，实现步级策略优化，改进信用分配，提升... | 仅在两个中小规模基准验证，未验证大规模复杂长周期任务的泛化效果。 | ✅ |
+| 2 | high | - | [Pushing the Limits of LLM Tool Calling via Experiential Knowledg...](http://arxiv.org/abs/2606.10875v1) | tool-use control | 简单实例级知识即可带来强可靠增益，抽象意图级知识增益有限；扩宽推理宽度比加深推理更能激活知识... | 通过整合经验知识，推理阶段并行采样扩展推理宽度激活知识，训练阶段用知识增强数据做... | 仅在两个公开基准验证效果，未验证真实场景泛化性，摘要未披露详细消... | ✅ |
+| 3 | high | - | [Trajectory-Refined Distillation](http://arxiv.org/abs/2606.08432v1) | online distillation | on-policy蒸馏的稠密token级监督会引发前缀失效，进而产生双峰教师混合和碎片化梯度... | 通过教师引导在蒸馏前修正学生模型生成的错误前缀，从轨迹层面干预，缓解原有蒸馏的梯... | 未在具体下游agent任务验证，方法通用性有待验证，未披露详细的... | ✅ |
+| 4 | high | - | [APPO: Agentic Procedural Policy Optimization](http://arxiv.org/abs/2606.12384v1) | policy optimization | 有影响力的决策点广泛分布于生成全序列而非集中在工具调用处，仅token熵无法可靠反映其对最终... | 通过将分支与信用分配转移到细粒度决策点，设计分支分数筛选有效分支点，结合程序级优... | 未披露具体基准细节与工程实现细节，结果的可复现性存在一定不确定性... | — |
+| 5 | high | - | [AliyunConsoleAgent: Training Web Agents in Real-World Cloud Envi...](http://arxiv.org/abs/2606.09447v1) | policy optimization | AliyunConsoleAgent-32B取得63.52%平均成功率，较基线提升20.24... | 通过前沿模型轨迹蒸馏做监督微调，结合GRPO强化学习与双通道奖励模型，优化智能体... | 仅在阿里云内部场景验证，方法在其他厂商异构云环境的泛化能力未得到... | — |
+| 6 | high | - | [Beyond Absolute Imitation: Anchored Residual Guidance for Privil...](http://arxiv.org/abs/2606.10385v1) | online distillation | 锚定残差机制可减少21.7%的后见泄漏，在长度超768 token的长轨迹上最多领先基线7.... | 通过锚定残差解耦特权监督，实现可控同策略蒸馏，减少模型后见偏差，规范推理生成行为... | 未披露具体公开基准，未在真实落地Agent场景验证，方法的泛化能... | — |
+| 7 | high | - | [Beyond Uniform Token-Level Trust Region in LLM Reinforcement Lea...](http://arxiv.org/abs/2606.10968v1) | policy optimization | 统一Token级信任阈值不符合自回归特性，对早期偏差约束不足、晚期探索限制过度，调整后精度显... | 通过位置加权阈值与累积前缀预算调整信任域约束，优化RLVR框架下的策略更新过程。 | 未在具体下游任务基准验证，方法泛化性与实际落地效果未明确说明。 | — |
+| 8 | high | - | [Bittensor Agent Arenas as a Trajectory Primitive: Distilling a S...](http://arxiv.org/abs/2606.10064v1) | online distillation | 仅用竞技场单日产出的轨迹训练Qwen3-4B，ASR从18.0%提升到42.7%，效果接近合... | 通过激励对齐的Agent竞技场生成合格轨迹，经过滤后结合SFT与教师引导的Dr.... | 数据依赖特定Bittensor子网产出，脱离该生态可复用性较低，... | — |
+| 9 | high | - | [Breaking Entropy Bounds: Accelerating RL Training via MTP with R...](http://arxiv.org/abs/2606.12370v1) | policy optimization | MTP接受率与RL阶段模型熵上升呈明确负线性关系，优化后接受率达95%，端到端异步RL训练最... | 通过分析熵波动对MTP接受率的约束，引入概率拒绝采样，设计端到端TV损失优化接受... | 仅在Qwen系列底座模型上验证，未验证其他架构底座的泛化效果，跨... | — |
+| 10 | high | - | [Breaking the Tokenizer Barrier: On-Policy Distillation across Mo...](http://arxiv.org/abs/2606.09456v1) | online distillation | 搭配精确分词映射的跨分词器在线策略蒸馏，计算效率显著优于主流监督微调基线，支持更多跨模型族师... | 通过设计精确的分词映射算法，实现跨模型族、跨分词器场景下高保真的在线策略知识蒸馏... | 未在下游实际任务尤其是agent场景验证效果，跨大模型族蒸馏的效... | — |
+| 11 | high | - | [Capability-Aligned Hierarchical Learning for Tool-Augmented LLMs](http://arxiv.org/abs/2606.09371v1) | policy optimization | 借助RLVR联合优化分层框架的高低层策略，可有效缓解规划-执行不对齐，显著提升工具使用任务性... | 通过RLVR对分层工具学习框架的高层规划与低层执行策略做联合优化，对齐二者能力，... | 仅在有限公开基准验证，未验证方法在大规模真实工业场景中的泛化性与... | — |
+| 12 | high | - | [Co-Evolving Skill Generation and Policy Optimization](http://arxiv.org/abs/2606.08755v1) | policy optimization | 即使前沿闭源大模型生成的新技能也效用混杂，多数无用甚至降性能，入库后边际贡献难以通过后续反馈... | 通过预存储验证估计候选技能边际效用，基于奖励间隙过滤劣质技能，用效用信号训练技能... | 未经过大规模实际任务验证，边际效用估计偏差可能误滤有用技能，影响... | — |
 
 ## 方法族分布
 
@@ -88,36 +88,6 @@
 - 仅在小规模网格基准验证，方法复杂度较高，复杂开放场景下的泛化性尚未验证
 - 实验仅在人工构建数据集开展，未在真实跨语言应用场景验证，泛化可靠性待验证。
 
-## 可延展 Idea Hook
-
-- 可将该自进化分布内优化思路结合在线蒸馏，进一步提升agent策略迭代的样本效率
-- 可将这种基于增益的前缀评估思路引入Agent推理的奖励学习，缓解Agent策略优化中的奖励稀疏问题。
-- 能否基于本文发现的子空间锁定特性，设计低算力开销的Agent策略在线蒸馏优化方案？
-- 可探索在在线策略蒸馏中引入不确定性对齐机制，提升师生框架下智能体工具调用决策的可靠性。
-- 可尝试将本文能力感知自适应提示选择思路，迁移到大语言模型Agent的GRPO策略优化中。
-- 可以将渐进式奖励设计思路引入多轮agent决策，解决多步任务中稀疏奖励引导不足的问题。
-- 能否将本文针对规模泛化的正则化思路迁移到LLM agent测试时扩展场景，提升泛化性能？
-- 针对人类偏好多元性，研究可适配偏好分歧的奖励建模方法，提升大语言模型对齐的实际可靠性。
-- 可探究将这种不确定性感知的LLM引导策略引入agent在线蒸馏，改善稀疏奖励场景下的agent训练效率
-- 能否将这种一致性驱动强化学习思路，迁移到多语言智能体的事实一致性优化任务中？
-- 可将该平滑散度正则方法引入agent在线策略蒸馏，优化离策略更新的稳定性，提升蒸馏效率。
-- 可研究经RLHF对齐的Agent是否也存在浅对齐问题，隐藏的违规行为结构是否可被用户提示绕过激活。
-
-## 下次可问导师的问题
-
-- 这种基于分布内学习的自进化框架结合在线蒸馏能否提升长程任务agent的训练效率？
-- 我们能否把这种前缀增益评估思路用到在线策略蒸馏的学生模型中间步骤奖励设计中？
-- 我们是否可以利用子空间锁定的结论，来降低当前Agent在线蒸馏工作的算力成本？
-- 我们做在线策略蒸馏优化agent工具决策时，是否需要引入不确定性对齐机制来提升性能？
-- 我们做Agent GRPO策略优化时，是否值得引入这种能力感知机制来提升训练稳定性？
-- 这种针对多轮修正的渐进式奖励设计思路，能否迁移到通用多轮agent决策任务中？
-- 这种面向调度的规模泛化正则化方法是否适合迁移到通用agent的测试时扩展优化？
-- 我们是否需要在当前的奖励学习研究中，加入对人类偏好多元性建模的探索？
-- 我们能否基于这一思路改进现有在线蒸馏框架，解决稀疏奖励下agent训练效率低的问题？
-- 我们当前Agent可靠性研究，是否需要关注跨语言场景下事实一致性的优化需求？
-- 我们是否可以将这种散度正则的思路整合到当前的agent在线策略蒸馏框架中做改进？
-- 我们做Agent对齐研究，是否需要关注RLHF带来的浅对齐问题以及隐含的可绕过安全风险？
-
 ## 代码资源
 
 - [Claw-R1: A Step-Level Data Middleware System for Agentic Reinforcement Learning](https://github.com/AgentR1/Claw-R1) · 183 stars
@@ -155,4 +125,4 @@
 - **AlfWorld**：1 篇
 
 ---
-*自动生成于 2026-06-14 | ArXiv_Daily_Digest*
+*自动生成于 2026-07-01 | ArXiv_Daily_Digest*

@@ -26,8 +26,6 @@ DEFAULT_OUTPUT_DIR = ROOT / "output" / "mentor_briefs"
 
 PRIORITY_SCORE = {"high": 30, "medium": 15, "low": 0}
 RELEVANCE_SCORE = {"high": 12, "medium": 6, "low": 0}
-FEASIBILITY_SCORE = {"high": 10, "medium": 5, "low": 0}
-COST_PENALTY = {"high": -8, "medium": -3, "low": 3}
 
 
 def load_directions() -> dict:
@@ -91,8 +89,6 @@ def paper_score(paper: dict) -> int:
     ext = paper.get("extracted", {}) or {}
     score = PRIORITY_SCORE[normalized_level(ext.get("read_priority"))]
     score += RELEVANCE_SCORE[normalized_level(ext.get("industrial_relevance"))]
-    score += FEASIBILITY_SCORE[normalized_level(ext.get("idea_feasibility"))]
-    score += COST_PENALTY[normalized_level(ext.get("compute_cost"), default="medium")]
     if paper.get("has_code"):
         score += 5
     if is_authority_venue(paper.get("venue")):
@@ -187,8 +183,6 @@ def summarize_direction(
         tags = [
             f"priority={normalized_level(ext.get('read_priority'))}",
             f"industry={normalized_level(ext.get('industrial_relevance'))}",
-            f"feasible={normalized_level(ext.get('idea_feasibility'))}",
-            f"cost={normalized_level(ext.get('compute_cost'), default='medium')}",
         ]
         if paper.get("has_code"):
             tags.append("code")
@@ -200,23 +194,7 @@ def summarize_direction(
         lines.append(f"   - 核心发现：{short(ext.get('key_finding'), 120)}")
         lines.append(f"   - 控制/评测：{short(ext.get('control_mechanism') or ext.get('evaluation_signal'), 120)}")
         lines.append(f"   - 风险：{short(ext.get('reliability_risk') or ext.get('failure_mode'), 120)}")
-        lines.append(f"   - Idea：{short(ext.get('idea_hook'), 140)}")
-        question = clean(ext.get("mentor_question"))
-        if question:
-            lines.append(f"   - 想问老师：{question}")
     lines.append("")
-
-    idea_hooks = [
-        clean((p.get("extracted") or {}).get("idea_hook"))
-        for p in ranked
-        if clean((p.get("extracted") or {}).get("idea_hook"))
-    ]
-    if idea_hooks:
-        lines.append("### 可带去讨论的候选切入点")
-        lines.append("")
-        for hook in idea_hooks[:3]:
-            lines.append(f"- {hook}")
-        lines.append("")
 
     return lines
 
@@ -231,7 +209,7 @@ def build_brief(week: str, top_n: int) -> str:
     lines = []
     lines.append(f"# Mentor Alignment Brief — {week}")
     lines.append("")
-    lines.append("目标：把雷达结果压缩成 2-3 个可和导师讨论的候选方向，优先看意义、差异性、可行性和工业相关性。")
+    lines.append("目标：把雷达结果压缩成 2-3 个候选方向，优先看意义、差异性和工业相关性。")
     lines.append("")
     lines.extend(summarize_authority_anchors(directions, anchors_by_direction))
 
