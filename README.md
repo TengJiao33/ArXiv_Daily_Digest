@@ -194,7 +194,13 @@ python mentor_brief.py --stdout
 
 ## Venue Backfill
 
-Venue labeling uses manual overrides first, then OpenReview accepted-paper metadata, then Semantic Scholar. OpenReview is useful for papers whose Semantic Scholar venue still appears as `arXiv`, such as newly accepted ICLR posters. Both OpenReview and Semantic Scholar responses are cached under `data/_cache/`; Semantic Scholar supports `SEMANTIC_SCHOLAR_API_KEY` or `S2_API_KEY` and 429 backoff.
+Venue labeling uses manual overrides first, then OpenReview accepted-paper metadata, then Semantic Scholar. OpenReview is useful for papers whose Semantic Scholar venue still appears as `arXiv`, such as newly accepted ICLR posters. OpenReview, Semantic Scholar venue responses, and Semantic Scholar citation responses are cached under `data/_cache/`; the daily GitHub Actions workflow restores and saves that cache across runs. Semantic Scholar supports `SEMANTIC_SCHOLAR_API_KEY` or `S2_API_KEY`, 429 backoff, and these optional controls:
+
+```bash
+SEMANTIC_SCHOLAR_MIN_INTERVAL=2.0
+SEMANTIC_SCHOLAR_MAX_RETRIES=2
+SEMANTIC_SCHOLAR_CITATION_CACHE_TTL_DAYS=14
+```
 
 Backfill venue labels for stored records:
 

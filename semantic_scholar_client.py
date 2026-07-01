@@ -78,12 +78,22 @@ def semantic_scholar_get(
     global _LAST_REQUEST_AT
 
     if max_retries is None:
-        max_retries = int(os.getenv("SEMANTIC_SCHOLAR_MAX_RETRIES", "4"))
+        try:
+            max_retries = int(os.getenv("SEMANTIC_SCHOLAR_MAX_RETRIES", "4"))
+        except ValueError:
+            max_retries = 4
+    max_retries = max(0, max_retries)
     if min_interval is None:
         min_interval = default_min_interval()
 
+    retry_5xx = os.getenv("SEMANTIC_SCHOLAR_RETRY_5XX", "1").strip().lower() not in {
+        "0",
+        "false",
+        "no",
+    }
+    max_attempts = max_retries + 1
     response = None
-    for attempt in range(max_retries + 1):
+    for attempt in range(max_attempts):
         elapsed = time.monotonic() - _LAST_REQUEST_AT
         if elapsed < min_interval:
             time.sleep(min_interval - elapsed)
@@ -91,19 +101,32 @@ def semantic_scholar_get(
         response = session.get(url, params=params, timeout=timeout)
         _LAST_REQUEST_AT = time.monotonic()
 
-        if response.status_code != 429:
-            return response
+        if response.status_code == 429:
+            if attempt >= max_retries:
+                raise SemanticScholarRateLimitError(
+                    f"429 after {max_attempts} attempts for {context}"
+                )
 
-        retry_after = _retry_after_seconds(response)
-        fallback = min(60.0, (2**attempt) * (2.5 if get_s2_api_key() else 6.0))
-        wait_seconds = retry_after if retry_after is not None else fallback
-        print(
-            f"[S2] 429 rate limit for {context}; "
-            f"sleeping {wait_seconds:.1f}s before retry {attempt + 1}/{max_retries}"
-        )
-        time.sleep(wait_seconds)
+            retry_after = _retry_after_seconds(response)
+            fallback = min(60.0, (2**attempt) * (2.5 if get_s2_api_key() else 6.0))
+            wait_seconds = retry_after if retry_after is not None else fallback
+            print(
+                f"[S2] 429 rate limit for {context}; "
+                f"sleeping {wait_seconds:.1f}s before retry {attempt + 1}/{max_retries}"
+            )
+            time.sleep(wait_seconds)
+            continue
+
+        if retry_5xx and response.status_code in {500, 502, 503, 504} and attempt < max_retries:
+            wait_seconds = min(30.0, (2**attempt) * 2.0)
+            print(
+                f"[S2] {response.status_code} server error for {context}; "
+                f"sleeping {wait_seconds:.1f}s before retry {attempt + 1}/{max_retries}"
+            )
+            time.sleep(wait_seconds)
+            continue
+
+        return response
 
     assert response is not None
-    if response.status_code == 429:
-        raise SemanticScholarRateLimitError(f"429 after {max_retries + 1} attempts for {context}")
     return response

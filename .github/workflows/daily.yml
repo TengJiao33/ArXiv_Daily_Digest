@@ -24,6 +24,15 @@ jobs:
       - name: 安装依赖
         run: pip install -r requirements.txt
 
+      - name: 恢复 API 缓存
+        uses: actions/cache/restore@v4
+        with:
+          path: data/_cache
+          key: api-cache-${{ runner.os }}-${{ hashFiles('config/directions.yaml', 'config/venue_overrides.yaml') }}-${{ github.run_id }}
+          restore-keys: |
+            api-cache-${{ runner.os }}-${{ hashFiles('config/directions.yaml', 'config/venue_overrides.yaml') }}-
+            api-cache-${{ runner.os }}-
+
       - name: 运行 Agent Reliability Radar
         env:
           DOUBAO_API_KEY: ${{ secrets.DOUBAO_API_KEY }}
@@ -33,10 +42,24 @@ jobs:
           WXPUSHER_UIDS: ${{ secrets.WXPUSHER_UIDS }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SEMANTIC_SCHOLAR_API_KEY: ${{ secrets.SEMANTIC_SCHOLAR_API_KEY }}
+          SEMANTIC_SCHOLAR_MIN_INTERVAL: "2.0"
+          SEMANTIC_SCHOLAR_MAX_RETRIES: "2"
+          SEMANTIC_SCHOLAR_CITATION_CACHE_TTL_DAYS: "14"
         run: python main.py
 
       - name: 生成静态 Dashboard 快照
         run: python radar_dashboard/build_static.py
+
+      - name: 确保 API 缓存目录存在
+        if: always()
+        run: mkdir -p data/_cache
+
+      - name: 保存 API 缓存
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: data/_cache
+          key: api-cache-${{ runner.os }}-${{ hashFiles('config/directions.yaml', 'config/venue_overrides.yaml') }}-${{ github.run_id }}
 
       - name: 提交采集数据
         run: |

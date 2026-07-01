@@ -170,7 +170,13 @@ python mentor_brief.py --stdout
 
 ## Venue 回填
 
-Semantic Scholar venue 查询存在限流。当前 resolver 支持 `SEMANTIC_SCHOLAR_API_KEY` 或 `S2_API_KEY`，会将响应缓存在 `data/_cache/`，并在 429 时退避重试。
+Semantic Scholar 查询存在限流。当前 resolver 支持 `SEMANTIC_SCHOLAR_API_KEY` 或 `S2_API_KEY`，venue 响应、citation 响应和 OpenReview 响应都会缓存在 `data/_cache/`；每日 GitHub Actions 会跨运行恢复并保存该缓存。Semantic Scholar 会在 429 时退避重试，也可以用这些环境变量控制节奏：
+
+```bash
+SEMANTIC_SCHOLAR_MIN_INTERVAL=2.0
+SEMANTIC_SCHOLAR_MAX_RETRIES=2
+SEMANTIC_SCHOLAR_CITATION_CACHE_TTL_DAYS=14
+```
 
 为已有记录回填 venue 标签：
 
